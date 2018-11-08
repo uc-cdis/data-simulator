@@ -10,13 +10,13 @@ def initialize_dictionary(url):
 def main():
     print("Data simulator software")
     #
-    url = 'https://s3.amazonaws.com/dictionary-artifacts/datadictionary/develop/schema.json'
-    #url = 'https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.2/schema.json'
+    #rl = 'https://s3.amazonaws.com/dictionary-artifacts/datadictionary/develop/schema.json'
+    url = 'https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.2/schema.json'
     #url = 'https://s3.amazonaws.com/dictionary-artifacts/genomel-dictionary/master/schema.json'
 
     initialize_dictionary(url)
 
-    graph = Graph(dictionary, 'DEV', 'open')
+    graph = Graph(dictionary, 'DEV', 'test')
 
     graph.generate_nodes_from_dictionary()
     graph.generate_full_graph()

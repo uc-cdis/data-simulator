@@ -6,6 +6,7 @@ from cdislogging import get_logger
 from errors import UserError, DictionaryError
 from generator import (
     generate_hash,
+    generate_string_data,
     generate_simple_primitive_data,
 )
 from utils import (
@@ -56,11 +57,17 @@ class Graph(object):
 
 
     def test_simulatation(self):
-        for node in self.gen_submission_order_v2():
+        node_order = self.gen_submission_order_v2()
+        with open('./sample_test_data/DataImportOrder.txt', 'w') as outfile:
+            for node in node_order:
+                outfile.write(node.name+'\n')
+        for node in node_order:
             logger.info("start simulating data for node {}".format(node.name))
             node.simulate_data(save=True)
             for data in node.simulate_dataset:
                 with open('./sample_test_data/' + node.name + ".json", 'w') as outfile:
+                    if node.name == 'derived_checkup':
+                        import pdb; pdb.set_trace()
                     json.dump(data, outfile, indent=4, sort_keys=True)
         
 
@@ -93,17 +100,18 @@ class Graph(object):
                 links = node.links
                 for link in links:
 
+                    link_tmp = link
+                    if not isinstance(link, list):
+                        link_tmp = [link]
+                    for l in link_tmp:
+                        if 'target_type' in l:
+                            self._add_parent_to_node(node, l['target_type'], l.get('name'), l.get('multiplicity'))
+   
                     if 'sub_group' in link or 'subgroup' in link:
                         sub_links = link.get('sub_group') or link.get('subgroup')
                         for sub_link in sub_links:
                             if 'target_type' in sub_link:
                                 self._add_parent_to_node(node, sub_link['target_type'], sub_link.get('name'), sub_link.get('multiplicity'))
-
-                    if not isinstance(link, list):
-                        link = [link]
-                    for l in link:
-                        if 'target_type' in l:
-                            self._add_parent_to_node(node, l['target_type'], l.get('name'), l.get('multiplicity'))
 
             except TypeError as e:
                 logger.error('Node {} have non-list links. Detail {}'.format(node.name, e.message))
@@ -160,6 +168,7 @@ class Node(object):
         try:
             self.category = node_schema['category']
             self.properties = node_schema['properties']
+            self.required = node_schema['required']
             self.links = node_schema['links']
         except ValueError as e:
             raise UserError(
@@ -192,12 +201,13 @@ class Node(object):
         for _ in xrange(n):
             example = {}
             for prop, prop_schema in self.properties.iteritems():
-                if prop in EXCLUDED_FIELDS:
+                if prop in EXCLUDED_FIELDS or prop not in self.required:
                     continue
                 single_property_data = self.simulate_data_for_single_property(prop, prop_schema)
-                if single_property_data:
-                    example[prop] = single_property_data
-            example['submitter_id'] = self.name + "_" + str(n)
+                if prop == 'app_checkups':
+                    import pdb; pdb.set_trace()
+                example[prop] = single_property_data
+            example['submitter_id'] = self.name + "_" + generate_string_data()
             example['type'] = self.name
             #import pdb; pdb.set_trace()
             if link_node.name == 'project':
@@ -220,10 +230,12 @@ class Node(object):
         Simulate data for single property
         """
         try:
+            if prop == 'app_checkups':
+                import pdb; pdb.set_trace()
             if prop == 'md5sum':
                 return generate_hash()
             if prop_schema.get('type'):
-                return generate_simple_primitive_data(prop_schema.get('type'))
+                return generate_simple_primitive_data(prop_schema.get('type'), prop_schema.get('pattern'))
             elif prop_schema.get('oneOf') or prop_schema.get('anyOf'):
                 one_of = prop_schema.get('oneOf') or prop_schema.get('anyOf')
                 for one in one_of:
@@ -240,7 +252,7 @@ class Node(object):
                         )
                 return random_choice(prop_schema.get('enum'))
             else:
-                logger.error("Error: {} does not have type of enum. Schema {}".format(prop, prop_schema))
+                logger.error("Error: {} does not have type or enum properties. Schema {}".format(prop, prop_schema))
 
         except UserError as e:
             logger.error("Error: {}".format(e.message))
