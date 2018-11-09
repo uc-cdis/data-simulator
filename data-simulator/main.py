@@ -20,7 +20,7 @@ def main():
 
     graph.generate_nodes_from_dictionary()
     graph.generate_full_graph()
-    orders = graph.gen_submission_order_v2()
+    orders = graph.gen_submission_order()
     print(len(orders))
     print(len(graph.nodes))
     #for one in orders:

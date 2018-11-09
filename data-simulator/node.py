@@ -1,6 +1,7 @@
 import os
 import json
 import utils
+import pprint
 from cdislogging import get_logger
 
 from errors import UserError, DictionaryError
@@ -12,11 +13,12 @@ from generator import (
 from utils import (
     is_mixed_type,
     random_choice,
+    get_recursive_keys,
 )
 logger = get_logger('DataSimulator')
 
 # from datamodelutils import models
-EXCLUDED_NODE = ['program', 'root']
+EXCLUDED_NODE = ['program', 'root', 'data_release']
 
 EXCLUDED_FIELDS = ["type", "error_type", "state", "id",
                    "file_state", "created_datetime", "updated_datetime",
@@ -29,7 +31,6 @@ class Graph(object):
     """
     """
 
-    # should be empty graph
     def __init__(self, dictionary, program, project):
         self.dictionary = dictionary
         self.root = None
@@ -56,21 +57,6 @@ class Graph(object):
             self.nodes.append(node)
 
 
-    def test_simulatation(self):
-        node_order = self.gen_submission_order_v2()
-        with open('./sample_test_data/DataImportOrder.txt', 'w') as outfile:
-            for node in node_order:
-                outfile.write(node.name+'\n')
-        for node in node_order:
-            logger.info("start simulating data for node {}".format(node.name))
-            node.simulate_data(save=True)
-            for data in node.simulate_dataset:
-                with open('./sample_test_data/' + node.name + ".json", 'w') as outfile:
-                    if node.name == 'derived_checkup':
-                        import pdb; pdb.set_trace()
-                    json.dump(data, outfile, indent=4, sort_keys=True)
-        
-
     def get_node_with_name(self, node_name):
         for node in self.nodes:
             if node.name == node_name:
@@ -85,7 +71,7 @@ class Graph(object):
         if not node_parent:
             raise UserError("Node {} have a link to node {} which does not exist".format(node.name, parent_name))
         
-        node.parents.append({'node': node_parent, 'multiplicity': multiplicity, 'name': link_name})
+        node.required_links.append({'node': node_parent, 'multiplicity': multiplicity, 'name': link_name})
         node_parent.childs.append(node)
 
     def generate_full_graph(self):
@@ -98,64 +84,59 @@ class Graph(object):
                 logger.error('ERROR: {} should have at least one link to other node'.format(node.name))
             try:
                 links = node.links
-                for link in links:
+                for sub_links in links:
 
-                    link_tmp = link
-                    if not isinstance(link, list):
-                        link_tmp = [link]
-                    for l in link_tmp:
-                        if 'target_type' in l:
-                            self._add_parent_to_node(node, l['target_type'], l.get('name'), l.get('multiplicity'))
+                    if not isinstance(sub_links, list):
+                        sub_links = [sub_links]
+
+                    for link in sub_links:
+                        if 'target_type' in link and 'required' in link:
+                            self._add_parent_to_node(node, link['target_type'], link.get('name'), link.get('multiplicity'))
    
-                    if 'sub_group' in link or 'subgroup' in link:
-                        sub_links = link.get('sub_group') or link.get('subgroup')
-                        for sub_link in sub_links:
-                            if 'target_type' in sub_link:
-                                self._add_parent_to_node(node, sub_link['target_type'], sub_link.get('name'), sub_link.get('multiplicity'))
+                        if 'sub_group' in link or 'subgroup' in link:
+                            sub_links = link.get('sub_group') or link.get('subgroup')
+                            for sub_link in sub_links:
+                                if 'target_type' in sub_link and 'required' in sub_link:
+                                    self._add_parent_to_node(node, sub_link['target_type'], sub_link.get('name'), sub_link.get('multiplicity'))
 
             except TypeError as e:
                 logger.error('Node {} have non-list links. Detail {}'.format(node.name, e.message))
+            
+            if not node.required_links:
+                logger.error('Node {} does not have any required links'.format(node.name))
 
     def gen_submission_order(self):
-
-        print("==========start gen submission order========")
-        if not self.root:
-            return []
-        order_submission = []
-        visited = set()
-        queue = [self.root]
-        index = 0
-        while index < len(queue):
-            cur_node = queue[index]
-            visited.add(cur_node.name)
-            order_submission.append(cur_node)
-            print(len(order_submission))
-            for node in cur_node.childs:
-                if node not in queue:
-                    queue.append(node)
-            index = index + 1
-        print("==========end gen submission order========")
-        return order_submission
-
-    def gen_submission_order_v2(self):
         order_submission = []
         
         for node in self.nodes:
-            path = []
             if node in order_submission:
                 continue
+            
+            path = []
             while node != self.root and node not in order_submission:
                 path.append(node)
                 try:
-                    node = node.parents[0].get('node')
+                    node = node.required_links[0].get('node')
                 except Exception:
+                    logger.info('ERROR: {} does not have any required link'.format(node.name))
                     break
             path.reverse()
             order_submission += path
         return order_submission
+    
+    def test_simulatation(self):
+        node_order = self.gen_submission_order()
+        with open('./sample_test_data/DataImportOrder.txt', 'w') as outfile:
+            for node in node_order:
+                outfile.write(node.name+'\n')
+        for node in node_order:
+            logger.info("start simulating data for node {}".format(node.name))
+            node.simulate_data(save=True, n=1)
+            #for data in node.simulate_dataset:
+            with open('./sample_test_data/' + node.name + ".json", 'w') as outfile:
+                json.dump(node.simulate_dataset, outfile, indent=4, sort_keys=True)
+        
             
-
-
 
 class Node(object):
     """
@@ -174,7 +155,7 @@ class Node(object):
             raise UserError(
                 'Error: NODE {}. Detail {}'.format(node_name, e.message)
             )
-        self.parents = []
+        self.required_links = []
         self.childs = []
         self.simulate_dataset = []
     
@@ -182,18 +163,20 @@ class Node(object):
         return self.name
 
     def is_root(self):
-        return not self.parents
+        return not self.required_links
     
-    def simulate_data(self, n=1, save=False):
+    def simulate_data(self, n=1, random=False, save=False):
         """
         Simulate data for the node
         """
         #import pdb; pdb.set_trace()
-        if not self.parents:
+        # skip the root 
+        if not self.required_links:
             return
-        link_node = self.parents[0].get('node')
-        link_node_multiplicity = self.parents[0].get('multiplicity')
-        link_name = self.parents[0].get('name')
+        
+        link_node = self.required_links[0].get('node')
+        link_node_multiplicity = self.required_links[0].get('multiplicity')
+        link_name = self.required_links[0].get('name')
         if link_node_multiplicity == 'one_to_one':
             n = len(link_node.simulate_dataset)
 
@@ -203,35 +186,45 @@ class Node(object):
             for prop, prop_schema in self.properties.iteritems():
                 if prop in EXCLUDED_FIELDS or prop not in self.required:
                     continue
-                single_property_data = self.simulate_data_for_single_property(prop, prop_schema)
-                if prop == 'app_checkups':
+                if prop == 'read_groups':
                     import pdb; pdb.set_trace()
+                single_property_data = self.simulate_data_for_single_property(prop, prop_schema)
+                # if prop == 'app_checkups':
+                #     import pdb; pdb.set_trace()
                 example[prop] = single_property_data
             example['submitter_id'] = self.name + "_" + generate_string_data()
             example['type'] = self.name
-            #import pdb; pdb.set_trace()
+
             if link_node.name == 'project':
                 example[link_name] = {'code': self.project}
             else:
                 try:
                     example[link_name] = {'submitter_id': link_node.simulate_dataset[0]['submitter_id']}
-                except Exception:
-                    import pdb; pdb.set_trace()
-                    print('debug')
+                except IndexError:
+                    #import pdb; pdb.set_trace()
+                    logger.error('ERROR: {} has not had simulated data yet'.format(link_node.name))
+    
             simulated_data.append(example)
+        
+        # store in dataset
         if save:
             self.simulate_dataset += simulated_data
         return simulated_data
         
-        
+    @staticmethod
+    def _is_link_property(prop_schema):
+        keys = get_recursive_keys(prop_schema)
+        if 'id' in keys and 'pattern' in keys and 'term' in keys:
+            return True
+        return False
 
-    def simulate_data_for_single_property(self, prop, prop_schema):
+    def simulate_data_for_single_property(self, prop, prop_schema, is_required=False):
         """
         Simulate data for single property
         """
         try:
-            if prop == 'app_checkups':
-                import pdb; pdb.set_trace()
+            # if prop == 'app_checkups':
+            #     import pdb; pdb.set_trace()
             if prop == 'md5sum':
                 return generate_hash()
             if prop_schema.get('type'):
@@ -239,11 +232,14 @@ class Node(object):
             elif prop_schema.get('oneOf') or prop_schema.get('anyOf'):
                 one_of = prop_schema.get('oneOf') or prop_schema.get('anyOf')
                 for one in one_of:
+                    if Node._is_link_property(one):
+                        return None
+
                     data_type = one.get('type')
                     if not data_type:
                         continue
                     return generate_simple_primitive_data(data_type)
-                return generate_simple_primitive_data('array')
+                #return generate_simple_primitive_data('array')
             elif prop_schema.get('enum'):
                 if is_mixed_type(prop_schema.get('enum')):
                     logger.error(
@@ -252,7 +248,7 @@ class Node(object):
                         )
                 return random_choice(prop_schema.get('enum'))
             else:
-                logger.error("Error: {} does not have type or enum properties. Schema {}".format(prop, prop_schema))
+                logger.error("Error: {} which is not a link does not have type or enum properties. Schema {}".format(prop, prop_schema))
 
         except UserError as e:
             logger.error("Error: {}".format(e.message))

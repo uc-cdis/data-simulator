@@ -17,3 +17,13 @@ def random_choice(arr):
 
 def is_primitive_type(data):
     return isinstance(data, (int, float, str))
+
+
+def get_recursive_keys(dictionary):
+    keys = []
+    for key, value in dictionary.items():
+        keys.append(key)
+        if type(value) is dict:
+            keys = keys + get_recursive_keys(value)
+    
+    return keys
