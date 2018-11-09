@@ -25,5 +25,5 @@ def get_recursive_keys(dictionary):
         keys.append(key)
         if type(value) is dict:
             keys = keys + get_recursive_keys(value)
-    
+
     return keys
