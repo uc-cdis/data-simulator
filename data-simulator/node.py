@@ -8,6 +8,7 @@ from errors import UserError, DictionaryError, NotSupported
 from generator import (
     generate_hash,
     generate_list_numbers,
+    generate_datetime,
     generate_string_data,
     generate_simple_primitive_data,
 )
@@ -15,11 +16,8 @@ from utils import (
     is_mixed_type,
     random_choice, 
     get_recursive_keys,
+    get_recursive_values,
 )
-
-
-# from datamodelutils import models
-
 
 EXCLUDED_FIELDS = [
     "type",
@@ -27,20 +25,12 @@ EXCLUDED_FIELDS = [
     "state",
     "id",
     "file_state",
-    #"created_datetime",
-    #"updated_datetime",
     "state",
-    # "state_comment",
-    # "project_id",
-    # "submitter_id",
-    # "workflow_start_datetime",
-    # "workflow_end_datetime",
-    # "sequencing_date",
-    "run_datetime",
+    "state_comment",
+    "project_id",
+    "submitter_id",
     "object_id",
 ]
-
-
 
 
 logger = get_logger("DataSimulator")
@@ -66,9 +56,10 @@ class Node(object):
             self.category = node_schema["category"]
             self.properties = node_schema["properties"]
             self.required = node_schema.get("required", [])
+            self.sys_properties = node_schema["systemProperties"]
             self.links = node_schema["links"]
         except KeyError as e:
-            raise UserError("Error: NODE {}. Detail {}".format(node_name, e.message))
+            raise UserError("Error: NODE {} does not have key `{}`".format(node_name, e.message))
         self.required_links = []
         self.childs = []
         self.simulated_dataset = []
@@ -132,33 +123,43 @@ class Node(object):
                             "submitter_id": choosen_sample["submitter_id"]
                         }
                 else:
-                    try:
-                        sample[link_node["name"]] = {
-                            "submitter_id": link_node["node"].simulated_dataset[idx][
-                                "submitter_id"
-                            ]
-                        }
-                    except IndexError:
-                        raise UserError("Internal error")
+                    sample[link_node["name"]] = {
+                        "submitter_id": link_node["node"].simulated_dataset[idx][
+                            "submitter_id"
+                        ]
+                    }
 
-    def _simulate_non_link_properties_data(self):
+    def _simulate_non_link_properties_data(self, required_only=True, skip=True):
         """
         simulate data for properties other than links
         """
+
         sample = {}
         for prop, prop_schema in self.properties.iteritems():
-            if prop in EXCLUDED_FIELDS or prop not in self.required:
+            if prop in [link['name'] for link in self.required_links] or prop in self.sys_properties:
                 continue
+            if prop in EXCLUDED_FIELDS or (required_only and prop not in self.required):
+                continue
+
             single_property_data = self.simulate_data_for_single_property(
                 prop, prop_schema
             )
-            sample[prop] = single_property_data
+            if single_property_data is not None:
+                sample[prop] = single_property_data
+            else:
+                if prop in self.required:
+                    error_process(
+                        do="log" if skip else "raise",
+                        msg='Can not simulate required property {}. Node {}'.format(prop, self.name),
+                        exc=DictionaryError,
+                    )
+
         return sample
 
     def _simulate_submitter_id(self):
         return self.name + "_" + generate_string_data()
 
-    def simulate_data(self, n_samples=1, random=False):
+    def simulate_data(self, n_samples=1, random=False, required_only=True, skip=True):
         """
         Simulate data for the node
         """
@@ -178,14 +179,12 @@ class Node(object):
         simulated_data = []
 
         for _ in xrange(n_samples):
-            example = self._simulate_non_link_properties_data()
-            # self._simulate_link_data()
-
+            example = self._simulate_non_link_properties_data(required_only=required_only, skip=skip)
             example["submitter_id"] = self._simulate_submitter_id()
+            
             example["type"] = self.name
-
             simulated_data.append(example)
-
+    
         self._simulate_link_data(simulated_data, random)
 
         # store in dataset
@@ -199,14 +198,21 @@ class Node(object):
         if "id" in keys and "pattern" in keys and "term" in keys:
             return True
         return False
+    
+    @staticmethod
+    def _is_datetime_property(prop_schema):
+        if str(prop_schema).find('date and time of day') > 0:
+            return True
+        return False
 
     def simulate_data_for_single_property(self, prop, prop_schema, is_required=False):
         """
         Simulate data for single property
         """
+        # if prop == 'file_size' and self.name == 'expression_array_file':
+        #     import pdb; pdb.set_trace()
+        #     import pdb; pdb.set_trace()
         try:
-            # if prop == 'app_checkups':
-            #     import pdb; pdb.set_trace()
             if prop == "md5sum":
                 return generate_hash()
             if prop_schema.get("type"):
@@ -223,7 +229,6 @@ class Node(object):
                     if not data_type:
                         continue
                     return generate_simple_primitive_data(data_type)
-                # return generate_simple_primitive_data('array')
             elif prop_schema.get("enum"):
                 if is_mixed_type(prop_schema.get("enum")):
                     logger.error(
@@ -232,9 +237,11 @@ class Node(object):
                         )
                     )
                 return random_choice(prop_schema.get("enum"))
+            elif Node._is_datetime_property(prop_schema):
+                return generate_datetime()
             else:
-                logger.error(
-                    "Error: {} which is not a link does not have type or enum properties. Schema {}".format(
+                raise DictionaryError(
+                    "Can not simulate prop {}. Schema does not provide enough info. Detail {}".format(
                         prop, prop_schema
                     )
                 )

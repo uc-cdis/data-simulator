@@ -2,13 +2,8 @@ import os
 import string
 import rstr
 import random
-import utils
-
-from cdislogging import get_logger
 
 from errors import UserError
-
-logger = get_logger("generator")
 
 
 def generate_string_data(size=10, pattern=None):
@@ -24,7 +19,6 @@ def generate_list_numbers(counts, nmax=100):
     L = []
     for _ in xrange(counts):
         L.append(generate_number(minx=int(0.2 * nmax), maxx=nmax, is_int=True))
-    import pdb; pdb.set_trace()
     return L
 
 
@@ -34,6 +28,10 @@ def generate_boolean():
 
 def generate_hash():
     return rstr.xeger(r"^[0-9a-f]{32}")
+
+
+def generate_datetime():
+    return rstr.xeger(r"^\d\d\d\d-(0[1-9]|1[0-2])-(0?[1-9]|[12][0-9]|3[01]) (0[0-9]|1[0-9]|2[0-3]):(0[0-9]|[0-5][0-9]):(0[0-9]|[0-5][0-9])$")
 
 
 def generate_simple_primitive_data(data_type, pattern=None):

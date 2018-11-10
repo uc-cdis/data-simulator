@@ -155,7 +155,7 @@ class Graph(object):
                     if item not in submission_order:
                         submission_order.append(item)
 
-    def simulate_graph_data(self):
+    def simulate_graph_data(self, random=True, required_only=True, skip=True):
         submission_order = []
         self.generate_submission_order_whole_graph(submission_order)
         with open("./sample_test_data/DataImportOrder.txt", "w") as outfile:
@@ -164,7 +164,7 @@ class Graph(object):
 
         n_samples_list = generate_list_numbers(len(submission_order), nmax=10)
         for idx, node in enumerate(submission_order):
-            logger.info("start simulating data for node {}".format(node.name))
-            node.simulate_data(n_samples=n_samples_list[idx], random=True)
+            #logger.info("start simulating data for node {}".format(node.name))
+            node.simulate_data(n_samples=n_samples_list[idx], random=random, required_only=required_only, skip=skip)
             with open("./sample_test_data/" + node.name + ".json", "w") as outfile:
                 json.dump(node.simulated_dataset, outfile, indent=4, sort_keys=True)

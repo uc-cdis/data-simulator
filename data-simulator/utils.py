@@ -27,3 +27,12 @@ def get_recursive_keys(dictionary):
             keys = keys + get_recursive_keys(value)
 
     return keys
+
+def get_recursive_values(dictionary):
+    values = []
+    for _, value in dictionary.items():
+        if type(value) is dict:
+            values = values + get_recursive_values(value)
+        else:
+            values.append(value)
+    return values

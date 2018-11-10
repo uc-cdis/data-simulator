@@ -11,12 +11,12 @@ def main():
     print("Data simulator software")
     #
     #rl = 'https://s3.amazonaws.com/dictionary-artifacts/datadictionary/develop/schema.json'
-    url = 'https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.2/schema.json'
+    url = 'https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.3/schema.json'
     #url = 'https://s3.amazonaws.com/dictionary-artifacts/genomel-dictionary/master/schema.json'
-    url = 'https://s3.amazonaws.com/dictionary-artifacts/kf-dictionary/kf-v0.1.2/schema.json'
+    #url = 'https://s3.amazonaws.com/dictionary-artifacts/kf-dictionary/kf-v0.1.2/schema.json'
 
-    url = 'https://s3.amazonaws.com/dictionary-artifacts/datadictionary/develop/schema.json'
-    url = 'https://s3.amazonaws.com/dictionary-artifacts/ndhdictionary/3.1.21/schema.json'
+    #url = 'https://s3.amazonaws.com/dictionary-artifacts/datadictionary/develop/schema.json'
+    #url = 'https://s3.amazonaws.com/dictionary-artifacts/ndhdictionary/3.1.21/schema.json'
 
     initialize_dictionary(url)
 
@@ -33,8 +33,7 @@ def main():
     # print(len(graph.nodes))
     # for one in orders:
     #    print one.name
-
-    graph.simulate_graph_data()
+    graph.simulate_graph_data(random=True, required_only=True, skip=True)
 
 
 if __name__ == '__main__':
