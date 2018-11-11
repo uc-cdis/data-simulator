@@ -1,18 +1,13 @@
-import os
-import json
-import utils
-
 from cdislogging import get_logger
 
 from errors import UserError, DictionaryError, NotSupported
 from generator import (
     generate_hash,
-    generate_list_numbers,
     generate_datetime,
     generate_string_data,
     generate_simple_primitive_data,
 )
-from utils import is_mixed_type, random_choice, get_recursive_keys, get_recursive_values
+from utils import is_mixed_type, random_choice, get_recursive_keys
 
 EXCLUDED_FIELDS = [
     "type",
@@ -89,7 +84,7 @@ class Node(object):
 
         Args:
             skip(bool): skip raising an exception to terminate
-        
+
         Outputs:
             None
         """
@@ -117,13 +112,13 @@ class Node(object):
         Args:
             simulated_data(list): list of data samples need to be filled with new data
             random(bool): whether randomly link to parent nodes
-        
+
         Outputs:
             None
-        
+
         Side effects:
             simulated_data(list): simulated_data is updated
-        
+
         """
         for link_node in self.required_links:
             for idx, sample in enumerate(simulated_data):
@@ -169,8 +164,8 @@ class Node(object):
             if prop in EXCLUDED_FIELDS or (required_only and prop not in self.required):
                 continue
 
-            single_property_data = self.simulate_properties_for_single_property(
-                prop, prop_schema
+            single_property_data = self.simulate_data_for_single_property(
+                prop=prop, prop_schema=prop_schema, skip=skip
             )
             if single_property_data is not None:
                 sample[prop] = single_property_data
@@ -235,8 +230,8 @@ class Node(object):
 
         return simulated_data
 
-    def simulate_properties_for_single_property(
-        self, prop, prop_schema, is_required=False
+    def simulate_data_for_single_property(
+        self, prop, prop_schema, required_only=False, skip=True
     ):
         """
         Simulate data for a single property
@@ -286,7 +281,17 @@ class Node(object):
                 )
 
         except UserError as e:
-            logger.error("Error: {}".format(e.message))
+            error_process(
+                do="log" if skip else "raise",
+                msg="Error: {}".format(e.message),
+                exc=UserError,
+            )
+        except DictionaryError as e:
+            error_process(
+                do="log" if skip else "raise",
+                msg="Error: {}".format(e.message),
+                exc=DictionaryError,
+            )
 
         return None
 

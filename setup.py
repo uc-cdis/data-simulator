@@ -6,11 +6,13 @@ setup(
     packages=find_packages(),
     description="Data simulator",
     install_requires=[
-        "dictionaryutils==2.0.0",
         "jsonschema==2.5.1",
-        "PyYAML==3.11",
+        "requests==1.0.2",
         "setuptools==30.1.0",
-        "simplejson==3.8.1",
         "rstr==2.2.6",
+    ],
+    dependency_links=[
+        "git+https://github.com/uc-cdis/dictionaryutils.git@2.0.3#egg=dictionaryutils",
+        "git+https://github.com/uc-cdis/cdislogging.git@0.0.2#egg=cdislogging",
     ],
 )
