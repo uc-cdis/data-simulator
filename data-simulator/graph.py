@@ -108,12 +108,13 @@ class Graph(object):
         )
         node_parent.childs.append(node)
 
-    def graph_validation(self, skip=True):
+    def graph_validation(self, required_only=False):
         """
         Call to all node validation to validate
         """
-        for node in self.nodes:
-            node.node_validation(skip)
+        return any(
+            [node.node_validation(required_only=required_only) for node in self.nodes]
+        )
 
     def construct_graph_edges(self):
         """
@@ -196,7 +197,7 @@ class Graph(object):
                 )
         submission_order.append(node)
 
-    def generate_submission_order_whole_graph(self, submission_order):
+    def generate_submission_order(self, submission_order):
         """
         Generate submission order for the graph
         
@@ -221,18 +222,18 @@ class Graph(object):
         self, path, n_samples=1, random=True, required_only=True, skip=True
     ):
         """
-        Simulate data for the whole graph
+        Simulate data for the whole graph. 
 
         Args:
             random(bool): whether randomly link to parent nodes
             required_only(bool): only simulate required properties
-            skip(bool): skip raising an exception to terminate
+            skip(bool): whether continue or terminate
         
         Outputs:
-            None or raise an exception
+            None
         """
         submission_order = []
-        self.generate_submission_order_whole_graph(submission_order)
+        self.generate_submission_order(submission_order)
         with open(join(path, "DataImportOrder.txt"), "w") as outfile:
             for node in submission_order:
                 outfile.write(node.name + "\n")
@@ -240,13 +241,23 @@ class Graph(object):
         n_samples_list = generate_list_numbers(
             len(submission_order), nmax=n_samples, random=random
         )
+
         for idx, node in enumerate(submission_order):
-            logger.info("start simulating data for node {}".format(node.name))
-            node.simulate_data(
-                n_samples=n_samples_list[idx],
-                random=random,
-                required_only=required_only,
-                skip=skip,
-            )
+            # raise exception if not skip and not pass validation
+            _, is_submitable = node.node_validation()
+            if is_submitable:
+                # simulate data
+                logger.info("Simulating data for node {}".format(node.name))
+                node.simulate_data(
+                    n_samples=n_samples_list[idx],
+                    random=random,
+                    required_only=required_only,
+                )
+            else:
+                if not skip:
+                    raise DictionaryError("Can not simulate node {}".format(node.name))
+                if skip:
+                    logger.error("Can not simulate node {}".format(node.name))
+
             with open(join(path, node.name + ".json"), "w") as outfile:
                 json.dump(node.simulated_dataset, outfile, indent=4, sort_keys=True)

@@ -1,3 +1,5 @@
+import sys
+
 from cdislogging import get_logger
 
 from errors import UserError, DictionaryError, NotSupported
@@ -78,32 +80,72 @@ class Node(object):
             return True
         return False
 
-    def node_validation(self, skip=True):
+    @staticmethod
+    def _simulate_data_from_simple_schema(prop, simple_schema):
+        if simple_schema["data_type"] == "md5sum":
+            return generate_hash()
+        elif simple_schema["data_type"] == "enum":
+            return random_choice(simple_schema["values"])
+        elif simple_schema["data_type"] == "datetime":
+            return generate_datetime()
+        else:
+            return generate_simple_primitive_data(
+                data_type=simple_schema["data_type"],
+                pattern=simple_schema.get("pattern"),
+            )
+
+    def node_validation(self, required_only=False):
         """
-        validate required properties and required links
+        Validate the node schema and check if the node is submitable or not.
+        The method supports for generating data even when the node does not pass validation.
+        Some non-required properties, which can be missed, may fail the validation.
 
         Args:
-            skip(bool): skip raising an exception to terminate
+            required_only(bool)
 
         Outputs:
-            None
+            pass_validation(bool)
+            is_submitable(bool)
         """
+        # if node schema is well-defined
+        pass_validation = True
+        is_submittable = True
+
+        # Go through all the properties to collect all possible errors may happend
         for prop in self.required:
             if prop not in self.properties:
-                error_process(
-                    do="log" if skip else "raise",
-                    msg="Node {}. Required property {} is not in property list".format(
+                logger.error(
+                    "Node {}. Required property {} is not in property list".format(
                         self.name, prop
-                    ),
-                    exc=DictionaryError,
+                    )
                 )
+                if pass_validation:
+                    pass_validation = False
+                if is_submittable:
+                    is_submittable = False
 
+        # validate required links
         if not self.required_links and self.name != "project":
-            error_process(
-                do="log" if skip else "raise",
-                msg="Node {} does not have any required link".format(self.name),
-                exc=DictionaryError,
-            )
+            logger.error("Node {} does not have any required link".format(self.name))
+            if pass_validation:
+                pass_validation = False
+            if is_submittable:
+                is_submittable = False
+
+        # validate properties
+        template = self.construct_property_generator_template(
+            required_only=required_only
+        )
+
+        for prop, schema in template.iteritems():
+            if schema["data_type"] is None:
+                logger.error(schema["error_msg"])
+                if pass_validation:
+                    pass_validation = False
+                if prop in self.required:
+                    is_submittable = False
+
+        return pass_validation, is_submittable
 
     def _simulate_link_properties(self, simulated_data, random=False):
         """
@@ -145,64 +187,66 @@ class Node(object):
                         ]
                     }
 
-    def _simulate_non_link_properties(self, required_only=True, skip=True):
+    def construct_property_generator_template(self, required_only=True):
         """
         Simulate data for non-link properties
 
         Args:
             required_only(bool): only simulate required properties
             skip(bool): skip raising an exception to terminate
+        
+        Outputs:
+            dict: template for data generator. Ex.
+                {
+                    'high_range':{
+                        'data_type': 'number'
+                        },
+                    'hash': {
+                        'data_type': 'string',
+                        'format': '^[0-9a-f]{32}'
+                        },
+                }
+
         """
 
-        sample = {}
+        template = {}
+
         for prop, prop_schema in self.properties.iteritems():
             if (
                 prop in [link["name"] for link in self.required_links]
                 or prop in self.sys_properties
+                or prop in EXCLUDED_FIELDS
+                or (required_only and prop not in self.required)
             ):
                 continue
-            if prop in EXCLUDED_FIELDS or (required_only and prop not in self.required):
-                continue
 
-            single_property_data = self.simulate_data_for_single_property(
-                prop=prop, prop_schema=prop_schema, skip=skip
+            template[prop] = self.construct_simple_property_schema(
+                prop=prop, prop_schema=prop_schema
             )
-            if single_property_data is not None:
-                sample[prop] = single_property_data
-            else:
-                if prop in self.required:
-                    error_process(
-                        do="log" if skip else "raise",
-                        msg="Can not simulate required property {}. Node {}".format(
-                            prop, self.name
-                        ),
-                        exc=DictionaryError,
-                    )
 
-        return sample
+        return template
 
     def _simulate_submitter_id(self):
         return self.name + "_" + generate_string_data()
 
-    def simulate_data(self, n_samples=1, random=False, required_only=True, skip=True):
+    def simulate_data(self, n_samples=1, random=False, required_only=True):
         """
         Simulate data for the node
 
         Args:
             n_samples(int): number of samples need to be generated
-            required_only(bool): generate only required data
             random(bool): random links or not
-            skip(bool): skip raising an exception to terminate
+            required_only(bool): generate only required data
 
         Output:
-            None
+            simulated_data[list]: list of simulated record
         """
         # skip project node
         if not self.required_links:
             return
 
         # re compute n-samples base on link type (one_to_one, one_to_many, ..etc.)
-        min_required_samples = 1.0e6
+        min_required_samples = sys.maxint
         for link_node in self.required_links:
             if link_node["multiplicity"] in {"one_to_one", "one_to_many"}:
                 min_required_samples = min(
@@ -212,88 +256,97 @@ class Node(object):
 
         simulated_data = []
 
-        # simulate non-link properties
-        for _ in xrange(n_samples):
-            example = self._simulate_non_link_properties(
-                required_only=required_only, skip=skip
-            )
-            example["submitter_id"] = self._simulate_submitter_id()
+        # construct template
+        template = self.construct_property_generator_template(
+            required_only=required_only
+        )
 
+        simulated_data = []
+        for _ in xrange(n_samples):
+            example = {}
+
+            for prop, simple_schema in template.iteritems():
+                if simple_schema["data_type"] is None:
+                    logger.warn(simple_schema["error_msg"])
+                # Skip. Simulate link property latter
+                elif simple_schema["data_type"] == "link_type":
+                    continue
+                else:
+                    example[prop] = Node._simulate_data_from_simple_schema(
+                        prop, simple_schema
+                    )
+
+            example["submitter_id"] = self._simulate_submitter_id()
             example["type"] = self.name
+
             simulated_data.append(example)
 
         # simulate link properties
-        self._simulate_link_properties(simulated_data, random)
-
-        # store to dataset
-        self.simulated_dataset += simulated_data
+        try:
+            self._simulate_link_properties(simulated_data, random)
+            # store to dataset
+            self.simulated_dataset += simulated_data
+        except IndexError:
+            # just silent pass
+            pass
 
         return simulated_data
 
-    def simulate_data_for_single_property(
-        self, prop, prop_schema, required_only=False, skip=True
-    ):
+    def construct_simple_property_schema(self, prop, prop_schema):
         """
         Simulate data for a single property
 
         Args:
             prop(str): property name
             prop_schema(json): property schema
-            required_only(bool): generate only required data
 
         Outputs:
-            None or raise an exception if get error
+            dict: a simple property schema to build data generator template
 
         """
+        if prop == "md5sum":
+            return {"data_type": "md5sum"}
 
-        try:
-            if prop == "md5sum":
-                return generate_hash()
-            if prop_schema.get("type"):
-                return generate_simple_primitive_data(
-                    prop_schema.get("type"), prop_schema.get("pattern")
-                )
-            elif prop_schema.get("oneOf") or prop_schema.get("anyOf"):
-                one_of = prop_schema.get("oneOf") or prop_schema.get("anyOf")
-                for one in one_of:
-                    if Node._is_link_property(one):
-                        return None
+        if prop_schema.get("type"):
+            return {
+                "data_type": prop_schema.get("type"),
+                "pattern": prop_schema.get("pattern"),
+            }
 
-                    data_type = one.get("type")
-                    if not data_type:
-                        continue
-                    return generate_simple_primitive_data(data_type)
-            elif prop_schema.get("enum"):
-                if is_mixed_type(prop_schema.get("enum")):
-                    DictionaryError(
-                        "Error: {} has mixed datatype. Detail {}".format(
-                            prop, prop_schema["enum"]
-                        )
-                    )
-                return random_choice(prop_schema.get("enum"))
-            elif Node._is_datetime_property(prop_schema):
-                return generate_datetime()
+        elif prop_schema.get("oneOf") or prop_schema.get("anyOf"):
+            one_of = prop_schema.get("oneOf") or prop_schema.get("anyOf")
+            for one in one_of:
+                if Node._is_link_property(one):
+                    return {"data_type": "link_type"}
+
+                data_type = one.get("type")
+                if not data_type:
+                    continue
+                return {"data_type": data_type}
+
+        elif prop_schema.get("enum"):
+            if is_mixed_type(prop_schema.get("enum")):
+                return {
+                    "data_type": None,
+                    "error_msg": "Error: {} has mixed datatype. Detail {}".format(
+                        prop, prop_schema["enum"]
+                    ),
+                    "error_type": "DictionaryError",
+                }
             else:
-                raise DictionaryError(
-                    "Can not simulate prop {}. Schema does not provide enough info. Detail {}".format(
-                        prop, prop_schema
-                    )
-                )
+                return {"data_type": "enum", "values": prop_schema.get("enum")}
 
-        except UserError as e:
-            error_process(
-                do="log" if skip else "raise",
-                msg="Error: {}".format(e.message),
-                exc=UserError,
-            )
-        except DictionaryError as e:
-            error_process(
-                do="log" if skip else "raise",
-                msg="Error: {}".format(e.message),
-                exc=DictionaryError,
-            )
+        elif Node._is_datetime_property(prop_schema):
+            return {"data_type": "datetime"}
 
-        return None
+        else:
+            return {
+                "data_type": None,
+                "error_msg": "Node {}. Can not get data type of {}. Detail {}".format(
+                    self.name, prop, prop_schema
+                ),
+                "error_type": "DictionaryError",
+            }
 
     @classmethod
     def simulate_properties_path(cls):
