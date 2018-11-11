@@ -28,6 +28,7 @@ def get_recursive_keys(dictionary):
 
     return keys
 
+
 def get_recursive_values(dictionary):
     values = []
     for _, value in dictionary.items():

@@ -10,5 +10,6 @@ except ImportError:
 
 import pytest
 
+
 def test_get_schema():
     assert True

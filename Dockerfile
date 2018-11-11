@@ -7,3 +7,4 @@ RUN apt-get update && apt-get install -y sudo python-pip git python-dev libpq-de
 COPY . /data-simulator
 WORKDIR /data-simulator
 
+RUN  pip install -r requirements.txt
