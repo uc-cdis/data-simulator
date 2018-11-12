@@ -19,7 +19,7 @@ class Graph(object):
         Graph constructor
 
         Args:
-            dictionary(dict): dictionary
+            dictionary(DataDictionary): a dictionary instance
             program(str): program name
             project(str): project name
 
@@ -84,10 +84,10 @@ class Graph(object):
             link_node_name(str): link node name
             multiplicity(str): link type (one_to_one, one_to_many, ..etc.)
             skip(bool): skip raising an exception to terminate
-        
+
         Outputs:
             None or raise exception
-        
+
         """
         # skip all the links to Project node
         if link_node_name in EXCLUDED_NODE:
@@ -102,7 +102,7 @@ class Graph(object):
                 logger.error(msg)
             else:
                 raise DictionaryError(message=msg)
-            
+
         node.required_links.append(
             {"node": node_parent, "multiplicity": multiplicity, "name": link_name}
         )
@@ -181,14 +181,14 @@ class Graph(object):
 
         Args:
             node(Node): current node object
-            submission_order(list): submission order list 
-        
+            submission_order(list): submission order list
+
         Outputs:
             None
-        
+
         Side effects:
             submission_order is updated interatively
-    
+
         """
         if node in submission_order:
             return
@@ -202,13 +202,13 @@ class Graph(object):
     def generate_submission_order(self, submission_order):
         """
         Generate submission order for the graph
-        
+
         Args:
-            submission_order(list): submission order list 
-        
+            submission_order(list): submission order list
+
         Outputs:
             None
-        
+
         Side effects:
             submission_order is updated interatively
         """
@@ -230,7 +230,7 @@ class Graph(object):
             random(bool): whether randomly link to parent nodes
             required_only(bool): only simulate required properties
             skip(bool): skip raising an exception to terminate
-        
+
         Outputs:
             None
         """

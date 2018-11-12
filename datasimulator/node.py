@@ -299,7 +299,7 @@ class Node(object):
         Simulate data for required links
 
         Args:
-            simulated_data(list): list of data samples need to be filled with new data
+            simulated_data(list): list of data samples need to be filled
             random(bool): whether randomly link to parent nodes
 
         Outputs:
