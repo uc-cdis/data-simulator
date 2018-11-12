@@ -112,8 +112,8 @@ class Graph(object):
         """
         Call to all node validation to validate
         """
-        return any(
-            [node.node_validation(required_only=required_only) for node in self.nodes]
+        return all(
+            [node.node_validation(required_only=required_only)[0] for node in self.nodes]
         )
 
     def construct_graph_edges(self):

@@ -6,9 +6,8 @@ setup(
     packages=find_packages(),
     description="Data simulator",
     install_requires=[
-        "jsonschema==2.5.1",
-        "requests==1.0.2",
-        "setuptools==30.1.0",
+        "requests>=2.18.0<3.0.0",
+        "setuptools==36.6.0",
         "rstr==2.2.6",
     ],
     dependency_links=[

@@ -28,18 +28,6 @@ EXCLUDED_FIELDS = [
 logger = get_logger("DataSimulator")
 
 
-def error_process(do, msg, exc):
-    """
-    log or raise an exception
-    """
-    if do == "log":
-        logger.error(msg)
-    elif do == "raise":
-        raise exc(msg)
-    else:
-        raise NotSupported("{} is not supported".format(type))
-
-
 class Node(object):
     """
     Class representation for node
@@ -285,7 +273,7 @@ class Node(object):
         try:
             self._simulate_link_properties(simulated_data, random)
             # store to dataset
-            self.simulated_dataset += simulated_data
+            self.simulated_dataset = simulated_data
         except IndexError:
             # just silent pass
             pass
