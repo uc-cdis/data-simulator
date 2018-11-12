@@ -19,7 +19,7 @@ class Graph(object):
         Graph constructor
 
         Args:
-            dictionary(str): dictionary url
+            dictionary(dict): dictionary
             program(str): program name
             project(str): project name
 
@@ -95,25 +95,27 @@ class Graph(object):
         node_parent = self.get_node_with_name(link_node_name)
 
         if not node_parent:
-            error_process(
-                do="log" if skip else "raise",
-                msg="Node {} have a link to node {} which does not exist".format(
+            msg = "Node {} have a link to node {} which does not exist".format(
                     node.name, link_node_name
-                ),
-                exc=DictionaryError,
-            )
-
+                )
+            if skip:
+                logger.error(msg)
+            else:
+                raise DictionaryError(message=msg)
+            
         node.required_links.append(
             {"node": node_parent, "multiplicity": multiplicity, "name": link_name}
         )
-        node_parent.childs.append(node)
 
     def graph_validation(self, required_only=False):
         """
         Call to all node validation to validate
         """
         return all(
-            [node.node_validation(required_only=required_only)[0] for node in self.nodes]
+            [
+                node.node_validation(required_only=required_only)[0]
+                for node in self.nodes
+            ]
         )
 
     def construct_graph_edges(self):
@@ -190,10 +192,10 @@ class Graph(object):
         """
         if node in submission_order:
             return
-        for linked_node_dic in node.required_links:
-            if linked_node_dic["node"] not in submission_order:
+        for linked_node_dict in node.required_links:
+            if linked_node_dict["node"] not in submission_order:
                 self.generate_submission_order_path_to_node(
-                    linked_node_dic["node"], submission_order
+                    linked_node_dict["node"], submission_order
                 )
         submission_order.append(node)
 
@@ -222,12 +224,12 @@ class Graph(object):
         self, path, n_samples=1, random=True, required_only=True, skip=True
     ):
         """
-        Simulate data for the whole graph. 
+        Simulate data for the whole graph.
 
         Args:
             random(bool): whether randomly link to parent nodes
             required_only(bool): only simulate required properties
-            skip(bool): whether continue or terminate
+            skip(bool): skip raising an exception to terminate
         
         Outputs:
             None

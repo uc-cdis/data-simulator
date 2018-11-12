@@ -1,7 +1,5 @@
 import random
 
-from errors import UserError
-
 
 def is_mixed_type(arr):
     if arr:

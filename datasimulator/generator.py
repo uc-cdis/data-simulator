@@ -1,5 +1,3 @@
-import os
-import string
 import rstr
 import random
 

@@ -11,6 +11,8 @@ from generator import (
 )
 from utils import is_mixed_type, random_choice, get_recursive_keys
 
+
+# Ingnore system properties
 EXCLUDED_FIELDS = [
     "type",
     "error_type",
@@ -49,7 +51,6 @@ class Node(object):
                 "Error: NODE {} does not have key `{}`".format(node_name, e.message)
             )
         self.required_links = []
-        self.childs = []
         self.simulated_dataset = []
 
     def __str__(self):
@@ -92,8 +93,8 @@ class Node(object):
             required_only(bool)
 
         Outputs:
-            pass_validation(bool)
-            is_submitable(bool)
+            pass_validation(bool): The node does not pass validation
+            is_submitable(bool): The node can be submitted even it does not pass validation
         """
         # if node schema is well-defined
         pass_validation = True
@@ -135,54 +136,14 @@ class Node(object):
 
         return pass_validation, is_submittable
 
-    def _simulate_link_properties(self, simulated_data, random=False):
-        """
-        simulate data for required links
-
-        Args:
-            simulated_data(list): list of data samples need to be filled with new data
-            random(bool): whether randomly link to parent nodes
-
-        Outputs:
-            None
-
-        Side effects:
-            simulated_data(list): simulated_data is updated
-
-        """
-        for link_node in self.required_links:
-            for idx, sample in enumerate(simulated_data):
-                if link_node["name"] == "projects":
-                    sample[link_node["name"]] = {"code": self.project}
-                    continue
-
-                if link_node["multiplicity"] in {"many_to_one", "many_to_many"}:
-                    if random:
-                        choosen_sample = random_choice(
-                            link_node["node"].simulated_dataset
-                        )
-                    else:
-                        choosen_sample = link_node["node"].simulated_dataset[idx]
-
-                    if choosen_sample:
-                        sample[link_node["name"]] = {
-                            "submitter_id": choosen_sample["submitter_id"]
-                        }
-                else:
-                    sample[link_node["name"]] = {
-                        "submitter_id": link_node["node"].simulated_dataset[idx][
-                            "submitter_id"
-                        ]
-                    }
-
     def construct_property_generator_template(self, required_only=True):
         """
-        Simulate data for non-link properties
+        Construct generator template for non-link properties. This template is
+        used to generate data in batch.
 
         Args:
             required_only(bool): only simulate required properties
-            skip(bool): skip raising an exception to terminate
-        
+
         Outputs:
             dict: template for data generator. Ex.
                 {
@@ -214,75 +175,9 @@ class Node(object):
 
         return template
 
-    def _simulate_submitter_id(self):
-        return self.name + "_" + generate_string_data()
-
-    def simulate_data(self, n_samples=1, random=False, required_only=True):
-        """
-        Simulate data for the node
-
-        Args:
-            n_samples(int): number of samples need to be generated
-            random(bool): random links or not
-            required_only(bool): generate only required data
-
-        Output:
-            simulated_data[list]: list of simulated record
-        """
-        # skip project node
-        if not self.required_links:
-            return
-
-        # re compute n-samples base on link type (one_to_one, one_to_many, ..etc.)
-        min_required_samples = sys.maxint
-        for link_node in self.required_links:
-            if link_node["multiplicity"] in {"one_to_one", "one_to_many"}:
-                min_required_samples = min(
-                    min_required_samples, len(link_node["node"].simulated_dataset)
-                )
-        n_samples = min(min_required_samples, n_samples)
-
-        simulated_data = []
-
-        # construct template
-        template = self.construct_property_generator_template(
-            required_only=required_only
-        )
-
-        simulated_data = []
-        for _ in xrange(n_samples):
-            example = {}
-
-            for prop, simple_schema in template.iteritems():
-                if simple_schema["data_type"] is None:
-                    logger.warn(simple_schema["error_msg"])
-                # Skip. Simulate link property latter
-                elif simple_schema["data_type"] == "link_type":
-                    continue
-                else:
-                    example[prop] = Node._simulate_data_from_simple_schema(
-                        prop, simple_schema
-                    )
-
-            example["submitter_id"] = self._simulate_submitter_id()
-            example["type"] = self.name
-
-            simulated_data.append(example)
-
-        # simulate link properties
-        try:
-            self._simulate_link_properties(simulated_data, random)
-            # store to dataset
-            self.simulated_dataset = simulated_data
-        except IndexError:
-            # just silent pass
-            pass
-
-        return simulated_data
-
     def construct_simple_property_schema(self, prop, prop_schema):
         """
-        Simulate data for a single property
+        Construct a simple schema for just single non-link property
 
         Args:
             prop(str): property name
@@ -335,6 +230,112 @@ class Node(object):
                 ),
                 "error_type": "DictionaryError",
             }
+
+    def simulate_data(self, n_samples=1, random=False, required_only=True):
+        """
+        Simulate data for the current node
+
+        Args:
+            n_samples(int): number of samples need to be generated
+            random(bool): random links or not
+            required_only(bool): generate only required data
+
+        Output:
+            simulated_data[list]: list of simulated record
+        """
+        # skip project node
+        if not self.required_links:
+            return
+
+        # re compute n-samples base on link type (one_to_one, one_to_many, ..etc.)
+        min_required_samples = sys.maxint
+        for link_node in self.required_links:
+            if link_node["multiplicity"] in {"one_to_one", "one_to_many"}:
+                min_required_samples = min(
+                    min_required_samples, len(link_node["node"].simulated_dataset)
+                )
+        n_samples = min(min_required_samples, n_samples)
+
+        simulated_data = []
+
+        # construct template
+        template = self.construct_property_generator_template(
+            required_only=required_only
+        )
+
+        simulated_data = []
+        for _ in xrange(n_samples):
+            example = {}
+
+            for prop, simple_schema in template.iteritems():
+                if simple_schema["data_type"] is None:
+                    logger.warn(simple_schema["error_msg"])
+                # Skip. Simulate link properties later
+                elif simple_schema["data_type"] == "link_type":
+                    continue
+                else:
+                    example[prop] = Node._simulate_data_from_simple_schema(
+                        prop, simple_schema
+                    )
+
+            example["submitter_id"] = self._simulate_submitter_id()
+            example["type"] = self.name
+
+            simulated_data.append(example)
+
+        # simulate link properties
+        try:
+            self._simulate_link_properties(simulated_data, random)
+            # store to dataset
+            self.simulated_dataset = simulated_data
+        except IndexError:
+            # just skip it
+            pass
+
+        return simulated_data
+
+    def _simulate_link_properties(self, simulated_data, random=False):
+        """
+        Simulate data for required links
+
+        Args:
+            simulated_data(list): list of data samples need to be filled with new data
+            random(bool): whether randomly link to parent nodes
+
+        Outputs:
+            None
+
+        Side effects:
+            simulated_data(list): simulated_data is updated
+
+        """
+        for link_node in self.required_links:
+            for idx, sample in enumerate(simulated_data):
+                if link_node["name"] == "projects":
+                    sample[link_node["name"]] = {"code": self.project}
+                    continue
+
+                if link_node["multiplicity"] in {"many_to_one", "many_to_many"}:
+                    if random:
+                        choosen_sample = random_choice(
+                            link_node["node"].simulated_dataset
+                        )
+                    else:
+                        choosen_sample = link_node["node"].simulated_dataset[idx]
+
+                    if choosen_sample:
+                        sample[link_node["name"]] = {
+                            "submitter_id": choosen_sample["submitter_id"]
+                        }
+                else:
+                    sample[link_node["name"]] = {
+                        "submitter_id": link_node["node"].simulated_dataset[idx][
+                            "submitter_id"
+                        ]
+                    }
+
+    def _simulate_submitter_id(self):
+        return self.name + "_" + generate_string_data()
 
     @classmethod
     def simulate_properties_path(cls):
