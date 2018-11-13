@@ -2,8 +2,7 @@ import json
 from os.path import join
 
 from node import Node, logger
-from errors import UserError, DictionaryError, NotSupported
-from utils import is_mixed_type, random_choice
+from errors import UserError, DictionaryError
 from generator import generate_list_numbers
 
 EXCLUDED_NODE = ["program", "root", "data_release"]
@@ -111,12 +110,23 @@ class Graph(object):
         """
         Call to all node validation to validate
         """
+        self.prelimary_dictionary_check()
+        self.graph_required_link_validation()
         return all(
             [
                 node.node_validation(required_only=required_only)[0]
                 for node in self.nodes
             ]
         )
+
+    def graph_required_link_validation(self):
+        """
+        Validate node links
+        """
+        for node in self.nodes:
+            # validate required links
+            if not node.required_links and node.name != "project":
+                logger.error("Node {} does not have any required link".format(node.name))
 
     def construct_graph_edges(self):
         """
@@ -199,19 +209,11 @@ class Graph(object):
                 )
         submission_order.append(node)
 
-    def generate_submission_order(self, submission_order):
+    def generate_submission_order(self):
         """
         Generate submission order for the graph
-
-        Args:
-            submission_order(list): submission order list
-
-        Outputs:
-            None
-
-        Side effects:
-            submission_order is updated interatively
         """
+        submission_order = []
         for node in self.nodes:
             if node not in submission_order:
                 path_order = []
@@ -219,6 +221,8 @@ class Graph(object):
                 for item in path_order:
                     if item not in submission_order:
                         submission_order.append(item)
+
+        return submission_order
 
     def simulate_graph_data(
         self, path, n_samples=1, random=True, required_only=True, skip=True
@@ -234,8 +238,8 @@ class Graph(object):
         Outputs:
             None
         """
-        submission_order = []
-        self.generate_submission_order(submission_order)
+        submission_order = self.generate_submission_order()
+
         with open(join(path, "DataImportOrder.txt"), "w") as outfile:
             for node in submission_order:
                 outfile.write(node.name + "\n")

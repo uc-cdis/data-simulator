@@ -14,19 +14,16 @@ def generate_number(minx=0, maxx=100, is_int=False):
 
 
 def generate_list_numbers(counts, nmax=100, random=False):
-    L = []
-    for _ in xrange(counts):
-        if random:
-            L.append(
-                generate_number(minx=max(1, int(0.2 * nmax)), maxx=nmax, is_int=True)
-            )
-        else:
-            L.append(nmax)
-    return L
+    if not random:
+        return [nmax for _ in range(counts)]
+    return [
+        generate_number(minx=max(1, int(0.2 * nmax)), maxx=nmax, is_int=True)
+        for _ in range(counts)
+    ]
 
 
 def generate_boolean():
-    return random.randint(0, 1) > 0
+    return bool(random.getrandbits(1))
 
 
 def generate_hash():

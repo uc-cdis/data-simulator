@@ -1,13 +1,10 @@
 class UserError(Exception):
-    def __init__(self, message):
-        super(UserError, self).__init__(message)
+    pass
 
 
 class DictionaryError(Exception):
-    def __init__(self, message):
-        super(DictionaryError, self).__init__(message)
+    pass
 
 
 class NotSupported(Exception):
-    def __init__(self, message):
-        super(NotSupported, self).__init__(message)
+    pass

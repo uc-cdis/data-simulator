@@ -2,7 +2,7 @@ import sys
 
 from cdislogging import get_logger
 
-from errors import UserError, DictionaryError, NotSupported
+from errors import UserError
 from generator import (
     generate_hash,
     generate_datetime,
@@ -108,17 +108,7 @@ class Node(object):
                         self.name, prop
                     )
                 )
-                if pass_validation:
-                    pass_validation = False
-                if is_submittable:
-                    is_submittable = False
-
-        # validate required links
-        if not self.required_links and self.name != "project":
-            logger.error("Node {} does not have any required link".format(self.name))
-            if pass_validation:
                 pass_validation = False
-            if is_submittable:
                 is_submittable = False
 
         # validate properties

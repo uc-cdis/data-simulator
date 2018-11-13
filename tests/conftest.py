@@ -1,6 +1,5 @@
 import os
 import pytest
-import json
 
 from dictionaryutils import DataDictionary, dictionary
 

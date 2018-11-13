@@ -1,7 +1,3 @@
-import os
-
-import pytest
-
 from datasimulator.graph import Graph
 from dictionaryutils import dictionary
 
