@@ -100,6 +100,15 @@ class Node(object):
         pass_validation = True
         is_submittable = True
 
+        if len(self.name) > 63:
+            logger.error(
+                "The name of the node {} is too long. Must less than 64 characters".format(
+                    self.name
+                )
+            )
+            pass_validation = False
+            is_submittable = False
+
         # Go through all the properties to collect all possible errors may happend
         for prop in self.required:
             if prop not in self.properties:
@@ -119,8 +128,7 @@ class Node(object):
         for prop, schema in template.iteritems():
             if schema["data_type"] is None:
                 logger.error(schema["error_msg"])
-                if pass_validation:
-                    pass_validation = False
+                pass_validation = False
                 if prop in self.required:
                     is_submittable = False
 
