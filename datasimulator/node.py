@@ -9,7 +9,7 @@ from generator import (
     generate_string_data,
     generate_simple_primitive_data,
 )
-from utils import is_mixed_type, random_choice, get_recursive_keys
+from utils import is_mixed_type, random_choice, get_keys_list
 
 
 # Ingnore system properties
@@ -58,7 +58,7 @@ class Node(object):
 
     @staticmethod
     def _is_link_property(prop_schema):
-        keys = get_recursive_keys(prop_schema)
+        keys = get_keys_list(prop_schema)
         if "id" in keys and "pattern" in keys and "term" in keys:
             return True
         return False
@@ -109,16 +109,16 @@ class Node(object):
             pass_validation = False
             is_submittable = False
 
-        # Go through all the properties to collect all possible errors may happend
-        for prop in self.required:
-            if prop not in self.properties:
-                logger.error(
-                    "Node {}. Required property {} is not in property list".format(
-                        self.name, prop
-                    )
+        # validate required properties
+        error_properties = set(self.required) - set(self.properties)
+        if error_properties:
+            pass_validation = False
+            is_submittable = False
+            logger.error(
+                "Node {}. Required properties {} is not in property list".format(
+                    self.name, error_properties
                 )
-                pass_validation = False
-                is_submittable = False
+            )
 
         # validate properties
         template = self.construct_property_generator_template(
@@ -255,7 +255,10 @@ class Node(object):
         n_samples = min(min_required_samples, n_samples)
 
         simulated_data = []
+        if self.name == "case":
+            import pdb
 
+            pdb.set_trace()
         # construct template
         template = self.construct_property_generator_template(
             required_only=required_only
@@ -334,7 +337,3 @@ class Node(object):
 
     def _simulate_submitter_id(self):
         return self.name + "_" + generate_string_data()
-
-    @classmethod
-    def simulate_properties_path(cls):
-        raise NotImplementedError()

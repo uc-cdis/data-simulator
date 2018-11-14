@@ -95,8 +95,8 @@ class Graph(object):
 
         if not node_parent:
             msg = "Node {} have a link to node {} which does not exist".format(
-                    node.name, link_node_name
-                )
+                node.name, link_node_name
+            )
             if skip:
                 logger.error(msg)
             else:
@@ -126,13 +126,14 @@ class Graph(object):
         for node in self.nodes:
             # validate required links
             if not node.required_links and node.name != "project":
-                logger.error("Node {} does not have any required link".format(node.name))
+                logger.error(
+                    "Node {} does not have any required link".format(node.name)
+                )
 
     def construct_graph_edges(self):
         """
         Construct edges between nodes. Ignore option links
         """
-
         # Link nodes together to create graph
         for node in self.nodes:
             if node == self.root:
@@ -185,29 +186,29 @@ class Graph(object):
                     )
                 )
 
-    def generate_submission_order_path_to_node(self, node, submission_order):
+    def generate_submission_order_path_to_node(self, node):
         """
         Generate submission order so that the current node can be submitted
 
         Args:
             node(Node): current node object
-            submission_order(list): submission order list
 
         Outputs:
-            None
-
-        Side effects:
-            submission_order is updated interatively
+            list: list of submission order
 
         """
-        if node in submission_order:
-            return
-        for linked_node_dict in node.required_links:
-            if linked_node_dict["node"] not in submission_order:
-                self.generate_submission_order_path_to_node(
-                    linked_node_dict["node"], submission_order
-                )
-        submission_order.append(node)
+        submission_order = [node]
+        index = 0
+
+        while index < len(submission_order):
+            cur_node = submission_order[index]
+            for linked_node_dict in cur_node.required_links:
+                if linked_node_dict["node"] not in submission_order:
+                    submission_order.append(linked_node_dict["node"])
+            index += 1
+        submission_order.reverse()
+
+        return submission_order
 
     def generate_submission_order(self):
         """
@@ -216,9 +217,7 @@ class Graph(object):
         submission_order = []
         for node in self.nodes:
             if node not in submission_order:
-                path_order = []
-                self.generate_submission_order_path_to_node(node, path_order)
-                for item in path_order:
+                for item in self.generate_submission_order_path_to_node(node):
                     if item not in submission_order:
                         submission_order.append(item)
 

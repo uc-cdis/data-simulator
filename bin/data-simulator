@@ -1,24 +1,24 @@
+import os
 import argparse
 
 from dictionaryutils import DataDictionary, dictionary
 
-from graph import Graph
-
-
-def initialize_dictionary(url):
-    dictionary.init(DataDictionary(url=url))
+from datasimulator.graph import Graph
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(title="action", dest="action")
 
-    validation_cmd = subparsers.add_parser("validate")
+    submission_order_cmd = subparsers.add_parser("submission_order")
+    submission_order_cmd.add_argument("--url", required=True, help="s3 dictionary link.")
+    submission_order_cmd.add_argument("--node_name", required=False, help="submission order")
+    submission_order_cmd.add_argument("--path", required=True)
 
+    validation_cmd = subparsers.add_parser("validate")
     validation_cmd.add_argument("--url", required=True, help="s3 dictionary link.")
 
     simulate_data_cmd = subparsers.add_parser("simulate")
-
     simulate_data_cmd.add_argument("--url", required=True, help="s3 dictionary link.")
     simulate_data_cmd.add_argument(
         "--path", required=True, help="path to save files to"
@@ -54,14 +54,17 @@ def main():
     args = parse_arguments()
 
     print("Data simulator initialization ...")
-    initialize_dictionary(args.url)
+    dictionary.init(DataDictionary(url=args.url))
+
+    program = args.program if hasattr(args, "program") else "DEV"
+    project = args.project if hasattr(args, "project") else "test"
+
+    # Initialize graph
+    graph = Graph(dictionary, program, project)
+    graph.generate_nodes_from_dictionary()
+    graph.construct_graph_edges()
 
     if args.action == "simulate":
-        # Initialize graph
-        graph = Graph(dictionary, args.program, args.project)
-        graph.generate_nodes_from_dictionary()
-        graph.construct_graph_edges()
-
         max_samples = int(args.max_samples)
 
         # just print error messages
@@ -75,11 +78,23 @@ def main():
             required_only=args.required_only,
             skip=args.skip,
         )
+
     elif args.action == "validate":
-        graph = Graph(dictionary, "DEV", "test")
-        graph.generate_nodes_from_dictionary()
-        graph.construct_graph_edges()
+        print("Validating ...")
         graph.graph_validation()
+
+    elif args.action == "submission_order":
+        print("Generate data submission order")
+
+        if args.node_name:
+            node = graph.get_node_with_name(args.node_name)
+            submission_order = graph.generate_submission_order_path_to_node(node)
+        else:
+             submission_order = graph.generate_submission_order()
+        
+        with open(os.path.join(args.path, "DataImportOrderPath.txt"), "w") as outfile:
+            for node in submission_order:
+                outfile.write(node.name + "\t" + node.category + "\n")
 
 
 if __name__ == "__main__":

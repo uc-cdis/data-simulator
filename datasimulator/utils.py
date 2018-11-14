@@ -1,4 +1,5 @@
 import random
+from functools import reduce
 
 
 def is_mixed_type(arr):
@@ -17,21 +18,16 @@ def is_primitive_type(data):
     return isinstance(data, (int, float, str))
 
 
-def get_recursive_keys(dictionary):
-    keys = []
-    for key, value in dictionary.items():
-        keys.append(key)
-        if type(value) is dict:
-            keys = keys + get_recursive_keys(value)
+def get_keys_list(d):
+    def get_field(d, fields):
+        return reduce(lambda acc, field: acc.get(field, {}), fields, d)
 
-    return keys
-
-
-def get_recursive_values(dictionary):
-    values = []
-    for _, value in dictionary.items():
-        if type(value) is dict:
-            values = values + get_recursive_values(value)
-        else:
-            values.append(value)
-    return values
+    result = []
+    to_visit = [[key] for key in d.keys()]
+    while to_visit:
+        key = to_visit.pop()
+        result.append(key[-1])
+        value = get_field(d, key)
+        if isinstance(value, dict):
+            to_visit.extend([key + [next_key] for next_key in value.keys()])
+    return result
