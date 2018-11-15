@@ -1,0 +1,19 @@
+language: python
+
+python: "2.7"
+
+sudo: false
+
+cache:
+  - directories:
+      - /home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages
+      - $HOME/.pip-cache
+  - apt
+
+install:
+  - pip install -r requirements.txt
+  - pip install -r dev-requirements.txt
+# command to run tests
+script:
+- py.test -vv tests/*
+

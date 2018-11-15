@@ -1,0 +1,101 @@
+import os
+import argparse
+
+from dictionaryutils import DataDictionary, dictionary
+
+from datasimulator.graph import Graph
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(title="action", dest="action")
+
+    submission_order_cmd = subparsers.add_parser("submission_order")
+    submission_order_cmd.add_argument("--url", required=True, help="s3 dictionary link.")
+    submission_order_cmd.add_argument("--node_name", required=False, help="submission order")
+    submission_order_cmd.add_argument("--path", required=True)
+
+    validation_cmd = subparsers.add_parser("validate")
+    validation_cmd.add_argument("--url", required=True, help="s3 dictionary link.")
+
+    simulate_data_cmd = subparsers.add_parser("simulate")
+    simulate_data_cmd.add_argument("--url", required=True, help="s3 dictionary link.")
+    simulate_data_cmd.add_argument(
+        "--path", required=True, help="path to save files to"
+    )
+
+    simulate_data_cmd.add_argument("--program", required=True)
+    simulate_data_cmd.add_argument("--project", required=True)
+
+    simulate_data_cmd.add_argument(
+        "--max_samples",
+        required=False,
+        help="max number of samples for each node",
+        default=1,
+    )
+
+    simulate_data_cmd.add_argument(
+        "--random", help="randomly generate data numbers for nodes", action="store_true"
+    )
+
+    simulate_data_cmd.add_argument(
+        "--required_only", help="generate only required fields", action="store_true"
+    )
+
+    simulate_data_cmd.add_argument(
+        "--skip", help="skip raising an exception if get error", action="store_true"
+    )
+
+    return parser.parse_args()
+
+
+# python main.py simulate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.3/schema.json --path ./data-simulator/sample_test_data --program DEV --project test
+def main():
+    args = parse_arguments()
+
+    print("Data simulator initialization ...")
+    dictionary.init(DataDictionary(url=args.url))
+
+    program = args.program if hasattr(args, "program") else "DEV"
+    project = args.project if hasattr(args, "project") else "test"
+
+    # Initialize graph
+    graph = Graph(dictionary, program, project)
+    graph.generate_nodes_from_dictionary()
+    graph.construct_graph_edges()
+
+    if args.action == "simulate":
+        max_samples = int(args.max_samples)
+
+        # just print error messages
+        graph.graph_validation(required_only=args.required_only)
+
+        # simulate data no matter what the graph passes validation or not
+        graph.simulate_graph_data(
+            path=args.path,
+            n_samples=max_samples,
+            random=args.random,
+            required_only=args.required_only,
+            skip=args.skip,
+        )
+
+    elif args.action == "validate":
+        print("Validating ...")
+        graph.graph_validation()
+
+    elif args.action == "submission_order":
+        print("Generate data submission order")
+
+        if args.node_name:
+            node = graph.get_node_with_name(args.node_name)
+            submission_order = graph.generate_submission_order_path_to_node(node)
+        else:
+             submission_order = graph.generate_submission_order()
+        
+        with open(os.path.join(args.path, "DataImportOrderPath.txt"), "w") as outfile:
+            for node in submission_order:
+                outfile.write(node.name + "\t" + node.category + "\n")
+
+
+if __name__ == "__main__":
+    main()
