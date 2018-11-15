@@ -255,10 +255,7 @@ class Node(object):
         n_samples = min(min_required_samples, n_samples)
 
         simulated_data = []
-        if self.name == "case":
-            import pdb
-
-            pdb.set_trace()
+    
         # construct template
         template = self.construct_property_generator_template(
             required_only=required_only
