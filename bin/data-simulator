@@ -46,6 +46,13 @@ def parse_arguments():
         "--skip", help="skip raising an exception if get error", action="store_true"
     )
 
+    submit_data_cmd = subparsers.add_parser("submitting_data")
+    submit_data_cmd.add_argument("--dir", required=True, help="path containing data")
+    submit_data_cmd.add_argument("--host", required=True)
+    submit_data_cmd.add_argument("--project", required=True)
+    submit_data_cmd.add_argument("--chunk_zie")
+    submit_data_cmd.add_argument("--access_token", required=True)
+
     return parser.parse_args()
 
 
@@ -74,6 +81,7 @@ def main():
         graph.simulate_graph_data(
             path=args.path,
             n_samples=max_samples,
+            node_instance_list=args.node_instance_list,
             random=args.random,
             required_only=args.required_only,
             skip=args.skip,
@@ -95,6 +103,8 @@ def main():
         with open(os.path.join(args.path, "DataImportOrderPath.txt"), "w") as outfile:
             for node in submission_order:
                 outfile.write(node.name + "\t" + node.category + "\n")
+    elif args.action == "submitting_data":
+        submit_test_data(args.host, args.project, args.dir, args.access_token_file)
 
 
 if __name__ == "__main__":

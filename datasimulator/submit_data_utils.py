@@ -1,6 +1,6 @@
 
 import os
-from os import join
+from os.path import join
 import requests
 import json
 
@@ -27,7 +27,7 @@ def submit_test_data(host, project,  dir, access_token_file, max_chunk_size=1):
 
     submission_order = submission_order.split('\n')
 
-    for fname in (submission_order):   
+    for fname in (submission_order):
         chunk_size = max_chunk_size
         if fname is None or fname == '':
             print('There is no {} in input directory'.format(fname))
