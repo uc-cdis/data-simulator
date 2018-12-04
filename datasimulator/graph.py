@@ -225,7 +225,7 @@ class Graph(object):
         return submission_order
 
     def simulate_graph_data(
-        self, path, n_samples=1, node_instance_list=None, random=True, required_only=True, skip=True
+        self, path, n_samples=1, node_num_instances_file=None, random=True, required_only=True, skip=True
     ):
         """
         Simulate data for the whole graph.
@@ -243,14 +243,14 @@ class Graph(object):
         with open(join(path, "DataImportOrder.txt"), "w") as outfile:
             for node in submission_order:
                 outfile.write(node.name + "\n") 
-        if node_instance_list is None:
+        if node_num_instances_file is None:
             n_samples_list = generate_list_numbers(
                 len(submission_order), nmax=n_samples, random=random
             )
         else:
             try:
                 n_samples_list = generate_list_numbers_from_file(
-                    node_instance_list, submission_order
+                    node_num_instances_file, submission_order
                 )
             except UserError as e:
                 raise e
