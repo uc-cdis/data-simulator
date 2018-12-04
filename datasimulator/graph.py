@@ -4,6 +4,7 @@ from os.path import join
 from node import Node, logger
 from errors import UserError, DictionaryError
 from generator import generate_list_numbers
+from utils import generate_list_numbers_from_file
 
 EXCLUDED_NODE = ["program", "root", "data_release"]
 
@@ -224,7 +225,7 @@ class Graph(object):
         return submission_order
 
     def simulate_graph_data(
-        self, path, n_samples=1, random=True, required_only=True, skip=True
+        self, path, n_samples=1, node_instance_list=None, random=True, required_only=True, skip=True
     ):
         """
         Simulate data for the whole graph.
@@ -241,12 +242,18 @@ class Graph(object):
 
         with open(join(path, "DataImportOrder.txt"), "w") as outfile:
             for node in submission_order:
-                outfile.write(node.name + "\n")
-
-        n_samples_list = generate_list_numbers(
-            len(submission_order), nmax=n_samples, random=random
-        )
-
+                outfile.write(node.name + "\n") 
+        if node_instance_list is None:
+            n_samples_list = generate_list_numbers(
+                len(submission_order), nmax=n_samples, random=random
+            )
+        else:
+            try:
+                n_samples_list = generate_list_numbers_from_file(
+                    node_instance_list, submission_order
+                )
+            except UserError as e:
+                raise e
         for idx, node in enumerate(submission_order):
             # raise exception if not skip and not pass validation
             _, is_submitable = node.node_validation()
