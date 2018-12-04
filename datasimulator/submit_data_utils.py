@@ -47,7 +47,7 @@ def submit_test_data(host, project,  dir, access_token_file, max_chunk_size=1):
 
                 elif response.status_code != 200:
                     print(
-                        "\n\n==============================={}==================================".format(fname))
+                        "\n\n==============================={}=================================".format(fname))
                     print('Failed at chunk {}'.format(index/chunk_size))
                     if index == 0:
                         print response.content
