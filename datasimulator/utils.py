@@ -1,4 +1,6 @@
+import os
 import random
+import json
 from functools import reduce
 
 
@@ -31,3 +33,20 @@ def get_keys_list(d):
         if isinstance(value, dict):
             to_visit.extend([key + [next_key] for next_key in value.keys()])
     return result
+
+
+def generate_list_numbers_from_file(data_file, submission_order):
+    result = []
+
+    try:
+        with open(data_file) as f:
+            data = json.load(f)
+            for filename in submission_order:
+                result.append(data[filename])
+
+    except IOError:
+        raise UserError("file {} does not exist".format(data_file))
+    except ValueError:
+        raise UserError("Can not load json file {}".format(data_file))
+    except KeyError as e:
+        raise UserError("Missing node in file {}. Detail {}".format(data_file, e.message))

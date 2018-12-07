@@ -14,8 +14,6 @@ def generate_number(minx=0, maxx=100, is_int=False):
 
 
 def generate_list_numbers(counts, nmax=100, random=False):
-    if not random:
-        return [nmax for _ in range(counts)]
     return [
         generate_number(minx=max(1, int(0.2 * nmax)), maxx=nmax, is_int=True)
         for _ in range(counts)

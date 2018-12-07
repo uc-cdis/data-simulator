@@ -255,7 +255,7 @@ class Node(object):
         n_samples = min(min_required_samples, n_samples)
 
         simulated_data = []
-    
+
         # construct template
         template = self.construct_property_generator_template(
             required_only=required_only
@@ -319,8 +319,11 @@ class Node(object):
                             link_node["node"].simulated_dataset
                         )
                     else:
-                        choosen_sample = link_node["node"].simulated_dataset[idx]
-
+                        choosen_sample = (
+                            link_node["node"].simulated_dataset[idx]
+                            if idx < len(link_node["node"].simulated_dataset)
+                            else random_choice(link_node["node"].simulated_dataset)
+                        )
                     if choosen_sample:
                         sample[link_node["name"]] = {
                             "submitter_id": choosen_sample["submitter_id"]

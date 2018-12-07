@@ -4,6 +4,7 @@ import argparse
 from dictionaryutils import DataDictionary, dictionary
 
 from datasimulator.graph import Graph
+from datasimulator.submit_data_utils import submit_test_data
 
 
 def parse_arguments():
@@ -35,6 +36,13 @@ def parse_arguments():
     )
 
     simulate_data_cmd.add_argument(
+        "--node_num_instances_file",
+        required=False,
+        help="max number of samples for each node",
+
+    )
+
+    simulate_data_cmd.add_argument(
         "--random", help="randomly generate data numbers for nodes", action="store_true"
     )
 
@@ -46,12 +54,23 @@ def parse_arguments():
         "--skip", help="skip raising an exception if get error", action="store_true"
     )
 
+    submit_data_cmd = subparsers.add_parser("submitting_data")
+    submit_data_cmd.add_argument("--dir", required=True, help="path containing data")
+    submit_data_cmd.add_argument("--host", required=True)
+    submit_data_cmd.add_argument("--project", required=True)
+    submit_data_cmd.add_argument("--chunk_size", default=1)
+    submit_data_cmd.add_argument("--access_token_file", required=True)
+
     return parser.parse_args()
 
 
 # python main.py simulate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.3/schema.json --path ./data-simulator/sample_test_data --program DEV --project test
 def main():
     args = parse_arguments()
+
+    if args.action == "submitting_data":
+        submit_test_data(args.host, args.project, args.dir, args.access_token_file, int(args.chunk_size))
+        return
 
     print("Data simulator initialization ...")
     dictionary.init(DataDictionary(url=args.url))
@@ -74,6 +93,7 @@ def main():
         graph.simulate_graph_data(
             path=args.path,
             n_samples=max_samples,
+            node_num_instances_file=args.node_num_instances_file,
             random=args.random,
             required_only=args.required_only,
             skip=args.skip,
