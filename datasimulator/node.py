@@ -70,7 +70,7 @@ class Node(object):
         return False
 
     @staticmethod
-    def _simulate_data_from_simple_schema(prop, simple_schema):
+    def _simulate_data_from_simple_schema(simple_schema):
         if simple_schema["data_type"] == "md5sum":
             return generate_hash()
         elif simple_schema["data_type"] == "enum":
@@ -81,6 +81,8 @@ class Node(object):
             return generate_simple_primitive_data(
                 data_type=simple_schema["data_type"],
                 pattern=simple_schema.get("pattern"),
+                maxx=simple_schema.get("max"),
+                minx=simple_schema.get("min")
             )
 
     def node_validation(self, required_only=False):
@@ -192,6 +194,8 @@ class Node(object):
             return {
                 "data_type": prop_schema.get("type"),
                 "pattern": prop_schema.get("pattern"),
+                "max": prop_schema.get("maximum", 100),
+                "min": prop_schema.get("minimum", 0),
             }
 
         elif prop_schema.get("oneOf") or prop_schema.get("anyOf"):
@@ -273,7 +277,7 @@ class Node(object):
                     continue
                 else:
                     example[prop] = Node._simulate_data_from_simple_schema(
-                        prop, simple_schema
+                        simple_schema
                     )
 
             example["submitter_id"] = self._simulate_submitter_id()

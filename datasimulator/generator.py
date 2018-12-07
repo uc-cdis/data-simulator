@@ -34,7 +34,7 @@ def generate_datetime():
     )
 
 
-def generate_simple_primitive_data(data_type, pattern=None):
+def generate_simple_primitive_data(data_type, pattern=None, maxx=100, minx=0):
     """
     Generate a single primitive data
     """
@@ -48,10 +48,10 @@ def generate_simple_primitive_data(data_type, pattern=None):
     if data_type == "string":
         return generate_string_data(pattern=pattern)
     if data_type == "integer":
-        return generate_number(is_int=True)
+        return generate_number(is_int=True, maxx=maxx, minx=minx)
 
     if data_type == "float" or data_type == "number":
-        return generate_number()
+        return generate_number(maxx=maxx, minx=minx)
 
     if data_type == "boolean":
         return generate_boolean()
