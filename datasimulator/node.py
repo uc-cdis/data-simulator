@@ -80,14 +80,14 @@ class Node(object):
             return generate_datetime()
         elif simple_schema["data_type"] == "array":
             return generate_array_data_type(
-                item_type=simple_schema.get("item_type"),
-                n_items=1)
+                item_type=simple_schema.get("item_type"), n_items=1
+            )
         else:
             return generate_simple_primitive_data(
                 data_type=simple_schema["data_type"],
                 pattern=simple_schema.get("pattern"),
                 maxx=simple_schema.get("max"),
-                minx=simple_schema.get("min")
+                minx=simple_schema.get("min"),
             )
 
     def node_validation(self, required_only=False):
@@ -197,11 +197,13 @@ class Node(object):
 
         if prop_schema.get("type"):
             if prop_schema.get("type") == "array":
-                if prop_schema.get("items") is None or (prop_schema.get("items").get("type") is None):
+                if prop_schema.get("items") is None or (
+                    prop_schema.get("items").get("type") is None
+                ):
                     return {
                         "data_type": "array",
                         "error_msg": "Error: {} has no item datatype. Detail {}".format(
-                            prop, prop_schema["enum"]
+                            prop, prop_schema
                         ),
                         "error_type": "DictionaryError",
                     }

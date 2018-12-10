@@ -49,4 +49,6 @@ def generate_list_numbers_from_file(data_file, submission_order):
     except ValueError:
         raise UserError("Can not load json file {}".format(data_file))
     except KeyError as e:
-        raise UserError("Missing node in file {}. Detail {}".format(data_file, e.message))
+        raise UserError(
+            "Missing node in file {}. Detail {}".format(data_file, e.message)
+        )
