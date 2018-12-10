@@ -7,6 +7,7 @@ from generator import (
     generate_hash,
     generate_datetime,
     generate_string_data,
+    generate_array_data_type,
     generate_simple_primitive_data,
 )
 from utils import is_mixed_type, random_choice, get_keys_list
@@ -77,12 +78,16 @@ class Node(object):
             return random_choice(simple_schema["values"])
         elif simple_schema["data_type"] == "datetime":
             return generate_datetime()
+        elif simple_schema["data_type"] == "array":
+            return generate_array_data_type(
+                item_type=simple_schema.get("item_type"), n_items=1
+            )
         else:
             return generate_simple_primitive_data(
                 data_type=simple_schema["data_type"],
                 pattern=simple_schema.get("pattern"),
                 maxx=simple_schema.get("max"),
-                minx=simple_schema.get("min")
+                minx=simple_schema.get("min"),
             )
 
     def node_validation(self, required_only=False):
@@ -191,12 +196,28 @@ class Node(object):
             return {"data_type": "md5sum"}
 
         if prop_schema.get("type"):
-            return {
-                "data_type": prop_schema.get("type"),
-                "pattern": prop_schema.get("pattern"),
-                "max": prop_schema.get("maximum", 100),
-                "min": prop_schema.get("minimum", 0),
-            }
+            if prop_schema.get("type") == "array":
+                if prop_schema.get("items") is None or (
+                    prop_schema.get("items").get("type") is None
+                ):
+                    return {
+                        "data_type": "array",
+                        "error_msg": "Error: {} has no item datatype. Detail {}".format(
+                            prop, prop_schema
+                        ),
+                        "error_type": "DictionaryError",
+                    }
+                return {
+                    "data_type": prop_schema.get("type"),
+                    "item_type": prop_schema.get("items").get("type"),
+                }
+            else:
+                return {
+                    "data_type": prop_schema.get("type"),
+                    "pattern": prop_schema.get("pattern"),
+                    "max": prop_schema.get("maximum", 100),
+                    "min": prop_schema.get("minimum", 0),
+                }
 
         elif prop_schema.get("oneOf") or prop_schema.get("anyOf"):
             one_of = prop_schema.get("oneOf") or prop_schema.get("anyOf")
