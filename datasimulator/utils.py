@@ -52,3 +52,5 @@ def generate_list_numbers_from_file(data_file, submission_order):
         raise UserError(
             "Missing node in file {}. Detail {}".format(data_file, e.message)
         )
+
+    return result
