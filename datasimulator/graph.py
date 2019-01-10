@@ -112,24 +112,27 @@ class Graph(object):
         Call to all node validation to validate
         """
         self.prelimary_dictionary_check()
-        self.graph_required_link_validation()
+        required_link_pass = self.graph_required_link_validation()
         return all(
             [
                 node.node_validation(required_only=required_only)[0]
                 for node in self.nodes
             ]
-        )
+        ) and required_link_pass
 
     def graph_required_link_validation(self):
         """
         Validate node links
         """
+        pass_validation = True
         for node in self.nodes:
             # validate required links
             if not node.required_links and node.name != "project":
                 logger.error(
                     "Node {} does not have any required link".format(node.name)
                 )
+                pass_validation =False
+        return pass_validation
 
     def construct_graph_edges(self):
         """
