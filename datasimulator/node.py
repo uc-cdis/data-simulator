@@ -1,4 +1,5 @@
 import sys
+import random
 
 from cdislogging import get_logger
 
@@ -47,6 +48,7 @@ class Node(object):
             self.category = node_schema["category"]
             self.properties = node_schema["properties"]
             self.links = node_schema["links"]
+            self.oneOf = node_schema.get("oneOf")
         except KeyError as e:
             raise UserError(
                 "Error: NODE {} does not have key `{}`".format(node_name, e.message)
@@ -164,8 +166,8 @@ class Node(object):
         """
 
         template = {}
-
-        for prop, prop_schema in self.properties.iteritems():
+       
+        for prop, prop_schema in self._get_simulating_node_properties().iteritems():
             if (
                 prop in [link["name"] for link in self.required_links]
                 or prop in self.sys_properties
@@ -317,6 +319,35 @@ class Node(object):
 
         return simulated_data
 
+    def _get_simulating_node_properties(self):
+        """
+        Select a set of properties for simulation
+        """
+
+        if self.oneOf is None:
+            return self.properties
+        if not isinstance(self.oneOf, list):
+            logger.warn("Expected list but received {}. Node {}".format(type(self.oneOf), self.name))
+        
+        c = random.randint(0, len(self.oneOf))
+        excluded_list = []
+        for idx, one in enumerate(self.oneOf):
+            if idx == c:
+                continue
+
+            if not isinstance(one, dict):
+                logger.warn("Expected dict but received {}. Node {}".format(type(one), self.name))
+            
+            for k, v in one.iteritems():
+                excluded_list = excluded_list + v if isinstance(v, list) else [v]
+        
+        result = {}
+        for prop, info in self.properties.iteritems():
+            if prop not in excluded_list:
+                result[prop] = info
+
+        return result
+    
     def _simulate_link_properties(self, simulated_data, random=False):
         """
         Simulate data for required links
