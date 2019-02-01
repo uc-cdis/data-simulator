@@ -49,6 +49,8 @@ def generate_simple_primitive_data(data_type, pattern=None, maxx=100, minx=0):
     """
     Generate a single primitive data
     """
+    if maxx < minx:
+        maxx = minx + 100
     if isinstance(data_type, list):
         if "null" in data_type:
             data_type.remove("null")
