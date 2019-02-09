@@ -16,7 +16,7 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
     if os.path.isfile(access_token_file):
         with open(access_token_file, "r") as reader:
             token = reader.read()
-        token = token[:-1]
+        token = token.strip()
     else:
         logger.error("There is no input token text file. Continue anyway!")
 
