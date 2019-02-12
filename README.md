@@ -1,4 +1,4 @@
-# data-simulator
+# Data Simulator
 Used to generate datasets based on dictionary
 
 
@@ -10,19 +10,54 @@ It is sometimes necessary to create simulated data when it is impractical to obt
 * Organize simulated data by nodes in a data model and export to json for easy upload.
 
 
-## Basics of Simulation
+## Basic Functionality
 
+#### Dictionary Validation
 
-
-### Example Simulation
-
-The following will simulate 10 rows from our sample compendium. 
-
+This function is very helpful for user to validate dictionary
 ```
-source('https://raw.githubusercontent.com/occ-data/data-simulator/master/SimData.R')
-compendium <- read.csv('https://raw.githubusercontent.com/occ-data/data-simulator/master/SampleCompendium/sampleClinical.csv', header=T, stringsAsFactors = F)
-
-
+data-simulator validate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.3/schema.json
 ```
 
-## Validation
+#### Simulating data
+
+Simulate the data using dictionary
+```
+data-simulator simulate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.3/schema.json --path ./data-simulator/sample_test_data --program DEV --project test
+```
+
+Some other options
+```
+--max_samples 100 # maximum number of instances for each node
+--required_only # only simulate required properties
+--random # randomly generate the numbers of node instances. If this value is not set, all nodes have the same number of instances
+-- node_num_instances_file ./file.txt # generate the numbers of node instances specified in the text file. The file should contain multiple lines, each line have node name and an integer for the node instance
+```
+
+#### Submission Order
+
+Generate a submission order given a node name and a dictionary
+```
+data-simulator submission_order --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.3/schema.json --node_name case --path ./data-simulator/sample_test_data
+```
+
+#### Submitting Data
+
+Submit the data via sheepdog api
+
+```
+data-simulator submitting_data --host http://devplanet.planx-pla.net --project DEV/test --dir ./data-simulator/sample_test_data --access_token_file ./token --chunk_size 10
+```
+
+## Setup
+To install data simulator for common use, run the following command.
+```
+python setup.py install
+```
+
+##  For Development
+```
+pip install -r dev-requirements.txt
+python setup.py develop
+
+```
