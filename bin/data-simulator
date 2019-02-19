@@ -12,7 +12,7 @@ def parse_arguments():
     subparsers = parser.add_subparsers(title="action", dest="action")
 
     submission_order_cmd = subparsers.add_parser("submission_order")
-    submission_order_cmd.add_argument("--url", required=True, help="s3 dictionary link.")
+    submission_order_cmd.add_argument("--url", required=True, help="s3 dictionary link.", nargs=1)
     submission_order_cmd.add_argument("--node_name", required=False, help="node to generate the submission order for")
     submission_order_cmd.add_argument("--path", required=True, help="path to save file to")
 
@@ -20,26 +20,27 @@ def parse_arguments():
     validation_cmd.add_argument("--url", required=True, help="s3 dictionary link.")
 
     simulate_data_cmd = subparsers.add_parser("simulate")
-    simulate_data_cmd.add_argument("--url", required=True, help="s3 dictionary link.")
+    simulate_data_cmd.add_argument("--url", required=False, help="s3 dictionary link.", nargs='?', default=None)
     simulate_data_cmd.add_argument(
-        "--path", required=True, help="path to save files to"
+        "--path", required=True, help="path to save files to", nargs=1
     )
 
-    simulate_data_cmd.add_argument("--program", required=True)
-    simulate_data_cmd.add_argument("--project", required=True)
+    simulate_data_cmd.add_argument("--program", required=False, nargs='?', default='DEV')
+    simulate_data_cmd.add_argument("--project", required=False, nargs='?', default='test')
 
     simulate_data_cmd.add_argument(
         "--max_samples",
         required=False,
         help="max number of samples for each node",
         default=1,
+        nargs='?',
     )
 
     simulate_data_cmd.add_argument(
         "--node_num_instances_file",
         required=False,
         help="max number of samples for each node stored in a file",
-
+        nargs=1,
     )
 
     simulate_data_cmd.add_argument(
@@ -73,10 +74,14 @@ def main():
         return
 
     print("Data simulator initialization ...")
-    dictionary.init(DataDictionary(url=args.url))
+    if args.url:
+        print("Loading dictionary from url {}".format(args.url))
+        dictionary.init(DataDictionary(url=args.url))
+    else:
+        print("Loading dictionary from installed dictionary")
 
-    program = args.program if hasattr(args, "program") else "DEV"
-    project = args.project if hasattr(args, "project") else "test"
+    program = args.program
+    project = args.project
 
     # Initialize graph
     graph = Graph(dictionary, program, project)
