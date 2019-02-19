@@ -80,8 +80,8 @@ def main():
     else:
         print("Loading dictionary from installed dictionary")
 
-    program = args.program
-    project = args.project
+    program = getattr(args, "program", "DEV")
+    project = getattr(args, "project", "test")
 
     # Initialize graph
     graph = Graph(dictionary, program, project)
