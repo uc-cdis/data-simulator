@@ -81,7 +81,5 @@ python setup.py install
 
 ##  For Development
 ```
-pip install -r dev-requirements.txt
-python setup.py develop
-
+pipenv install --dev
 ```

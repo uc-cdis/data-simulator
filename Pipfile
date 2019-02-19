@@ -1,0 +1,15 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+mock = ">=1.0.1"
+pytest-cov = ">=2.5.1"
+coverage = ">=3.7.1"
+
+[packages]
+data-simulator = {editable = true,path = "."}
+
+[requires]
+python_version = "2.7"

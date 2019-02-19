@@ -1,19 +1,22 @@
 language: python
-
-python: "2.7"
-
+python: '2.7'
 sudo: false
-
 cache:
-  - directories:
-      - /home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages
-      - $HOME/.pip-cache
-  - apt
-
+- directories:
+  - "/home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages"
+  - "$HOME/.pip-cache"
+- apt
 install:
-  - pip install -r requirements.txt
-  - pip install -r dev-requirements.txt
-# command to run tests
+- pip install pipenv
+- pipenv install --dev
+- pipenv graph
 script:
-- py.test -vv tests/*
-
+- pipenv run py.test -vv tests/*
+deploy:
+  provider: pypi
+  user: uc-ctds
+  skip_existing: true
+  on:
+    tags: true
+  password:
+    secure: nS4xqoSN+B8N8HgtIrO6WZjmkCFpT4+8BfH5Tz1kzZl2XybZJbkq3At2ZLhfIxvmO5PONLDpqvvyXzQQYTLpWmO/BxcsvGWYbRfjwpzGwtfxiwScR48nABRZPQ28flPrzYm9EYZhtZBTVlH822JW306fnt9cnUBfOZIugU5xvfFWWuYmILzjGGGYfgq27sD4GRgd4LQBegJUxQvy88GVatKfdcgX77fitKD9d73xjGieESGak7ZRpcZVVWtSSFARUbIPNJIFM3f30iuhYn5CsFQcPz/lTP4VxYoqpfHcEcOOBE/oVxYw3K9ttW1LEfqI0sNRLMBiIQaJB7jbMwtwOzAsKK/7t7B3PAwXzfAi3ZtwFz9OwHkRQU2/Cf6GlhIAfACKr50IgGRssk95e/5kLrNQILw0/9YIi+ZkiiaGZsTQHl8TWwkCkEBe6y1pkRslfWlk8O5WgOLQycTFbLwWN80JMFdZb2Xxdb8tSJkd4jHFi5tPRnt9ORFMciVTNfxQyXRS8dc3x0BDk35M3mbPzFNA9dbVHrQZ4kFdVu8q1rBTNz8WMCb6XePwaKVPYkNg9Jy0vCeitO/ueFcVlqnt0QcPu9OpasDJU+NZ1WHnJNIcxO5GogUX6EWw92J1+PbDwvHKL8s72HeE1Cqql81dlefXqTCcBiWKhuVCuxwQAh0=
