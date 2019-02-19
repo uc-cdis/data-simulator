@@ -12,7 +12,7 @@ def parse_arguments():
     subparsers = parser.add_subparsers(title="action", dest="action")
 
     submission_order_cmd = subparsers.add_parser("submission_order")
-    submission_order_cmd.add_argument("--url", required=True, help="s3 dictionary link.", nargs=1)
+    submission_order_cmd.add_argument("--url", required=True, help="s3 dictionary link.", nargs='?')
     submission_order_cmd.add_argument("--node_name", required=False, help="node to generate the submission order for")
     submission_order_cmd.add_argument("--path", required=True, help="path to save file to")
 
@@ -22,7 +22,7 @@ def parse_arguments():
     simulate_data_cmd = subparsers.add_parser("simulate")
     simulate_data_cmd.add_argument("--url", required=False, help="s3 dictionary link.", nargs='?', default=None)
     simulate_data_cmd.add_argument(
-        "--path", required=True, help="path to save files to", nargs=1
+        "--path", required=True, help="path to save files to", nargs='?'
     )
 
     simulate_data_cmd.add_argument("--program", required=False, nargs='?', default='DEV')
@@ -40,7 +40,7 @@ def parse_arguments():
         "--node_num_instances_file",
         required=False,
         help="max number of samples for each node stored in a file",
-        nargs=1,
+        nargs='?',
     )
 
     simulate_data_cmd.add_argument(
