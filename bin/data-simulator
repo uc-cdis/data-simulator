@@ -80,11 +80,8 @@ def main():
     else:
         print("Loading dictionary from installed dictionary")
 
-    program = getattr(args, "program", "DEV")
-    project = getattr(args, "project", "test")
-
     # Initialize graph
-    graph = Graph(dictionary, program, project)
+    graph = Graph(dictionary)
     graph.generate_nodes_from_dictionary()
     graph.construct_graph_edges()
 

@@ -14,7 +14,7 @@ class Graph(object):
     Graph representation class
     """
 
-    def __init__(self, dictionary, program, project):
+    def __init__(self, dictionary, program="DEV", project="test"):
         """
         Graph constructor
 
