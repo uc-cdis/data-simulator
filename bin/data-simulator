@@ -80,12 +80,11 @@ def main():
     else:
         print("Loading dictionary from installed dictionary")
 
-    # Initialize graph
-    graph = Graph(dictionary)
-    graph.generate_nodes_from_dictionary()
-    graph.construct_graph_edges()
-
     if args.action == "simulate":
+        # Initialize graph
+        graph = Graph(dictionary, program=args.program, project=args.project)
+        graph.generate_nodes_from_dictionary()
+        graph.construct_graph_edges()
         max_samples = int(args.max_samples)
 
         # just print error messages
@@ -102,10 +101,18 @@ def main():
         )
 
     elif args.action == "validate":
+        # Initialize graph
+        graph = Graph(dictionary)
+        graph.generate_nodes_from_dictionary()
+        graph.construct_graph_edges()
         print("Validating ...")
         graph.graph_validation()
 
     elif args.action == "submission_order":
+        # Initialize graph
+        graph = Graph(dictionary)
+        graph.generate_nodes_from_dictionary()
+        graph.construct_graph_edges()
         print("Generate data submission order")
 
         if args.node_name:
