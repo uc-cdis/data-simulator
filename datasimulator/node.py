@@ -303,7 +303,8 @@ class Node(object):
                         simple_schema
                     )
 
-            example["submitter_id"] = self._simulate_submitter_id()
+            if self.name != 'project':
+                example["submitter_id"] = self._simulate_submitter_id()
             example["type"] = self.name
 
             simulated_data.append(example)
