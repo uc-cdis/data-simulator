@@ -316,7 +316,10 @@ class Node(object):
         try:
             self._simulate_link_properties(simulated_data, random)
             # store to dataset
-            self.simulated_dataset = simulated_data
+            if self.name == 'project':
+                self.simulated_dataset = simulated_data[0]
+            else:
+                self.simulated_dataset = simulated_data
         except IndexError:
             # just skip it
             pass
