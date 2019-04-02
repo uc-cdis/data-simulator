@@ -307,6 +307,9 @@ class Node(object):
                 example["submitter_id"] = self._simulate_submitter_id()
             example["type"] = self.name
 
+            if self.name == 'project':
+                example["code"] = self.project
+
             simulated_data.append(example)
 
         # simulate link properties
