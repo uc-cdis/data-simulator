@@ -269,8 +269,8 @@ class Node(object):
             simulated_data[list]: list of simulated record
         """
         # skip project node
-        if not self.required_links:
-            return
+        # if not self.required_links:
+        #     return
 
         # re compute n-samples base on link type (one_to_one, one_to_many, ..etc.)
         min_required_samples = sys.maxint
