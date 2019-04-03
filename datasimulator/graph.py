@@ -1,10 +1,10 @@
 import json
 from os.path import join
 
-from node import Node, logger
-from errors import UserError, DictionaryError
-from generator import generate_list_numbers
-from utils import generate_list_numbers_from_file
+from .node import Node, logger
+from .errors import UserError, DictionaryError
+from .generator import generate_list_numbers
+from .utils import generate_list_numbers_from_file
 
 EXCLUDED_NODE = ["program", "root", "data_release"]
 
@@ -259,7 +259,7 @@ class Graph(object):
         else:
             try:
                 n_samples_list = generate_list_numbers_from_file(
-                    node_num_instances_file, submission_order
+                    node_num_instances_file, submission_order, n_samples
                 )
             except UserError as e:
                 raise e

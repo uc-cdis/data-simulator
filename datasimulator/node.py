@@ -3,15 +3,15 @@ import random
 
 from cdislogging import get_logger
 
-from errors import UserError
-from generator import (
+from .errors import UserError
+from .generator import (
     generate_hash,
     generate_datetime,
     generate_string_data,
     generate_array_data_type,
     generate_simple_primitive_data,
 )
-from utils import is_mixed_type, random_choice, get_keys_list
+from .utils import is_mixed_type, random_choice, get_keys_list
 
 
 # Ingnore system properties
