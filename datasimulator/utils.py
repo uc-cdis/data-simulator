@@ -3,7 +3,7 @@ import random
 import json
 from functools import reduce
 
-from datasimulator.errors import UserError
+from .errors import UserError
 
 
 def is_mixed_type(arr):
@@ -37,14 +37,17 @@ def get_keys_list(d):
     return result
 
 
-def generate_list_numbers_from_file(data_file, submission_order):
+def generate_list_numbers_from_file(data_file, submission_order, n_samples):
     result = []
 
     try:
         with open(data_file) as f:
             data = json.load(f)
             for filename in submission_order:
-                result.append(data[str(filename)])
+                if str(filename) in data:
+                    result.append(data[str(filename)])
+                else:
+                    result.append(n_samples)
 
     except IOError:
         raise UserError("file {} does not exist".format(data_file))

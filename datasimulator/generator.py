@@ -1,12 +1,26 @@
 import rstr
 import random
 
-from errors import UserError
+from .errors import UserError
 
+tried_words = False
+WORDS = None
 
 def generate_string_data(size=10, pattern=None):
-    pattern = pattern or "^[0-9a-f]{" + str(size) + "}"
-    return rstr.xeger(pattern)
+    global tried_words, WORDS
+    if not tried_words:
+        tried_words = True
+        try:
+            word_file = "/usr/share/dict/words"
+            WORDS = open(word_file).read().splitlines()
+        except:
+            pass
+    if pattern or not WORDS:
+        pattern = pattern or "^[0-9a-f]{" + str(size) + "}"
+        return rstr.xeger(pattern)
+    else:
+        return "{}_{}".format(random.choice(WORDS), random.choice(WORDS))
+
 
 
 def generate_number(minx=0, maxx=100, is_int=False):
