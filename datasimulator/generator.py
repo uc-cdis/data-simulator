@@ -7,6 +7,7 @@ tried_words = False
 WORDS = None
 
 def generate_string_data(size=10, pattern=None):
+    global tried_words, WORDS
     if not tried_words:
         tried_words = True
         try:
