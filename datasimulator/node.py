@@ -269,8 +269,8 @@ class Node(object):
             simulated_data[list]: list of simulated record
         """
         # skip project node
-        if not self.required_links:
-            return
+        # if not self.required_links:
+        #     return
 
         # re compute n-samples base on link type (one_to_one, one_to_many, ..etc.)
         min_required_samples = sys.maxint
@@ -303,8 +303,12 @@ class Node(object):
                         simple_schema
                     )
 
-            example["submitter_id"] = self._simulate_submitter_id()
+            if self.name != 'project':
+                example["submitter_id"] = self._simulate_submitter_id()
             example["type"] = self.name
+
+            if self.name == 'project':
+                example["code"] = self.project
 
             simulated_data.append(example)
 
@@ -312,7 +316,10 @@ class Node(object):
         try:
             self._simulate_link_properties(simulated_data, random)
             # store to dataset
-            self.simulated_dataset = simulated_data
+            if self.name == 'project':
+                self.simulated_dataset = simulated_data[0]
+            else:
+                self.simulated_dataset = simulated_data
         except IndexError:
             # just skip it
             pass
