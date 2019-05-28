@@ -36,10 +36,10 @@ Required arguments:
 * project
 
 Optional arguments:
-* max_samples 10: maximum number of instances for each node. default is 1
+* max_samples: maximum number of instances for each node. default is 1
 * required_only: only simulate required properties
 * random: randomly generate the numbers of node instances. If this argument is not used, all nodes have `max_samples` instances
-* node_num_instances_file ./file.txt: generate the numbers of node instances specified in the text file. The file should contain multiple lines, each line with the node name and an integer for the node instance
+* node_num_instances_file ./file.json: generate the numbers of node instances specified in the JSON file. The file should contain the number of instances (integer)  to generate for each node name, for example: `{"submitted_unaligned_reads": 100}`. `max_samples` instances are generated for nodes that are not specified in the file.
 
 #### Submission Order
 
