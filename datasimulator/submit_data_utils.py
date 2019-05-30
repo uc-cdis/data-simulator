@@ -31,12 +31,16 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
     submission_order = submission_order.split("\n")
 
     for fname in submission_order:
+        if fname == "project":
+            continue
         chunk_size = max_chunk_size
         if fname is None or fname == "":
             logger.error("There is no {} in input directory".format(fname))
             continue
         with open(join(dir, fname + ".json"), "r") as rfile:
             data = json.loads(rfile.read())
+            if not isinstance(data, list):
+                data = [data]
             index = 0
             while index < len(data):
                 response = requests.put(
