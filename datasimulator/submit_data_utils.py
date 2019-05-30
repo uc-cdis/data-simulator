@@ -10,6 +10,8 @@ logger = get_logger("SubmittingData")
 
 def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
 
+    api_root_endpoint = host + "/api/v0/submission/_root"
+    api_program_endpoint = host + "/api/v0/submission/" + project.split("/")[0]
     api_endpoint = host + "/api/v0/submission/" + project
 
     token = ""
@@ -20,6 +22,28 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
     else:
         logger.error("There is no input token text file. Continue anyway!")
 
+    # Create program
+    data = """
+    {
+        "name": {},
+        "dbgap_accession_number": {},
+        "type": "program"
+    }
+    """.format(
+        project.split("/")[0], project.split("/")[0]
+    )
+
+    response = requests.put(
+        api_endpoint,
+        data=json.dumps(data),
+        headers={
+            "content-type": "application/json",
+            "Authorization": "bearer " + token,
+        },
+    )
+
+    if response.status_code not in [200, 201]:
+        logger.error("Can not create program")
     submission_order = ""
     if os.path.isfile(join(dir, "DataImportOrder.txt")):
         with open(join(dir, "DataImportOrder.txt"), "r") as reader:
