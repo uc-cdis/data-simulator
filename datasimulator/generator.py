@@ -48,13 +48,15 @@ def generate_datetime():
     )
 
 
-def generate_array_data_type(item_type, n_items=1):
+def generate_array_data_type(item_type, n_items=1, item_predefined_values=[]):
     if item_type == "string":
         return [generate_string_data(size=10, pattern=None) for _ in xrange(n_items)]
     elif item_type == "integer":
         return [generate_number(is_int=True) for _ in xrange(n_items)]
     elif item_type in {"float", "number"}:
         return [generate_number() for _ in xrange(n_items)]
+    elif item_type == "enum":
+        return [random.choice(item_predefined_values)]
     else:
         raise UserError("{} is not supported".format(item_type))
 
