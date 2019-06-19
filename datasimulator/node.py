@@ -82,7 +82,7 @@ class Node(object):
             return generate_datetime()
         elif simple_schema["data_type"] == "array":
             return generate_array_data_type(
-                item_type=simple_schema.get("item_type"), n_items=1
+                item_type=simple_schema.get("item_type"), n_items=1, item_predefined_values=simple_schema.get("item_enum_data", [])
             )
         else:
             return generate_simple_primitive_data(
@@ -199,6 +199,14 @@ class Node(object):
 
         if prop_schema.get("type"):
             if prop_schema.get("type") == "array":
+
+                if "items" in prop_schema and "enum" in prop_schema["items"]:
+                    return {
+                        "data_type": "array",
+                        "item_type": "enum",
+                        "item_enum_data": prop_schema["items"]["enum"]
+                    }
+
                 if prop_schema.get("items") is None or (
                     prop_schema.get("items").get("type") is None
                 ):
