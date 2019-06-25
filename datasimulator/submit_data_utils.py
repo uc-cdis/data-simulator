@@ -9,8 +9,13 @@ logger = get_logger("SubmittingData")
 
 
 def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
-
-    api_endpoint = host + "/api/v0/submission/" + project
+    """
+    Submit the test data. `project` is in the format of `program/project`
+    """
+    program_name = project.split("/")[0]
+    api_root_endpoint = host + "/api/v0/submission"
+    api_program_endpoint = "{}/{}".format(api_root_endpoint, program_name)
+    api_endpoint = "{}/{}".format(api_root_endpoint, project)
 
     token = ""
     if os.path.isfile(access_token_file):
@@ -19,6 +24,30 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
         token = token.strip()
     else:
         logger.error("There is no input token text file. Continue anyway!")
+
+    # Create program
+    try:
+        data = {
+            "dbgap_accession_number": project.split("/")[0],
+            "type": "program",
+            "name": project.split("/")[0],
+        }
+    except IndexError as e:
+        logger.error("Can not create program. Detail {}".format((e)))
+        return
+
+    response = requests.put(
+        api_root_endpoint,
+        data=json.dumps(data),
+        headers={
+            "content-type": "application/json",
+            "Authorization": "bearer " + token,
+        },
+    )
+
+    if response.status_code not in [200, 201]:
+        logger.error("Can not create the program. Response {}".format(response.json()))
+        return
 
     submission_order = ""
     if os.path.isfile(join(dir, "DataImportOrder.txt")):
@@ -31,14 +60,26 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
     submission_order = submission_order.split("\n")
 
     for fname in submission_order:
-        if fname == "project":
-            continue
         chunk_size = max_chunk_size
         if fname is None or fname == "":
             logger.error("There is no {} in input directory".format(fname))
             continue
         with open(join(dir, fname + ".json"), "r") as rfile:
             data = json.loads(rfile.read())
+            if fname == "project":
+                response = requests.put(
+                    api_program_endpoint,
+                    data=json.dumps(data),
+                    headers={
+                        "content-type": "application/json",
+                        "Authorization": "bearer " + token,
+                    },
+                )
+                if response.status_code not in [200, 201]:
+                    logger.error("Can not create the project. Response {}".format(response.json()))
+                    return
+                continue
+
             if not isinstance(data, list):
                 data = [data]
             index = 0
