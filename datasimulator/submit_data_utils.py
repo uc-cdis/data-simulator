@@ -9,10 +9,13 @@ logger = get_logger("SubmittingData")
 
 
 def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
-
+    """
+    Submit the test data. `project` is in the format of `program/project`
+    """
+    program_name = project.split("/")[0]
     api_root_endpoint = host + "/api/v0/submission"
-    api_program_endpoint = host + "/api/v0/submission/" + project.split("/")[0]
-    api_endpoint = host + "/api/v0/submission/" + project
+    api_program_endpoint = "{}/{}".format(api_root_endpoint, program_name)
+    api_endpoint = "{}/{}".format(api_root_endpoint, project)
 
     token = ""
     if os.path.isfile(access_token_file):
@@ -73,7 +76,7 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
                     },
                 )
                 if response.status_code not in [200, 201]:
-                    logger.error("Can not create the project")
+                    logger.error("Can not create the project. Response {}".format(response.json()))
                     return
                 continue
 
