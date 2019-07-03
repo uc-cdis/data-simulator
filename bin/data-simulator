@@ -133,7 +133,7 @@ def main():
             node = graph.get_node_with_name(args.node_name)
             submission_order = graph.generate_submission_order_path_to_node(node)
         else:
-             submission_order = graph.generate_submission_order()
+            submission_order = graph.generate_submission_order()
         
         with open(os.path.join(args.path, "DataImportOrderPath.txt"), "w") as outfile:
             for node in submission_order:

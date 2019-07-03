@@ -11,9 +11,11 @@ setup(
         "rstr==2.2.6",
         "dictionaryutils~=3.0.2",
         "gen3dictionary~=2.0.1",
+        "openpyxl==2.6.4",
     ],
     dependency_links=[
         "git+https://github.com/uc-cdis/cdislogging.git@1.0.0#egg=cdislogging",
+        "git+https://github.com/uc-cdis/gdcdatamodel.git@3.0.2#egg=gen3datamodel",
     ],
     scripts=["bin/data-simulator"],
 )
