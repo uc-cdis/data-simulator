@@ -37,11 +37,12 @@ class Node(object):
     Class representation for node
     """
 
-    def __init__(self, node_name, node_schema, project):
+    def __init__(self, node_name, node_schema, project, consent_codes):
         """
         """
         self.name = node_name
         self.project = project
+        self.consent_codes = consent_codes
         self.required = node_schema.get("required", [])
         self.sys_properties = node_schema.get("systemProperties", [])
         try:
@@ -174,6 +175,10 @@ class Node(object):
                 or prop in EXCLUDED_FIELDS
                 or (required_only and prop not in self.required)
             ):
+                continue
+
+            # ignore consent_codes unless specified otherwise
+            if not self.consent_codes and prop == "consent_codes":
                 continue
 
             template[prop] = self.construct_simple_property_schema(

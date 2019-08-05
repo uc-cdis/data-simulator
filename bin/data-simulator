@@ -52,6 +52,10 @@ def parse_arguments():
     )
 
     simulate_data_cmd.add_argument(
+        "--consent_codes", help="include generation of random consent codes", action="store_true"
+    )
+
+    simulate_data_cmd.add_argument(
         "--skip", help="skip raising an exception if gets an error", action="store_true"
     )
 
@@ -83,7 +87,7 @@ def main():
     if args.action == "simulate":
         # Initialize graph
         graph = Graph(dictionary, program=args.program, project=args.project)
-        graph.generate_nodes_from_dictionary()
+        graph.generate_nodes_from_dictionary(args.consent_codes)
         graph.construct_graph_edges()
         max_samples = int(args.max_samples)
 
