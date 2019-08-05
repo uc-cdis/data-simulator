@@ -22,7 +22,6 @@ def generate_string_data(size=10, pattern=None):
         return "{}_{}".format(random.choice(WORDS), random.choice(WORDS))
 
 
-
 def generate_number(minx=0, maxx=100, is_int=False):
     return random.randint(minx, maxx) if is_int else random.uniform(minx, maxx)
 
@@ -86,3 +85,8 @@ def generate_simple_primitive_data(data_type, pattern=None, maxx=100, minx=0):
         return generate_boolean()
 
     raise UserError("{} is not supported".format(data_type))
+
+
+def generate_consent_code(size=5):
+    pattern = "^[A-Z]{" + str(size) + "}"
+    return rstr.xeger(pattern)

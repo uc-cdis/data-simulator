@@ -9,6 +9,7 @@ from .generator import (
     generate_datetime,
     generate_string_data,
     generate_array_data_type,
+    generate_consent_code,
     generate_simple_primitive_data,
 )
 from .utils import is_mixed_type, random_choice, get_keys_list
@@ -92,6 +93,10 @@ class Node(object):
                 maxx=simple_schema.get("max"),
                 minx=simple_schema.get("min"),
             )
+
+    @staticmethod
+    def _simulate_consent_code():
+        return ["/consent/{}".format(generate_consent_code())]
 
     def node_validation(self, required_only=False):
         """
@@ -311,6 +316,8 @@ class Node(object):
                 # Skip. Simulate link properties later
                 elif simple_schema["data_type"] == "link_type":
                     continue
+                elif prop == "consent_codes":
+                    example[prop] = Node._simulate_consent_code()
                 else:
                     example[prop] = Node._simulate_data_from_simple_schema(
                         simple_schema
