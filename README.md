@@ -40,6 +40,7 @@ Optional arguments:
 * required_only: only simulate required properties
 * random: randomly generate the numbers of node instances. If this argument is not used, all nodes have `max_samples` instances
 * node_num_instances_file ./file.json: generate the numbers of node instances specified in the JSON file. The file should contain the number of instances (integer)  to generate for each node name, for example: `{"submitted_unaligned_reads": 100}`. `max_samples` instances are generated for nodes that are not specified in the file.
+* consent_codes: whether to include generation of random consent codes
 
 #### Submission Order
 

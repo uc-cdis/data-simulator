@@ -46,14 +46,16 @@ class Graph(object):
         """
         return [k for k in self.dictionary.schema if k not in EXCLUDED_NODE]
 
-    def generate_nodes_from_dictionary(self):
+    def generate_nodes_from_dictionary(self, consent_codes=False):
         """
         generate nodes from dictionary
 
+        Args:
+            consent_codes(bool): whether to include generation of random consent codes
         """
         # logger.info('Start simulating data')
         for node_name in self._get_list_of_node_names():
-            node = Node(node_name, self.dictionary.schema[node_name], self.project)
+            node = Node(node_name, self.dictionary.schema[node_name], self.project, consent_codes)
             if node_name == "project":
                 self.root = node
             self.nodes.append(node)
