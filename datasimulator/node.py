@@ -182,10 +182,6 @@ class Node(object):
             ):
                 continue
 
-            # ignore consent_codes unless specified otherwise
-            if not self.consent_codes and prop == "consent_codes":
-                continue
-
             template[prop] = self.construct_simple_property_schema(
                 prop=prop, prop_schema=prop_schema
             )
@@ -317,7 +313,7 @@ class Node(object):
                 elif simple_schema["data_type"] == "link_type":
                     continue
                 elif prop == "consent_codes":
-                    example[prop] = Node._simulate_consent_code()
+                    example[prop] = Node._simulate_consent_code() if self.consent_codes else []
                 else:
                     example[prop] = Node._simulate_data_from_simple_schema(
                         simple_schema
