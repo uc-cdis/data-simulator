@@ -26,6 +26,8 @@ EXCLUDED_FIELDS = [
     "project_id",
     "submitter_id",
     "object_id",
+    "created_datetime",
+    "updated_datetime",
 ]
 
 

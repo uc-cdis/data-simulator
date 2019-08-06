@@ -6,6 +6,7 @@ from .errors import UserError
 tried_words = False
 WORDS = None
 
+
 def generate_string_data(size=10, pattern=None):
     global tried_words, WORDS
     if not tried_words:
@@ -20,7 +21,6 @@ def generate_string_data(size=10, pattern=None):
         return rstr.xeger(pattern)
     else:
         return "{}_{}".format(random.choice(WORDS), random.choice(WORDS))
-
 
 
 def generate_number(minx=0, maxx=100, is_int=False):
