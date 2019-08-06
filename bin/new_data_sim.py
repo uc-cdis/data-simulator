@@ -26,6 +26,9 @@ def parse_arguments():
     simulate_data_cmd = subparsers.add_parser("simulate")
     simulate_data_cmd.add_argument("--url", required=False, help="s3 dictionary link.", nargs='?', default=None)
     simulate_data_cmd.add_argument(
+        "--file", required=True, help="file defines the ", nargs='?'
+    )
+    simulate_data_cmd.add_argument(
         "--path", required=True, help="path to save files to", nargs='?'
     )
 
@@ -48,11 +51,9 @@ def simulate_data(url, file_path, outpath):
 
 
 def main():
-    file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..',
-                             'generator_configuration.json')
     args = parse_arguments()
     if args.action == 'simulate':
-        simulate_data(args.url, file_path, args.path)
+        simulate_data(args.url, args.file, args.path)
 
 
 if __name__ == '__main__':
