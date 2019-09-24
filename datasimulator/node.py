@@ -325,6 +325,7 @@ class Node(object):
 
             if self.name == 'project':
                 example["code"] = self.project
+                example["dbgap_accession_number"] = "phs-{}".format(self.project)
 
             simulated_data.append(example)
 
