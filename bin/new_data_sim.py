@@ -31,18 +31,24 @@ def parse_arguments():
     simulate_data_cmd.add_argument(
         "--path", required=True, help="path to save files to", nargs='?'
     )
+    simulate_data_cmd.add_argument(
+        "--program", required=False, help="program to generate data", nargs='?'
+    )
+    simulate_data_cmd.add_argument(
+        "--project", required=False, help="project to generate data", nargs='?'
+    )
 
     return parser.parse_args()
 
 
-def simulate_data(url, file_path, outpath):
+def simulate_data(url, program, project, file_path, outpath):
     try:
         d, md = init_dictionary(url)
         with open(file_path, 'r') as config_file:
             numbers = json.load(config_file)
             l_graph = LinkGraph(numbers, d)
         if l_graph:
-            simulate_tree(md, l_graph, outpath)
+            simulate_tree(md, program, project, l_graph, outpath)
         else:
             print 'Error graph is not created'
     except Exception as ex:
@@ -53,7 +59,7 @@ def simulate_data(url, file_path, outpath):
 def main():
     args = parse_arguments()
     if args.action == 'simulate':
-        simulate_data(args.url, args.file, args.path)
+        simulate_data(args.url, args.program, args.project, args.file, args.path)
 
 
 if __name__ == '__main__':

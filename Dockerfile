@@ -7,5 +7,5 @@ RUN apt-get update && apt-get install -y sudo python-pip git python-dev libpq-de
 COPY . /data-simulator
 WORKDIR /data-simulator
 
-RUN  pip install -r requirements.txt \
+RUN  pip install --no-cache-dir -r requirements.txt \
      && python setup.py develop

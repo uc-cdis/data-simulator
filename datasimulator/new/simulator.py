@@ -31,7 +31,7 @@ EXCLUDED_FIELDS = [
 ]
 
 
-def simulate_tree(model, graph, outpath):
+def simulate_tree(model, program, project, graph, outpath):
     for n in graph.nodes:
         print 'NODE: {}'.format(n)
         simulate_relations(model, graph.dictionary, n)
@@ -48,7 +48,7 @@ def simulate_relations(model, dictionary, graph_node):
     data_nodes = {}
     for i in xrange(0, graph_node.number):
         key = random_submitter_id(graph_node.name)
-        if graph_node.name == 'project':
+        if graph_node.name == 'project' or graph_node.name == 'node_project':
             data_nodes[key] = {'code': key}
         else:
             data_nodes[key] = {'submitter_id': key}

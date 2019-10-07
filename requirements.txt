@@ -1,5 +1,7 @@
-dictionaryutils==2.0.3
+dictionaryutils==2.0.8
 setuptools==36.6.0
 requests>=2.18.0<3.0.0
 rstr==2.2.6
+openpyxl==2.6.4
+gen3datamodel==2.0.2
 -e git+https://git@github.com/uc-cdis/cdislogging.git@0.1.1#egg=cdislogging
