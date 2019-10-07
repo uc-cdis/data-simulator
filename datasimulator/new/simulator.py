@@ -69,6 +69,7 @@ def simulate_node_properties(props, properties, node_name, data_node):
             continue
         else:
             data_node[k] = _simulate_data_from_simple_schema(prop_schema)
+        data_node["type"] = node_name
 
 
 def simulate_nodes_properties(model, dictionary, graph_node):

@@ -72,6 +72,8 @@ def generate_portion_links(nodes_by_node_name, n_name, start, portion, links):
         js[l.dst] = 0
         nb_dst = len(nodes_by_node_name[l.dst])
         for i in xrange(start, end):
+            if (i % 1000 == 0):
+                print("   {} / {}".format(i, end))
             if l.link.name not in data_nodes[i]:
                 d_node_key = nodes_by_node_name[l.dst].keys()[js[l.dst]]
                 data_nodes[i][l.link.name] = {'submitter_id': d_node_key}
