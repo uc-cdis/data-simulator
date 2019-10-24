@@ -27,13 +27,13 @@ def get_keys_list(d):
         return reduce(lambda acc, field: acc.get(field, {}), fields, d)
 
     result = []
-    to_visit = [[key] for key in d.keys()]
+    to_visit = [[key] for key in list(d.keys())]
     while to_visit:
         key = to_visit.pop()
         result.append(key[-1])
         value = get_field(d, key)
         if isinstance(value, dict):
-            to_visit.extend([key + [next_key] for next_key in value.keys()])
+            to_visit.extend([key + [next_key] for next_key in list(value.keys())])
     return result
 
 
