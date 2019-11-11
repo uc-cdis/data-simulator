@@ -7,6 +7,7 @@ setup(
     description="Data simulator",
     install_requires=["requests>=2.18.0<3.0.0", "setuptools==36.6.0", "rstr==2.2.6"],
     dependency_links=[
+        # TODO pin to version once py3 branch is mergd
         "git+https://github.com/uc-cdis/dictionaryutils.git@chore/py3#egg=dictionaryutils",
         "git+https://github.com/uc-cdis/cdislogging.git@1.0.0#egg=cdislogging",
     ],
