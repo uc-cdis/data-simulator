@@ -55,7 +55,12 @@ class Graph(object):
         """
         # logger.info('Start simulating data')
         for node_name in self._get_list_of_node_names():
-            node = Node(node_name, self.dictionary.schema[node_name], self.project, consent_codes)
+            node = Node(
+                node_name,
+                self.dictionary.schema[node_name],
+                self.project,
+                consent_codes,
+            )
             if node_name == "project":
                 self.root = node
             self.nodes.append(node)
@@ -115,12 +120,15 @@ class Graph(object):
         """
         self.prelimary_dictionary_check()
         required_link_pass = self.graph_required_link_validation()
-        return all(
-            [
-                node.node_validation(required_only=required_only)[0]
-                for node in self.nodes
-            ]
-        ) and required_link_pass
+        return (
+            all(
+                [
+                    node.node_validation(required_only=required_only)[0]
+                    for node in self.nodes
+                ]
+            )
+            and required_link_pass
+        )
 
     def graph_required_link_validation(self):
         """
@@ -133,7 +141,7 @@ class Graph(object):
                 logger.error(
                     "Node {} does not have any required link".format(node.name)
                 )
-                pass_validation =False
+                pass_validation = False
         return pass_validation
 
     def construct_graph_edges(self):

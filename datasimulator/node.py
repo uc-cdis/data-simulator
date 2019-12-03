@@ -84,7 +84,9 @@ class Node(object):
             return generate_datetime()
         elif simple_schema["data_type"] == "array":
             return generate_array_data_type(
-                item_type=simple_schema.get("item_type"), n_items=1, item_predefined_values=simple_schema.get("item_enum_data", [])
+                item_type=simple_schema.get("item_type"),
+                n_items=1,
+                item_predefined_values=simple_schema.get("item_enum_data", []),
             )
         else:
             return generate_simple_primitive_data(
@@ -172,7 +174,7 @@ class Node(object):
         """
 
         template = {}
-       
+
         for prop, prop_schema in self._get_simulating_node_properties().items():
             if (
                 prop in [link["name"] for link in self.required_links]
@@ -210,7 +212,7 @@ class Node(object):
                     return {
                         "data_type": "array",
                         "item_type": "enum",
-                        "item_enum_data": prop_schema["items"]["enum"]
+                        "item_enum_data": prop_schema["items"]["enum"],
                     }
 
                 if prop_schema.get("items") is None or (
@@ -313,17 +315,19 @@ class Node(object):
                 elif simple_schema["data_type"] == "link_type":
                     continue
                 elif prop == "consent_codes":
-                    example[prop] = Node._simulate_consent_code() if self.consent_codes else []
+                    example[prop] = (
+                        Node._simulate_consent_code() if self.consent_codes else []
+                    )
                 else:
                     example[prop] = Node._simulate_data_from_simple_schema(
                         simple_schema
                     )
 
-            if self.name != 'project':
+            if self.name != "project":
                 example["submitter_id"] = self._simulate_submitter_id()
             example["type"] = self.name
 
-            if self.name == 'project':
+            if self.name == "project":
                 example["code"] = self.project
                 example["dbgap_accession_number"] = "phs-{}".format(self.project)
 
@@ -333,7 +337,7 @@ class Node(object):
         try:
             self._simulate_link_properties(simulated_data, random)
             # store to dataset
-            if self.name == 'project':
+            if self.name == "project":
                 self.simulated_dataset = simulated_data[0]
             else:
                 self.simulated_dataset = simulated_data
@@ -351,8 +355,12 @@ class Node(object):
         if self.oneOf is None:
             return self.properties
         if not isinstance(self.oneOf, list):
-            logger.warn("Expected list but received {}. Node {}".format(type(self.oneOf), self.name))
-        
+            logger.warn(
+                "Expected list but received {}. Node {}".format(
+                    type(self.oneOf), self.name
+                )
+            )
+
         c = random.randint(0, len(self.oneOf))
         excluded_list = []
         for idx, one in enumerate(self.oneOf):
@@ -360,18 +368,22 @@ class Node(object):
                 continue
 
             if not isinstance(one, dict):
-                logger.warn("Expected dict but received {}. Node {}".format(type(one), self.name))
-            
+                logger.warn(
+                    "Expected dict but received {}. Node {}".format(
+                        type(one), self.name
+                    )
+                )
+
             for k, v in one.items():
                 excluded_list = excluded_list + v if isinstance(v, list) else [v]
-        
+
         result = {}
         for prop, info in self.properties.items():
             if prop not in excluded_list:
                 result[prop] = info
 
         return result
-    
+
     def _simulate_link_properties(self, simulated_data, random=False):
         """
         Simulate data for required links

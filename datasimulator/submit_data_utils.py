@@ -76,7 +76,11 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
                     },
                 )
                 if response.status_code not in [200, 201]:
-                    logger.error("Can not create the project. Response {}".format(response.json()))
+                    logger.error(
+                        "Can not create the project. Response {}".format(
+                            response.json()
+                        )
+                    )
                     return
                 continue
 
