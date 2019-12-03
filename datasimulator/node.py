@@ -140,7 +140,7 @@ class Node(object):
             required_only=required_only
         )
 
-        for prop, schema in template.iteritems():
+        for prop, schema in template.items():
             if schema["data_type"] is None:
                 logger.error(schema["error_msg"])
                 pass_validation = False
@@ -173,7 +173,7 @@ class Node(object):
 
         template = {}
        
-        for prop, prop_schema in self._get_simulating_node_properties().iteritems():
+        for prop, prop_schema in self._get_simulating_node_properties().items():
             if (
                 prop in [link["name"] for link in self.required_links]
                 or prop in self.sys_properties
@@ -287,7 +287,7 @@ class Node(object):
         #     return
 
         # re compute n-samples base on link type (one_to_one, one_to_many, ..etc.)
-        min_required_samples = sys.maxint
+        min_required_samples = sys.maxsize
         for link_node in self.required_links:
             if link_node["multiplicity"] in {"one_to_one", "one_to_many"}:
                 min_required_samples = min(
@@ -303,10 +303,10 @@ class Node(object):
         )
 
         simulated_data = []
-        for _ in xrange(n_samples):
+        for _ in range(n_samples):
             example = {}
 
-            for prop, simple_schema in template.iteritems():
+            for prop, simple_schema in template.items():
                 if simple_schema["data_type"] is None:
                     logger.warn(simple_schema["error_msg"])
                 # Skip. Simulate link properties later
@@ -362,11 +362,11 @@ class Node(object):
             if not isinstance(one, dict):
                 logger.warn("Expected dict but received {}. Node {}".format(type(one), self.name))
             
-            for k, v in one.iteritems():
+            for k, v in one.items():
                 excluded_list = excluded_list + v if isinstance(v, list) else [v]
         
         result = {}
-        for prop, info in self.properties.iteritems():
+        for prop, info in self.properties.items():
             if prop not in excluded_list:
                 result[prop] = info
 
