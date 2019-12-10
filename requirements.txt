@@ -1,4 +1,4 @@
--e git+https://git@github.com/uc-cdis/dictionaryutils.git@chore/py3#egg=dictionaryutils
+dictionaryutils==3.0.0
 setuptools==36.6.0
 requests>=2.18.0<3.0.0
 rstr==2.2.6
