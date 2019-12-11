@@ -6,6 +6,7 @@ from .errors import UserError
 tried_words = False
 WORDS = None
 
+
 def generate_string_data(size=10, pattern=None):
     global tried_words, WORDS
     if not tried_words:
@@ -28,7 +29,9 @@ def generate_number(minx=0, maxx=100, is_int=False):
 
 def generate_list_numbers(counts, nmax=100, random=False):
     return [
-        generate_number(minx=max(1, int(0.2 * nmax)), maxx=nmax, is_int=True) if random else nmax
+        generate_number(minx=max(1, int(0.2 * nmax)), maxx=nmax, is_int=True)
+        if random
+        else nmax
         for _ in range(counts)
     ]
 
