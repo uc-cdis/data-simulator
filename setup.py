@@ -5,7 +5,7 @@ setup(
     version="0.0.1",
     packages=find_packages(),
     description="Data simulator",
-    install_requires=["requests>=2.18.0<3.0.0", "setuptools==36.6.0", "rstr==2.2.6"],
+    install_requires=["requests>=2.18.0<3.0.0", "setuptools==36.6.0", "rstr==2.2.6", "gen3dictionary~=2.0.1"],
     dependency_links=[
         # TODO pin to version once py3 branch is merged
         "git+https://github.com/uc-cdis/dictionaryutils.git@3.0.1#egg=dictionaryutils",
