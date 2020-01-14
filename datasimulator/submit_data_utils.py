@@ -66,7 +66,11 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
         logger.info("Submitting {}".format(fname))
         complete_fname = join(dir, fname + ".json")
         if not os.path.exists(complete_fname):
-            logger.warn("There is no `{}` file in input directory - nothing to submit".format(complete_fname))
+            logger.warn(
+                "There is no `{}` file in input directory - nothing to submit".format(
+                    complete_fname
+                )
+            )
             continue
         with open(complete_fname, "r") as rfile:
             data = json.loads(rfile.read())
