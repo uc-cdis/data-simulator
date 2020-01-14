@@ -63,10 +63,12 @@ def generate_array_data_type(item_type, n_items=1, item_predefined_values=[]):
         raise UserError("{} is not supported".format(item_type))
 
 
-def generate_simple_primitive_data(data_type, pattern=None, maxx=100, minx=0):
+def generate_simple_primitive_data(data_type, pattern=None, maxx=None, minx=None):
     """
     Generate a single primitive data
     """
+    maxx = maxx or 100
+    minx = minx or 0
     if maxx < minx:
         maxx = minx + 100
     if isinstance(data_type, list):

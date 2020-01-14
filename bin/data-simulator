@@ -6,6 +6,10 @@ from dictionaryutils import DataDictionary, dictionary
 from datasimulator.graph import Graph
 from datasimulator.submit_data_utils import submit_test_data
 
+from cdislogging import get_logger
+
+logger = get_logger("data-simulator", log_level="info")
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
@@ -74,18 +78,21 @@ def main():
     args = parse_arguments()
 
     if args.action == "submitting_data":
+        logger.info("Submitting data...")
         submit_test_data(args.host, args.project, args.dir, args.access_token_file, int(args.chunk_size))
+        logger.info("Done!")
         return
 
-    print("Data simulator initialization ...")
+    logger.info("Data simulator initialization...")
     if args.url:
-        print("Loading dictionary from url {}".format(args.url))
+        logger.info("Loading dictionary from url {}".format(args.url))
         dictionary.init(DataDictionary(url=args.url))
     else:
-        print("Loading dictionary from installed dictionary")
+        logger.info("Loading dictionary from installed dictionary")
 
     if args.action == "simulate":
         # Initialize graph
+        logger.info("Initializing graph...")
         graph = Graph(dictionary, program=args.program, project=args.project)
         graph.generate_nodes_from_dictionary(args.consent_codes)
         graph.construct_graph_edges()
@@ -95,6 +102,7 @@ def main():
         graph.graph_validation(required_only=args.required_only)
 
         # simulate data no matter what the graph passes validation or not
+        logger.info("Generating data...")
         graph.simulate_graph_data(
             path=args.path,
             n_samples=max_samples,
@@ -106,19 +114,21 @@ def main():
 
     elif args.action == "validate":
         # Initialize graph
+        logger.info("Initializing graph...")
         graph = Graph(dictionary)
         graph.generate_nodes_from_dictionary()
         graph.construct_graph_edges()
-        print("Validating ...")
+        logger.info("Validating...")
         graph.graph_validation()
 
     elif args.action == "submission_order":
         # Initialize graph
+        logger.info("Initializing graph...")
         graph = Graph(dictionary)
         graph.generate_nodes_from_dictionary()
         graph.construct_graph_edges()
-        print("Generate data submission order")
 
+        logger.info("Generating data submission order...")
         if args.node_name:
             node = graph.get_node_with_name(args.node_name)
             submission_order = graph.generate_submission_order_path_to_node(node)
@@ -128,6 +138,8 @@ def main():
         with open(os.path.join(args.path, "DataImportOrderPath.txt"), "w") as outfile:
             for node in submission_order:
                 outfile.write(node.name + "\t" + node.category + "\n")
+
+    logger.info("Done!")
 
 
 if __name__ == "__main__":

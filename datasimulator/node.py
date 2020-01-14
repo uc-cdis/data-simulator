@@ -30,7 +30,7 @@ EXCLUDED_FIELDS = [
 ]
 
 
-logger = get_logger("DataSimulator")
+logger = get_logger("data-simulator simulate", log_level="info")
 
 
 class Node(object):

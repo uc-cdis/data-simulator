@@ -8,7 +8,5 @@ RUN apt-get update && apt-get install -y sudo python3-pip git python3-dev libpq-
 COPY . /data-simulator
 WORKDIR /data-simulator
 
-RUN pip freeze
-
 RUN  pip install -r requirements.txt \
      && python3 setup.py develop
