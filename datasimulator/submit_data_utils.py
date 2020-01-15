@@ -5,7 +5,7 @@ import json
 
 from cdislogging import get_logger
 
-logger = get_logger("SubmittingData")
+logger = get_logger("data-simulator submitting_data", log_level="info")
 
 
 def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
@@ -62,9 +62,17 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
     for fname in submission_order:
         chunk_size = max_chunk_size
         if fname is None or fname == "":
-            logger.error("There is no {} in input directory".format(fname))
             continue
-        with open(join(dir, fname + ".json"), "r") as rfile:
+        logger.info("Submitting {}".format(fname))
+        complete_fname = join(dir, fname + ".json")
+        if not os.path.exists(complete_fname):
+            logger.warn(
+                "There is no `{}` file in input directory - nothing to submit".format(
+                    complete_fname
+                )
+            )
+            continue
+        with open(complete_fname, "r") as rfile:
             data = json.loads(rfile.read())
             if fname == "project":
                 response = requests.put(
@@ -117,4 +125,3 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
                     logger.info(response.status_code)
 
                 index = index + chunk_size
-            logger.info("Done submitting {}".format(fname))
