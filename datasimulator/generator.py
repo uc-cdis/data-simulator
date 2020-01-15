@@ -63,12 +63,10 @@ def generate_array_data_type(item_type, n_items=1, item_predefined_values=[]):
         raise UserError("{} is not supported".format(item_type))
 
 
-def generate_simple_primitive_data(data_type, pattern=None, maxx=100, minx=0):
+def generate_simple_primitive_data(data_type, pattern=None, maxx=None, minx=None):
     """
     Generate a single primitive data
     """
-    if maxx < minx:
-        maxx = minx + 100
     if isinstance(data_type, list):
         if "null" in data_type:
             data_type.remove("null")
@@ -78,14 +76,27 @@ def generate_simple_primitive_data(data_type, pattern=None, maxx=100, minx=0):
 
     if data_type == "string":
         return generate_string_data(pattern=pattern)
+
+    if data_type == "boolean":
+        return generate_boolean()
+
+    # format min and max values, we need them for int and float
+    minx = minx or 0
+    maxx = maxx or 100
+    assert isinstance(minx, (int, float)), "minx should be a number (got {})".format(
+        minx
+    )
+    assert isinstance(maxx, (int, float)), "maxx should be a number (got {})".format(
+        maxx
+    )
+    if maxx < minx:
+        maxx = minx + 100
+
     if data_type == "integer":
         return generate_number(is_int=True, maxx=maxx, minx=minx)
 
     if data_type == "float" or data_type == "number":
         return generate_number(maxx=maxx, minx=minx)
-
-    if data_type == "boolean":
-        return generate_boolean()
 
     raise UserError("{} is not supported".format(data_type))
 
