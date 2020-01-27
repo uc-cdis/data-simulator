@@ -61,7 +61,7 @@ def group_exlusive_links(exclusive_list, l_links):
 
 
 def generate_portion_links(nodes_by_node_name, n_name, start, portion, links):
-    data_nodes = nodes_by_node_name[n_name].values()
+    data_nodes = list(nodes_by_node_name[n_name].values())
     end = start + int(portion * len(data_nodes))
     link_names = [l.link.name for l in links]
     print('start: {} - end: {}'.format(start, end))
@@ -71,11 +71,11 @@ def generate_portion_links(nodes_by_node_name, n_name, start, portion, links):
         print('Link {}'.format(l.dst))
         js[l.dst] = 0
         nb_dst = len(nodes_by_node_name[l.dst])
-        for i in xrange(start, end):
+        for i in range(start, end):
             if (i % 1000 == 0):
                 print("   {} / {}".format(i, end))
             if l.link.name not in data_nodes[i]:
-                d_node_key = nodes_by_node_name[l.dst].keys()[js[l.dst]]
+                d_node_key = list(nodes_by_node_name[l.dst].keys())[js[l.dst]]
                 data_nodes[i][l.link.name] = {'submitter_id': d_node_key}
                 for k in nodes_by_node_name[l.dst][d_node_key].keys():
                     if k in link_names and k not in data_nodes[i]:
