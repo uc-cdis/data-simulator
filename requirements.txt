@@ -3,5 +3,5 @@ gen3dictionary==2.0.1
 setuptools==36.6.0
 requests>=2.18.0<3.0.0
 rstr==2.2.6
-gen3datamodel==2.0.2
+gen3datamodel==3.0.2
 openpyxl==2.6.4

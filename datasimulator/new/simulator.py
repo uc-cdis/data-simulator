@@ -1,11 +1,11 @@
 import json
 
 from os.path import join
-from subgroup_parser import create_subgroup_validators
+from datasimulator.new.subgroup_parser import create_subgroup_validators
 from datasimulator.generator import generate_string_data
-from links_simulator import generate_links
+from datasimulator.new.links_simulator import generate_links
 from datasimulator.dd_utils import get_properties
-from node_simulator import construct_simple_property_schema, _simulate_data_from_simple_schema
+from datasimulator.new.node_simulator import construct_simple_property_schema, _simulate_data_from_simple_schema
 from cdislogging import get_logger
 
 logger = get_logger("DataSimulator")
@@ -38,7 +38,7 @@ def simulate_tree(model, program, project, graph, outpath):
     print(graph.dictionary.schema.keys())
     for n in graph.nodes:
         simulate_nodes_properties(model, graph.dictionary, n)
-        l_n = nodes_by_node_name[n.name].values()
+        l_n = list(nodes_by_node_name[n.name].values())
         with open(join(outpath, '{}.json'.format(n.name)), 'w') as outfile:
             json.dump(l_n, outfile, indent=4, sort_keys=True)
 
@@ -46,7 +46,7 @@ def simulate_tree(model, program, project, graph, outpath):
 def simulate_relations(model, dictionary, graph_node):
     required_validator, existing_list, exclusive_list = create_subgroup_validators(dictionary, graph_node.name)
     data_nodes = {}
-    for i in xrange(0, graph_node.number):
+    for i in range(0, graph_node.number):
         key = random_submitter_id(graph_node.name)
         if graph_node.name == 'project' or graph_node.name == 'node_project':
             data_nodes[key] = {'code': key}
