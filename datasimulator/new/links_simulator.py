@@ -76,7 +76,10 @@ def generate_portion_links(nodes_by_node_name, n_name, start, portion, links):
                 print("   {} / {}".format(i, end))
             if l.link.name not in data_nodes[i]:
                 d_node_key = list(nodes_by_node_name[l.dst].keys())[js[l.dst]]
-                data_nodes[i][l.link.name] = {'submitter_id': d_node_key}
+                if l.link.name != "projects":
+                    data_nodes[i][l.link.name] = {'submitter_id': d_node_key}
+                else:
+                    data_nodes[i][l.link.name] = {'code': d_node_key}
                 for k in nodes_by_node_name[l.dst][d_node_key].keys():
                     if k in link_names and k not in data_nodes[i]:
                         data_nodes[i][k] = copy.copy(nodes_by_node_name[l.dst][d_node_key][k])
