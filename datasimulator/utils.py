@@ -8,7 +8,7 @@ from .errors import UserError
 
 def is_mixed_type(arr):
     if arr:
-        return any(not isinstance(e, (type(arr[0],type(None)))) for e in arr)
+        return any(not isinstance(e, type(arr[0])) or e != None for e in arr)
     return False
 
 
