@@ -8,7 +8,7 @@
     "exposure": 1409,
     "follow_up": 1409,
     "imaging_exam": 1534,
-    "imaging_file": 45591,
+    "imaging_file": 15591,
     "imaging_study": 1536,
     "read_group": 830,
     "sample": 3310,
@@ -17,7 +17,7 @@
     "summary_drug_use": 2101,
     "summary_mutation_panel": 3556,
     "summary_socio_demographic": 1409,
-    "tb_result": 23093,
+    "tb_result": 8093,
     "treatment": 2101,
     "links": [
         "aliquot->sample",

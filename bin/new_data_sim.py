@@ -40,7 +40,7 @@ def parse_arguments():
 
     return parser.parse_args()
 
-
+# python new_data_sim.py simulate --url https://s3.amazonaws.com/dictionary-artifacts/ndhdictionary/3.5.4/schema.json --file generator_configuration.json --path sample_test_data --program jnkns --project jenkins
 def simulate_data(url, program, project, file_path, outpath):
     try:
         d, md = init_dictionary(url)
