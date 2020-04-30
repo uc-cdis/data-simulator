@@ -10,7 +10,6 @@ setup(
         "setuptools==36.6.0",
         "rstr==2.2.6",
         "dictionaryutils~=3.0.2",
-        "gen3dictionary~=2.0.1",
     ],
     dependency_links=[
         "git+https://github.com/uc-cdis/cdislogging.git@1.0.0#egg=cdislogging",
