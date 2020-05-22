@@ -9,12 +9,14 @@ setup(
         "requests>=2.18.0<3.0.0",
         "setuptools==36.6.0",
         "rstr==2.2.6",
-        "dictionaryutils", # "dictionaryutils~=3.0.2",
+        # "dictionaryutils~=3.0.2",
+        "dictionaryutils",
         "gen3dictionary~=2.0.1",
     ],
     dependency_links=[
         "git+https://github.com/uc-cdis/cdislogging.git@1.0.0#egg=cdislogging",
-        "git+https://github.com/uc-cdis/dictionaryutils.git@feat/format_upgrade#egg=dictionaryutils", # for testing purpose
+        # for testing purpose
+        "git+https://github.com/uc-cdis/dictionaryutils.git@feat/format_upgrade#egg=dictionaryutils",
     ],
     scripts=["bin/data-simulator"],
 )
