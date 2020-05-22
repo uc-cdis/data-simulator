@@ -1,4 +1,6 @@
-dictionaryutils==3.0.2
+# for testing purpose
+#dictionaryutils==3.0.2
+-e git+ssh://git@github.com/uc-cdis/dictionaryutils.git@feat/format_upgrade#egg=dictionaryutils
 gen3dictionary==2.0.1
 setuptools==36.6.0
 requests>=2.18.0<3.0.0
