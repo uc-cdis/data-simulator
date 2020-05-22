@@ -7,8 +7,9 @@ namespace: http://gdc.nci.nih.gov
 category: biospecimen
 program: '*'
 project: '*'
-description: >
-  A digital image, microscopic or otherwise, of any sample, portion, or sub-part thereof. (GDC)
+description: >-
+  A digital image, microscopic or otherwise, of any sample, portion, or sub-part thereof.
+  (GDC)
 additionalProperties: false
 submittable: true
 validators: null
@@ -36,102 +37,148 @@ uniqueKeys:
   - [id]
   - [project_id, submitter_id]
 
-# slide properties
 properties:
+
   type:
     type: string
+
   id:
-    $ref: "_definitions.yaml#/UUID"
+    $ref:
+      - "_definitions.yaml#/uuid"
     systemAlias: node_id
+
   state:
-    $ref: "_definitions.yaml#/state"
+    $ref:
+      - "_definitions.yaml#/state"
+
   submitter_id:
-    type:
-      - string
-      - "null"
+    oneOf:
+      - type: string
+      - type: "null"
+
   apoptotic_concentration:
-    description: "The concentration, in cells/mL, of apoptotic cells in the slide blood."
+    description: >-
+      The concentration, in cells/mL, of apoptotic cells in the slide blood.
     type: number
+
   ctc_concentration:
-    description: "The concentration, in cells/mL, of traditional CTC cells (intact and enlarged cell and nucleus, cytokeratin positive, and CD45 negative) in the slide blood."
+    description: >-
+      The concentration, in cells/mL, of traditional CTC cells (intact and enlarged
+      cell and nucleus, cytokeratin positive, and CD45 negative) in the slide blood.
     type: number
+
   ctc_low_concentration:
-    description: "The concentration, in cells/mL, of CTC-low cells (those with low cytokeratin levels compared to traditional CTCs) in the slide blood."
+    description: >-
+      The concentration, in cells/mL, of CTC-low cells (those with low cytokeratin
+      levels compared to traditional CTCs) in the slide blood.
     type: number
+
   ctc_small_concentration:
-    description: "The concentration, in cells/mL, of CTC-small cells (those with a small nuclear and cellular size relative to traditional CTCs) in the slide blood."
+    description: >-
+      The concentration, in cells/mL, of CTC-small cells (those with a small nuclear
+      and cellular size relative to traditional CTCs) in the slide blood.
     type: number
+
   section_location:
-    term:
-      $ref: "_terms.yaml#/section_location"
+    $ref:
+      - "_terms.yaml#/section_location/common"
     type: string
+
   methanol_added:
-    description: "True/False indicator for if methanol was used in the slide preparation process."
+    description: >-
+      True/False indicator for if methanol was used in the slide preparation process.
     type: boolean
+
   number_proliferating_cells:
-    term:
-      $ref: "_terms.yaml#/number_proliferating_cells"
+    $ref:
+      - "_terms.yaml#/number_proliferating_cells/common"
     type: integer
+
   number_nucleated_cells:
-    description: "The total number of nucleated cells identified on the slide."
+    description: >-
+      The total number of nucleated cells identified on the slide.
     type: integer
+
   percent_tumor_cells:
-    term:
-      $ref: "_terms.yaml#/percent_tumor_cells"
+    $ref:
+      - "_terms.yaml#/percent_tumor_cells/common"
     type: number
+
   percent_tumor_nuclei:
-    term:
-      $ref: "_terms.yaml#/percent_tumor_nuclei"
+    $ref:
+      - "_terms.yaml#/percent_tumor_nuclei/common"
     type: number
+
   percent_normal_cells:
-    term:
-      $ref: "_terms.yaml#/percent_normal_cells"
+    $ref:
+      - "_terms.yaml#/percent_normal_cells/common"
     type: number
+
   percent_necrosis:
-    term:
-      $ref: "_terms.yaml#/percent_necrosis"
+    $ref:
+      - "_terms.yaml#/percent_necrosis/common"
     type: number
+
   percent_stromal_cells:
-    term:
-      $ref: "_terms.yaml#/percent_stromal_cells"
+    $ref:
+      - "_terms.yaml#/percent_stromal_cells/common"
     type: number
+
   percent_inflam_infiltration:
-    term:
-      $ref: "_terms.yaml#/percent_inflam_infiltration"
+    $ref:
+      - "_terms.yaml#/percent_inflam_infiltration/common"
     type: number
+
   percent_lymphocyte_infiltration:
-    term:
-      $ref: "_terms.yaml#/percent_lymphocyte_infiltration"
+    $ref:
+      - "_terms.yaml#/percent_lymphocyte_infiltration/common"
     type: number
+
   percent_monocyte_infiltration:
-    term:
-      $ref: "_terms.yaml#/percent_monocyte_infiltration"
+    $ref:
+      - "_terms.yaml#/percent_monocyte_infiltration/common"
     type: number
+
   percent_granulocyte_infiltration:
-    term:
-      $ref: "_terms.yaml#/percent_granulocyte_infiltration"
+    $ref:
+      - "_terms.yaml#/percent_granulocyte_infiltration/common"
     type: number
+
   percent_neutrophil_infiltration:
-    term:
-      $ref: "_terms.yaml#/percent_neutrophil_infiltration"
+    $ref:
+      - "_terms.yaml#/percent_neutrophil_infiltration/common"
     type: number
+
   percent_eosinophil_infiltration:
-    term:
-      $ref: "_terms.yaml#/percent_eosinophil_infiltration"
+    $ref:
+      - "_terms.yaml#/percent_eosinophil_infiltration/common"
     type: number
+
   run_datetime:
-    $ref: "_definitions.yaml#/datetime"
+    $ref:
+      - "_definitions.yaml#/datetime"
+
   run_name:
-    description: "Name, number, or other identifier given to this slide's run."
+    description: >-
+      Name, number, or other identifier given to this slide's run.
     type: string
+
   slide_identifier:
-    description: "Unique identifier given to the this slide."
+    description: >-
+      Unique identifier given to the this slide.
     type: string
+
+  project_id:
+    $ref:
+      - "_definitions.yaml#/project_id"
+
+  created_datetime:
+    $ref:
+      - "_definitions.yaml#/datetime"
+
+  updated_datetime:
+    $ref:
+      - "_definitions.yaml#/datetime"
+
   samples:
     $ref: "_definitions.yaml#/to_many"
-  project_id:
-    $ref: "_definitions.yaml#/project_id"
-  created_datetime:
-    $ref: "_definitions.yaml#/datetime"
-  updated_datetime:
-    $ref: "_definitions.yaml#/datetime"

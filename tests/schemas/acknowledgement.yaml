@@ -1,13 +1,14 @@
 $schema: "http://json-schema.org/draft-04/schema#"
 
 id: "acknowledgement"
-title: Acknowledgement 
+title: Acknowledgement
 type: object
 namespace: http://gdc.nci.nih.gov
 category: administrative
 program: '*'
 project: '*'
-description: "Acknowledgement of an individual involved in a project."
+description: >-
+  Acknowledgement of an individual involved in a project.
 additionalProperties: false
 submittable: true
 validators: null
@@ -21,7 +22,7 @@ systemProperties:
 
 links:
   - name: projects
-    backref: acknowledgements 
+    backref: acknowledgements
     label: contribute_to
     target_type: project
     multiplicity: many_to_many
@@ -32,29 +33,44 @@ required:
   - projects
 
 uniqueKeys:
-  - [ id ]
-  - [ project_id, submitter_id ]
+  - [id]
+  - [project_id, submitter_id]
 
 properties:
+
   type:
-    enum: [ "acknowledgement" ]
+    enum:
+      - acknowledgement
+
   id:
-    $ref: "_definitions.yaml#/UUID"
+    $ref:
+      - "_definitions.yaml#/uuid"
     systemAlias: node_id
+
   state:
-    $ref: "_definitions.yaml#/state"
+    $ref:
+      - "_definitions.yaml#/state"
+
   submitter_id:
-    type:
-      - string
-      - "null"
+    oneOf:
+      - type: string
+      - type: "null"
+
   acknowledgee:
-    description: "The indvidiual or group being acknowledged by the project."
+    description: >-
+      The indvidiual or group being acknowledged by the project.
     type: string
-  projects:
-    $ref: "_definitions.yaml#/to_many"
+
   project_id:
     type: string
+
   created_datetime:
-    $ref: "_definitions.yaml#/datetime"
+    $ref:
+      - "_definitions.yaml#/datetime"
+
   updated_datetime:
-    $ref: "_definitions.yaml#/datetime"
+    $ref:
+      - "_definitions.yaml#/datetime"
+
+  projects:
+    $ref: "_definitions.yaml#/to_many_project"

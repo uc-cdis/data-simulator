@@ -3,15 +3,16 @@ $schema: "http://json-schema.org/draft-04/schema#"
 id: "aliquot"
 title: Aliquot
 type: object
+namespace: null
 category: biospecimen
 program: '*'
 project: '*'
-description: >
-  Pertaining to a portion of the whole; any one of two or more samples of something, of the same
-  volume or weight.
+description: >-
+  Pertaining to a portion of the whole; any one of two or more samples of something,
+  of the same volume or weight.
 additionalProperties: false
 submittable: true
-validators: []
+validators: '[]'
 
 systemProperties:
   - id
@@ -19,6 +20,14 @@ systemProperties:
   - state
   - created_datetime
   - updated_datetime
+
+links:
+  - name: samples
+    backref: aliquots
+    label: derived_from
+    target_type: sample
+    multiplicity: many_to_many
+    required: true
 
 required:
   - submitter_id
@@ -28,51 +37,50 @@ uniqueKeys:
   - [id]
   - [project_id, submitter_id]
 
-links:
-  - name: samples
-    backref: aliquots
-    label: derived_from
-    multiplicity: many_to_many
-    target_type: sample
-    required: true
-
-constraints: null
-
-# Aliquot properties
 properties:
+
   type:
     type: string
+
   id:
-    $ref: "_definitions.yaml#/UUID"
+    $ref:
+      - "_definitions.yaml#/uuid"
     systemAlias: node_id
+
   state:
-    $ref: "_definitions.yaml#/state"
+    $ref:
+      - "_definitions.yaml#/state"
+
   submitter_id:
-    type:
-      - string
-      - "null"
-    description: >
-      The legacy barcode used before prior to the use
-      UUIDs. For TCGA this is bcraliquotbarcode.
+    description: >-
+      The legacy barcode used before prior to the use UUIDs. For TCGA this is bcraliquotbarcode.
+    oneOf:
+      - type: string
+      - type: "null"
+
   aliquot_quantity:
-    term:
-      $ref: "_terms.yaml#/aliquot_quantity"
+    $ref:
+      - "_terms.yaml#/aliquot_quantity/common"
     type: number
+
   aliquot_volume:
-    term:
-      $ref: "_terms.yaml#/aliquot_volume"
+    $ref:
+      - "_terms.yaml#/aliquot_volume/common"
     type: number
+
   amount:
-    term:
-      $ref: "_terms.yaml#/amount"
+    $ref:
+      - "_terms.yaml#/amount/common"
     type: number
+
   analyte_type:
-    term:
-      $ref: "_terms.yaml#/analyte_type"
+    $ref:
+      - "_terms.yaml#/analyte_type/common"
     type: string
+
   analyte_type_id:
-    term:
-      $ref: "_terms.yaml#/analyte_type_id"
+    $ref:
+      - "_terms.yaml#/analyte_type_id/common"
     enum:
       - D
       - E
@@ -84,19 +92,28 @@ properties:
       - W
       - X
       - Y
+
   concentration:
-    term:
-      $ref: "_terms.yaml#/concentration"
+    $ref:
+      - "_terms.yaml#/concentration/common"
     type: number
+
   project_id:
-    $ref: "_definitions.yaml#/project_id"
+    $ref:
+      - "_definitions.yaml#/project_id"
+
   source_center:
-    term:
-      $ref: "_terms.yaml#/source_center"
+    $ref:
+      - "_terms.yaml#/source_center/common"
     type: string
-  samples:
-    $ref: "_definitions.yaml#/to_one"
+
   created_datetime:
-    $ref: "_definitions.yaml#/datetime"
+    $ref:
+      - "_definitions.yaml#/datetime"
+
   updated_datetime:
-    $ref: "_definitions.yaml#/datetime"
+    $ref:
+      - "_definitions.yaml#/datetime"
+
+  samples:
+    $ref: "_definitions.yaml#/to_many"

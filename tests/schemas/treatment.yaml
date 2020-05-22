@@ -7,9 +7,9 @@ namespace: http://gdc.nci.nih.gov
 category: clinical
 program: '*'
 project: '*'
-description: >
-  Record of the administration and intention of therapeutic agents provided to a patient to alter
-  the course of a pathologic process.
+description: >-
+  Record of the administration and intention of therapeutic agents provided to a patient
+  to alter the course of a pathologic process.
 additionalProperties: false
 submittable: true
 validators: null
@@ -24,57 +24,58 @@ systemProperties:
 links:
   - name: diagnoses
     backref: treatments
-    label: describes #need better term here
+    label: describes
     target_type: diagnosis
     multiplicity: many_to_one
     required: true
 
-
-
 uniqueKeys:
-  #unclear if want submitter ID for clinical
   - [id]
   - [project_id, submitter_id]
 
 properties:
+
   type:
-    enum: [ "treatment" ]
+    enum:
+      - treatment
 
   id:
-    $ref: "_definitions.yaml#/UUID"
+    $ref:
+      - "_definitions.yaml#/uuid"
     systemAlias: node_id
 
   state:
-    $ref: "_definitions.yaml#/state"
+    $ref:
+      - "_definitions.yaml#/state"
 
   submitter_id:
-    type:
-      - string
-      - "null"
+    oneOf:
+      - type: string
+      - type: "null"
 
   days_to_treatment:
-    term:
-      $ref: "_terms.yaml#/days_to_treatment"
+    $ref:
+      - "_terms.yaml#/days_to_treatment/common"
     type: number
 
   days_to_treatment_end:
-    term:
-      $ref: "_terms.yaml#/days_to_treatment_end"
+    $ref:
+      - "_terms.yaml#/days_to_treatment_end/common"
     type: number
 
   days_to_treatment_start:
-    term:
-      $ref: "_terms.yaml#/days_to_treatment_start"
+    $ref:
+      - "_terms.yaml#/days_to_treatment_start/common"
     type: number
 
   therapeutic_agents:
-    term:
-      $ref: "_terms.yaml#/therapeutic_agents"
+    $ref:
+      - "_terms.yaml#/therapeutic_agents/common"
     type: string
 
   treatment_anatomic_site:
-    term:
-      $ref: "_terms.yaml#/treatment_anatomic_site"
+    $ref:
+      - "_terms.yaml#/treatment_anatomic_site/common"
     enum:
       - Abdomen, total
       - Arm
@@ -155,13 +156,13 @@ properties:
       - Not Allowed To Collect
 
   treatment_intent_type:
-    term:
-      $ref: "_terms.yaml#/treatment_intent_type"
+    $ref:
+      - "_terms.yaml#/treatment_intent_type/common"
     type: string
 
   treatment_or_therapy:
-    term:
-      $ref: "_terms.yaml#/treatment_or_therapy"
+    $ref:
+      - "_terms.yaml#/treatment_or_therapy/common"
     enum:
       - "yes"
       - "no"
@@ -169,8 +170,8 @@ properties:
       - not reported
 
   treatment_outcome:
-    term:
-      $ref: "_terms.yaml#/treatment_outcome"
+    $ref:
+      - "_terms.yaml#/treatment_outcome/common"
     enum:
       - Complete Response
       - Partial Response
@@ -179,8 +180,8 @@ properties:
       - Unknown
 
   treatment_type:
-    term:
-      $ref: "_terms.yaml#/treatment_type"
+    $ref:
+      - "_terms.yaml#/treatment_type/common"
     enum:
       - Ablation
       - Chemotherapy
@@ -200,14 +201,17 @@ properties:
       - Not Reported
       - Not Allowed To Collect
 
+  project_id:
+    $ref:
+      - "_definitions.yaml#/project_id"
+
+  created_datetime:
+    $ref:
+      - "_definitions.yaml#/datetime"
+
+  updated_datetime:
+    $ref:
+      - "_definitions.yaml#/datetime"
+
   diagnoses:
     $ref: "_definitions.yaml#/to_one"
-
-  project_id:
-    $ref: "_definitions.yaml#/project_id"
-
-  # ======== Timestamps ========
-  created_datetime:
-    $ref: "_definitions.yaml#/datetime"
-  updated_datetime:
-    $ref: "_definitions.yaml#/datetime"

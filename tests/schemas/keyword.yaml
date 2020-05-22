@@ -7,7 +7,8 @@ namespace: http://gdc.nci.nih.gov
 category: administrative
 program: '*'
 project: '*'
-description: "A keyword for a project."
+description: >-
+  A keyword for a project.
 additionalProperties: false
 submittable: true
 validators: null
@@ -32,29 +33,44 @@ required:
   - projects
 
 uniqueKeys:
-  - [ id ]
-  - [ project_id, submitter_id ]
+  - [id]
+  - [project_id, submitter_id]
 
 properties:
+
   type:
-    enum: [ "keyword" ]
+    enum:
+      - keyword
+
   id:
-    $ref: "_definitions.yaml#/UUID"
+    $ref:
+      - "_definitions.yaml#/uuid"
     systemAlias: node_id
+
   state:
-    $ref: "_definitions.yaml#/state"
+    $ref:
+      - "_definitions.yaml#/state"
+
   submitter_id:
-    type:
-      - string
-      - "null"
+    oneOf:
+      - type: string
+      - type: "null"
+
   keyword_name:
-    description: "The name of the keyword."
+    description: >-
+      The name of the keyword.
     type: string
-  projects:
-    $ref: "_definitions.yaml#/to_many"
+
   project_id:
     type: string
+
   created_datetime:
-    $ref: "_definitions.yaml#/datetime"
+    $ref:
+      - "_definitions.yaml#/datetime"
+
   updated_datetime:
-    $ref: "_definitions.yaml#/datetime"
+    $ref:
+      - "_definitions.yaml#/datetime"
+
+  projects:
+    $ref: "_definitions.yaml#/to_many_project"
