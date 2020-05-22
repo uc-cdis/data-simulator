@@ -7,8 +7,9 @@ namespace: http://gdc.nci.nih.gov
 category: notation
 program: '*'
 project: '*'
-description: >
-  Information pertaining to processed results obtained from slides; often in the form of counts.
+description: >-
+  Information pertaining to processed results obtained from slides; often in the form
+  of counts.
 additionalProperties: false
 submittable: true
 validators: null
@@ -33,67 +34,110 @@ required:
   - slides
 
 uniqueKeys:
-  - [ id ]
-  - [ project_id, submitter_id ]
+  - [id]
+  - [project_id, submitter_id]
 
 properties:
+
   type:
-    enum: [ "slide_count" ]
+    enum:
+      - slide_count
+
   id:
-    $ref: "_definitions.yaml#/UUID"
+    $ref:
+      - "_definitions.yaml#/uuid"
     systemAlias: node_id
+
   state:
-    $ref: "_definitions.yaml#/state"
+    $ref:
+      - "_definitions.yaml#/state"
+
   submitter_id:
-    type:
-      - string
-      - "null"
+    oneOf:
+      - type: string
+      - type: "null"
+
   cell_type:
-    description: "The type of cell being counted or measured."
+    description: >-
+      The type of cell being counted or measured.
     type: string
+
   cell_identifier:
-    description: "An alternative identifier for a given cell type."
+    description: >-
+      An alternative identifier for a given cell type.
     type: string
+
   cell_count:
-    description: "Raw count of a particular cell type."
+    description: >-
+      Raw count of a particular cell type.
     type: integer
+
   ck_signal:
-    description: "Numeric quantification of the CK signal."
+    description: >-
+      Numeric quantification of the CK signal.
     type: number
+
   biomarker_signal:
-    description: "Numeric quantification of the biomarker signal."
+    description: >-
+      Numeric quantification of the biomarker signal.
     type: number
+
   er_localization:
-    description: "Cellular localization of the endoplasmic reticulum as determined by staining."
+    description: >-
+      Cellular localization of the endoplasmic reticulum as determined by staining.
     enum:
       - Nuclear
       - Cytoplasmic
       - Both
       - None
-      - Not Determined 
+      - Not Determined
+
   frame_identifier:
-    description: "Name, number, or other identifier given to the frame of the slide from which this image was taken."
+    description: >-
+      Name, number, or other identifier given to the frame of the slide from which
+      this image was taken.
     type: string
+
   relative_nuclear_size:
-    description: "The ratio of the single cell's nucleus size to the average of the surrounding cells."
+    description: >-
+      The ratio of the single cell's nucleus size to the average of the surrounding
+      cells.
     type: number
+
   relative_nuclear_intensity:
-    description: "The ratio of the single cell's nuclear staining intensity to the average of the surrounding cells."
+    description: >-
+      The ratio of the single cell's nuclear staining intensity to the average of
+      the surrounding cells.
     type: number
+
   relative_cytokeratin_intensity:
-    description: "The ratio of the single cell's cytokeratin staining intensity to the average of the surrounding cells."
+    description: >-
+      The ratio of the single cell's cytokeratin staining intensity to the average
+      of the surrounding cells.
     type: number
+
   relative_er_intensity:
-    description: "The ratio of the single cell's endoplasmic reticulum staining intensity to the average of the surrounding cells."
+    description: >-
+      The ratio of the single cell's endoplasmic reticulum staining intensity to the
+      average of the surrounding cells.
     type: number
+
   run_name:
-    description: "The name or identifier given to the run that was used to generate this slide count."
+    description: >-
+      The name or identifier given to the run that was used to generate this slide
+      count.
     type: string
-  slides:
-    $ref: "_definitions.yaml#/to_many"
+
   project_id:
     type: string
+
   created_datetime:
-    $ref: "_definitions.yaml#/datetime"
+    $ref:
+      - "_definitions.yaml#/datetime"
+
   updated_datetime:
-    $ref: "_definitions.yaml#/datetime"
+    $ref:
+      - "_definitions.yaml#/datetime"
+
+  slides:
+    $ref: "_definitions.yaml#/to_many"

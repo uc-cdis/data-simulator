@@ -7,7 +7,7 @@ namespace: http://gdc.nci.nih.gov
 category: clinical
 program: '*'
 project: '*'
-description: >
+description: >-
   Record of a patient's background regarding cancer events of blood relatives.
 additionalProperties: false
 submittable: true
@@ -28,31 +28,33 @@ links:
     multiplicity: many_to_one
     required: true
 
-
 uniqueKeys:
-  #unclear if want submitter ID for clinical
   - [id]
   - [project_id, submitter_id]
 
 properties:
+
   type:
-    enum: [ "family_history" ]
+    enum:
+      - family_history
 
   id:
-    $ref: "_definitions.yaml#/UUID"
+    $ref:
+      - "_definitions.yaml#/uuid"
     systemAlias: node_id
 
   state:
-    $ref: "_definitions.yaml#/state"
+    $ref:
+      - "_definitions.yaml#/state"
 
   submitter_id:
-    type:
-      - string
-      - "null"
+    oneOf:
+      - type: string
+      - type: "null"
 
   relative_with_cancer_history:
-    term:
-      $ref: "_terms.yaml#/relative_with_cancer_history"
+    $ref:
+      - "_terms.yaml#/relative_with_cancer_history/common"
     enum:
       - "yes"
       - "no"
@@ -60,13 +62,13 @@ properties:
       - not reported
 
   relationship_type:
-    term:
-      $ref: "_terms.yaml#/relationship_type"
+    $ref:
+      - "_terms.yaml#/relationship_type/common"
     type: string
 
   relationship_gender:
-    term:
-      $ref: "_terms.yaml#/gender"
+    $ref:
+      - "_terms.yaml#/gender/common"
     enum:
       - female
       - male
@@ -75,20 +77,26 @@ properties:
       - not reported
 
   relationship_age_at_diagnosis:
-    term:
-      $ref: "_terms.yaml#/relationship_age_at_diagnosis"
+    $ref:
+      - "_terms.yaml#/relationship_age_at_diagnosis/common"
     type: number
 
   relationship_primary_diagnosis:
-    term:
-      $ref: "_terms.yaml#/primary_diagnosis"
+    $ref:
+      - "_terms.yaml#/primary_diagnosis/common"
     type: string
+
+  project_id:
+    $ref:
+      - "_definitions.yaml#/project_id"
+
+  created_datetime:
+    $ref:
+      - "_definitions.yaml#/datetime"
+
+  updated_datetime:
+    $ref:
+      - "_definitions.yaml#/datetime"
 
   cases:
     $ref: "_definitions.yaml#/to_one"
-  project_id:
-    $ref: "_definitions.yaml#/project_id"
-  created_datetime:
-    $ref: "_definitions.yaml#/datetime"
-  updated_datetime:
-    $ref: "_definitions.yaml#/datetime"

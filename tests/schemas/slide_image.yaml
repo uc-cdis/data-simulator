@@ -7,7 +7,7 @@ namespace: http://gdc.nci.nih.gov
 category: data_file
 program: '*'
 project: '*'
-description: >
+description: >-
   Data file containing image of a slide.
 additionalProperties: false
 submittable: true
@@ -47,60 +47,87 @@ required:
   - slides
 
 uniqueKeys:
-  - [ id ]
-  - [ project_id, submitter_id ]
+  - [id]
+  - [project_id, submitter_id]
 
 properties:
-  $ref: "_definitions.yaml#/data_file_properties"
+
+  $ref:
+    - "_definitions.yaml#/data_file_properties"
+
   type:
-    enum: [ "slide_image" ]
+    enum:
+      - slide_image
+
   data_category:
-    term:
-      $ref: "_terms.yaml#/data_category"
+    $ref:
+      - "_terms.yaml#/data_category/common"
     enum:
       - Biospecimen
       - Slide Image
       - Mass Cytometry
+
   data_type:
-    term:
-      $ref: "_terms.yaml#/data_type"
+    $ref:
+      - "_terms.yaml#/data_type/common"
     enum:
       - image
       - Single Cell Image
       - Raw IMC Data
       - Single Channel IMC Image
       - Antibody Panel Added
+
   data_format:
-    term:
-      $ref: "_terms.yaml#/data_format"
-    type: string 
+    $ref:
+      - "_terms.yaml#/data_format/common"
+    type: string
+
   experimental_strategy:
-    description: "Classification of the slide type with respect to its experimental use."
+    description: >-
+      Classification of the slide type with respect to its experimental use.
     enum:
       - Diagnostic Slide
       - Tissue Slide
+
   cell_type:
-    description: "The type of cell being imaged or otherwised analysed."
+    description: >-
+      The type of cell being imaged or otherwised analysed.
     type: string
+
   cell_identifier:
-    description: "An alternative identifier for a given cell type."
+    description: >-
+      An alternative identifier for a given cell type.
     type: string
+
   cell_count:
-    description: "Count of the cell type being imaged or otherwise analysed."
+    description: >-
+      Count of the cell type being imaged or otherwise analysed.
     type: integer
+
   frame_identifier:
-    description: "Name, number, or other identifier given to the frame of the slide from which this image was taken."
+    description: >-
+      Name, number, or other identifier given to the frame of the slide from which
+      this image was taken.
     type: string
+
   panel_used:
-    description: "Name or other identifier given to the panel used during an IMC run."
+    description: >-
+      Name or other identifier given to the panel used during an IMC run.
     type: string
+
   protocol_used:
-    description: "Name or other identifier given to the protocol used during an IMC run."
+    description: >-
+      Name or other identifier given to the protocol used during an IMC run.
     type: string
+
   run_name:
-    description: "Name, number, or other identifier given to the run that generated this slide image."
+    description: >-
+      Name, number, or other identifier given to the run that generated this slide
+      image.
     type: string
+
   slides:
     $ref: "_definitions.yaml#/to_one"
+
   core_metadata_collections:
     $ref: "_definitions.yaml#/to_many"

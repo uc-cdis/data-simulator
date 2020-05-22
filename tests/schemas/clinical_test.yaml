@@ -1,16 +1,16 @@
 $schema: "http://json-schema.org/draft-04/schema#"
 
 id: "clinical_test"
-title: Clinical Test 
+title: Clinical Test
 type: object
 namespace: http://gdc.nci.nih.gov
-category: clinical 
-project: '*'
+category: clinical
 program: '*'
-description: > 
-  Metadata concerning any clinical tests used in relation to a case diagnosis. 
+project: '*'
+description: >-
+  Metadata concerning any clinical tests used in relation to a case diagnosis.
 additionalProperties: false
-submittable: true 
+submittable: true
 validators: null
 
 systemProperties:
@@ -21,9 +21,9 @@ systemProperties:
   - state
 
 links:
-  - name: cases 
+  - name: cases
     backref: clinical_tests
-    label: performed_for 
+    label: performed_for
     target_type: case
     multiplicity: many_to_one
     required: true
@@ -45,29 +45,33 @@ uniqueKeys:
   - [project_id, submitter_id]
 
 properties:
+
   type:
-    enum: [ "clinical_test" ]
+    enum:
+      - clinical_test
 
   id:
-    $ref: "_definitions.yaml#/UUID"
+    $ref:
+      - "_definitions.yaml#/uuid"
     systemAlias: node_id
 
   state:
-    $ref: "_definitions.yaml#/state"
+    $ref:
+      - "_definitions.yaml#/state"
 
   submitter_id:
-    type:
-      - string
-      - "null"
+    oneOf:
+      - type: string
+      - type: "null"
 
   biomarker_name:
-    term:
-      $ref: "_terms.yaml#/biomarker_name"
+    $ref:
+      - "_terms.yaml#/biomarker_name/common"
     type: string
 
   biomarker_result:
-    term:
-      $ref: "_terms.yaml#/biomarker_result"
+    $ref:
+      - "_terms.yaml#/biomarker_result/common"
     enum:
       - Amplification
       - Gain
@@ -80,8 +84,8 @@ properties:
       - Pending
 
   biomarker_test_method:
-    term:
-      $ref: "_terms.yaml#/biomarker_test_method"
+    $ref:
+      - "_terms.yaml#/biomarker_test_method/common"
     enum:
       - Cytogenetics
       - FISH
@@ -97,18 +101,18 @@ properties:
       - Pending
 
   cea_level_preoperative:
-    term:
-      $ref: "_terms.yaml#/cea_level_preoperative"
+    $ref:
+      - "_terms.yaml#/cea_level_preoperative/common"
     type: number
 
   dlco_ref_predictive_percent:
-    term:
-      $ref: "_terms.yaml#/dlco_ref_predictive_percent"
+    $ref:
+      - "_terms.yaml#/dlco_ref_predictive_percent/common"
     type: number
 
   estrogen_receptor_percent_positive_ihc:
-    term:
-      $ref: "_terms.yaml#/estrogen_receptor_percent_positive_ihc"
+    $ref:
+      - "_terms.yaml#/estrogen_receptor_percent_positive_ihc/common"
     enum:
       - <1%
       - 1-10%
@@ -123,8 +127,8 @@ properties:
       - 91-100%
 
   estrogen_receptor_result_ihc:
-    term:
-      $ref: "_terms.yaml#/estrogen_receptor_result_ihc"
+    $ref:
+      - "_terms.yaml#/estrogen_receptor_result_ihc/common"
     enum:
       - Negative
       - Not Performed
@@ -132,28 +136,28 @@ properties:
       - Unknown
 
   fev1_ref_post_bronch_percent:
-    term:
-      $ref: "_terms.yaml#/fev1_ref_post_bronch_percent"
+    $ref:
+      - "_terms.yaml#/fev1_ref_post_bronch_percent/common"
     type: number
 
   fev1_ref_pre_bronch_percent:
-    term:
-      $ref: "_terms.yaml#/fev1_ref_pre_bronch_percent"
+    $ref:
+      - "_terms.yaml#/fev1_ref_pre_bronch_percent/common"
     type: number
 
   fev1_fvc_post_bronch_percent:
-    term:
-      $ref: "_terms.yaml#/fev1_fvc_post_bronch_percent"
+    $ref:
+      - "_terms.yaml#/fev1_fvc_post_bronch_percent/common"
     type: number
 
   fev1_fvc_pre_bronch_percent:
-    term:
-      $ref: "_terms.yaml#/fev1_fvc_pre_bronch_percent"
+    $ref:
+      - "_terms.yaml#/fev1_fvc_pre_bronch_percent/common"
     type: number
 
   her2_erbb2_percent_positive_ihc:
-    term:
-      $ref: "_terms.yaml#/her2_erbb2_percent_positive_ihc"
+    $ref:
+      - "_terms.yaml#/her2_erbb2_percent_positive_ihc/common"
     enum:
       - <1%
       - 1-10%
@@ -168,17 +172,17 @@ properties:
       - 91-100%
 
   her2_erbb2_result_fish:
-    term:
-      $ref: "_terms.yaml#/her2_erbb2_result_fish"
+    $ref:
+      - "_terms.yaml#/her2_erbb2_result_fish/common"
     enum:
       - Negative
-      - Not Performed 
+      - Not Performed
       - Positive
       - Unknown
 
   her2_erbb2_result_ihc:
-    term:
-      $ref: "_terms.yaml#/her2_erbb2_result_ihc"
+    $ref:
+      - "_terms.yaml#/her2_erbb2_result_ihc/common"
     enum:
       - Negative
       - Not Performed
@@ -186,26 +190,26 @@ properties:
       - Unknown
 
   ldh_level_at_diagnosis:
-    term:
-      $ref: "_terms.yaml#/ldh_level_at_diagnosis"
+    $ref:
+      - "_terms.yaml#/ldh_level_at_diagnosis/common"
     type: number
 
   ldh_normal_range_upper:
-    term:
-      $ref: "_terms.yaml#/ldh_normal_range_upper"
+    $ref:
+      - "_terms.yaml#/ldh_normal_range_upper/common"
     type: number
 
   microsatellite_instability_abnormal:
-    term:
-      $ref: "_terms.yaml#/microsatellite_instability_abnormal"
+    $ref:
+      - "_terms.yaml#/microsatellite_instability_abnormal/common"
     enum:
       - "Yes"
       - "No"
       - Unknown
 
   progesterone_receptor_percent_positive_ihc:
-    term:
-      $ref: "_terms.yaml#/progesterone_receptor_percent_positive_ihc"
+    $ref:
+      - "_terms.yaml#/progesterone_receptor_percent_positive_ihc/common"
     enum:
       - <1%
       - 1-10%
@@ -220,21 +224,28 @@ properties:
       - 91-100%
 
   progesterone_receptor_result_ihc:
-    term:
-      $ref: "_terms.yaml#/progesterone_receptor_result_ihc"
+    $ref:
+      - "_terms.yaml#/progesterone_receptor_result_ihc/common"
     enum:
       - Negative
       - Not Performed
       - Positive
       - Unknown
 
+  project_id:
+    $ref:
+      - "_definitions.yaml#/project_id"
+
+  created_datetime:
+    $ref:
+      - "_definitions.yaml#/datetime"
+
+  updated_datetime:
+    $ref:
+      - "_definitions.yaml#/datetime"
+
   cases:
     $ref: "_definitions.yaml#/to_one"
+
   diagnoses:
     $ref: "_definitions.yaml#/to_many"
-  project_id:
-    $ref: "_definitions.yaml#/project_id" 
-  created_datetime:
-    $ref: "_definitions.yaml#/datetime"
-  updated_datetime:
-    $ref: "_definitions.yaml#/datetime"

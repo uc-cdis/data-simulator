@@ -7,9 +7,9 @@ namespace: http://gdc.nci.nih.gov
 category: administrative
 program: '*'
 project: '*'
-description: >
-  The collection of all data related to a specific subject in the
-  context of a specific experiment. 
+description: >-
+  The collection of all data related to a specific subject in the context of a specific
+  experiment.
 additionalProperties: false
 submittable: true
 validators: null
@@ -22,7 +22,7 @@ systemProperties:
   - state
 
 links:
-  - name: experiments 
+  - name: experiments
     backref: cases
     label: member_of
     target_type: experiment
@@ -31,36 +31,52 @@ links:
 
 required:
   - submitter_id
-  - experiments 
+  - experiments
 
 uniqueKeys:
   - [id]
   - [project_id, submitter_id]
 
-# Case properties
 properties:
+
   type:
     type: string
+
   id:
-    $ref: "_definitions.yaml#/UUID"
+    $ref:
+      - "_definitions.yaml#/uuid"
     systemAlias: node_id
+
   state:
-    $ref: "_definitions.yaml#/state"
+    $ref:
+      - "_definitions.yaml#/state"
+
   submitter_id:
-    type:
-      - string
-      - "null"
+    oneOf:
+      - type: string
+      - type: "null"
+
   primary_site:
-    description: "Primary site for the case."
+    description: >-
+      Primary site for the case.
     type: string
+
   disease_type:
-    description: "Name of the disease for the case."
+    description: >-
+      Name of the disease for the case.
     type: string
-  experiments: 
-    $ref: "_definitions.yaml#/to_one"
+
   project_id:
-    $ref: "_definitions.yaml#/project_id"
+    $ref:
+      - "_definitions.yaml#/project_id"
+
   created_datetime:
-    $ref: "_definitions.yaml#/datetime"
+    $ref:
+      - "_definitions.yaml#/datetime"
+
   updated_datetime:
-    $ref: "_definitions.yaml#/datetime"
+    $ref:
+      - "_definitions.yaml#/datetime"
+
+  experiments:
+    $ref: "_definitions.yaml#/to_one"
