@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+
+[packages]
+dictionaryutils = "==3.0.2"
+gen3dictionary = "==2.0.1"
+requests = ">=2.18.0<3.0.0"
+rstr = "==2.2.6"
+gen3datamodel = "==3.0.2"
+openpyxl = "==2.6.4"
+
+[requires]
+python_version = "3.8"

@@ -48,13 +48,17 @@ class LinkGraph:
         links = numbers.get("links")
         nodes = {}
         for link in links:
-            names = link.split("->")
-            if names[1] not in nodes:
-                nodes[names[1]] = Node(names[1], int(numbers.get(names[1])))
-            if names[0] not in nodes:
-                nodes[names[0]] = Node(names[0], int(numbers.get(names[0])))
-            nodes[names[0]].add_parent(nodes[names[1]])
-            nodes[names[1]].add_child(nodes[names[0]])
+            try:
+                names = link.split("->")
+                if names[1] not in nodes:
+                    nodes[names[1]] = Node(names[1], int(numbers.get(names[1])))
+                if names[0] not in nodes:
+                    nodes[names[0]] = Node(names[0], int(numbers.get(names[0])))
+                nodes[names[0]].add_parent(nodes[names[1]])
+                nodes[names[1]].add_child(nodes[names[0]])
+            except Exception as ex:
+                print(names)
+                print(numbers)
         lst_nodes = sorted(self.leverage(nodes.values()), key=lambda k: k.level)
         return lst_nodes
 

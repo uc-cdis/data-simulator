@@ -2,7 +2,7 @@ import copy
 from datasimulator.dd_utils import get_parent_label
 
 
-class EdgeWithLevel():
+class EdgeWithLevel:
     def __init__(self, dst, l, level):
         self.dst = dst
         self.link = l
@@ -12,7 +12,7 @@ class EdgeWithLevel():
         self.__repr__()
 
     def __repr__(self):
-        return 'dst: {} - link: {} - level: {}'.format(self.dst, self.link, self.level)
+        return "dst: {} - link: {} - level: {}".format(self.dst, self.link, self.level)
 
     def __lt__(self, other):
         return self.level < other.level
@@ -34,7 +34,7 @@ def proportionate_amount(nodes_by_node_name, link_group_by_mask):
         numbers_by_group[k] = max_v
         total += max_v
     for k, v in numbers_by_group.items():
-        portions[k] = v/float(total)
+        portions[k] = v / float(total)
     return portions
 
 
@@ -52,11 +52,19 @@ def group_exlusive_links(exclusive_list, l_links):
     values = list(set(map(lambda x: x.exclusive_mask, exclusive_list)))
     print(l_links)
     print(values)
-    link_group_by_mask = {x: [y for y in l_links if y.link.exclusive_mask == x] for x in values}
+    link_group_by_mask = {
+        x: [y for y in l_links if y.link.exclusive_mask == x] for x in values
+    }
     link_group_by_mask = {x: y for (x, y) in link_group_by_mask.items() if len(y) > 0}
     if len(link_group_by_mask) > 1 and 0 in link_group_by_mask:
-        link_group_by_mask = {x: y.extend(link_group_by_mask[0]) for (x, y) in link_group_by_mask.items() if x != 0}
-    link_group_by_mask = {x: sorted(y, reverse=True) for (x, y) in link_group_by_mask.items()}
+        link_group_by_mask = {
+            x: y.extend(link_group_by_mask[0])
+            for (x, y) in link_group_by_mask.items()
+            if x != 0
+        }
+    link_group_by_mask = {
+        x: sorted(y, reverse=True) for (x, y) in link_group_by_mask.items()
+    }
     return link_group_by_mask
 
 
@@ -64,32 +72,36 @@ def generate_portion_links(nodes_by_node_name, n_name, start, portion, links):
     data_nodes = list(nodes_by_node_name[n_name].values())
     end = start + int(portion * len(data_nodes))
     link_names = [l.link.name for l in links]
-    print('start: {} - end: {}'.format(start, end))
+    print("start: {} - end: {}".format(start, end))
 
     js = {}
     for l in links:
-        print('Link {}'.format(l.dst))
+        print("Link {}".format(l.dst))
         js[l.dst] = 0
         nb_dst = len(nodes_by_node_name[l.dst])
         for i in range(start, end):
-            if (i % 1000 == 0):
+            if i % 1000 == 0:
                 print("   {} / {}".format(i, end))
             if l.link.name not in data_nodes[i]:
                 d_node_key = list(nodes_by_node_name[l.dst].keys())[js[l.dst]]
                 if l.link.name != "projects":
-                    data_nodes[i][l.link.name] = {'submitter_id': d_node_key}
+                    data_nodes[i][l.link.name] = {"submitter_id": d_node_key}
                 else:
-                    data_nodes[i][l.link.name] = {'code': d_node_key}
+                    data_nodes[i][l.link.name] = {"code": d_node_key}
                 for k in nodes_by_node_name[l.dst][d_node_key].keys():
                     if k in link_names and k not in data_nodes[i]:
-                        data_nodes[i][k] = copy.copy(nodes_by_node_name[l.dst][d_node_key][k])
-            js[l.dst] = 0 if js[l.dst] == nb_dst-1 else js[l.dst] + 1
+                        data_nodes[i][k] = copy.copy(
+                            nodes_by_node_name[l.dst][d_node_key][k]
+                        )
+            js[l.dst] = 0 if js[l.dst] == nb_dst - 1 else js[l.dst] + 1
 
     return end
 
 
 def generate_links(model, nodes_by_node_name, node_name, graph_node, exclusive_list):
-    link_group_by_mask = group_exlusive_links(exclusive_list, get_list_of_links(graph_node, model, exclusive_list))
+    link_group_by_mask = group_exlusive_links(
+        exclusive_list, get_list_of_links(graph_node, model, exclusive_list)
+    )
     portions = proportionate_amount(nodes_by_node_name, link_group_by_mask)
     i = 0
     for k, v in link_group_by_mask.items():

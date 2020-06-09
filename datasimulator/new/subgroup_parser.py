@@ -7,22 +7,31 @@ class SubgroupParsingNode(object):
         self.parent = parent
         self.schema = schema
         self.code = code
-        self.name = schema.get('name') if 'name' in schema else None
-        self.required = schema.get('required', False)
-        self.exclusive = schema.get('exclusive', False)
+        self.name = schema.get("name") if "name" in schema else None
+        self.required = schema.get("required", False)
+        self.exclusive = schema.get("exclusive", False)
         self.required_links = []
         self.existing_mask = None
         self.existing_links = []
         self.exclusive_mask = 0
         self.exclusive_links = []
-        self.all_ancestors_required = parent.all_ancestors_required and parent.required \
-            if parent is not None else self.required
-        self.all_ancestors_inclusive = parent.all_ancestors_inclusive and not parent.exclusive \
-            if parent is not None else not self.exclusive
+        self.all_ancestors_required = (
+            parent.all_ancestors_required and parent.required
+            if parent is not None
+            else self.required
+        )
+        self.all_ancestors_inclusive = (
+            parent.all_ancestors_inclusive and not parent.exclusive
+            if parent is not None
+            else not self.exclusive
+        )
 
     def update_existing_mask(self, current, parent, child, update_mask_should_fix):
-        parent.existing_mask = current.existing_mask if parent.existing_mask is None \
+        parent.existing_mask = (
+            current.existing_mask
+            if parent.existing_mask is None
             else parent.existing_mask | current.existing_mask
+        )
         parent.existing_links.append(child.name)
         current.existing_mask = None
         current.existing_links = []
@@ -54,7 +63,11 @@ class SubgroupParsingNode(object):
         update_mask_should_fix = child.required
         self.code = child.code if self.code is None else self.code | child.code
         if update_mask_should_fix:
-            self.existing_mask = child.code if self.existing_mask is None else self.existing_mask | child.code
+            self.existing_mask = (
+                child.code
+                if self.existing_mask is None
+                else self.existing_mask | child.code
+            )
             self.existing_links.append(child.name)
 
         current_sg = self
@@ -67,8 +80,14 @@ class SubgroupParsingNode(object):
             parent = current_sg.parent
             if parent is not None:
                 if update_mask_should_fix:
-                    update_mask_should_fix = self.update_existing_mask(current_sg, parent, child, update_mask_should_fix)
-                parent.code = current_sg.code if parent.code is None else parent.code | current_sg.code
+                    update_mask_should_fix = self.update_existing_mask(
+                        current_sg, parent, child, update_mask_should_fix
+                    )
+                parent.code = (
+                    current_sg.code
+                    if parent.code is None
+                    else parent.code | current_sg.code
+                )
                 if parent.required:
                     parent.required_links.append(child.name)
             current_sg = parent
@@ -83,17 +102,23 @@ class LinkWithExclusiveMask(object):
         self.name = item.name
         self.exclusive_mask = item.exclusive_mask
         self.exclusive_links = item.exclusive_links
-        self.multiplicity = item.schema.get('multiplicity')
-        self.backref = item.schema.get('backref')
+        self.multiplicity = item.schema.get("multiplicity")
+        self.backref = item.schema.get("backref")
 
     def __str__(self):
         return self.__repr__()
 
     def __repr__(self):
-        return 'EXCLUSIVE: name: {} - exclusive_mask: {} - ' \
-               'exclusive_links: {} - backref: {} - multiplicity: {}'.format(
-                self.name, self.exclusive_mask, self.exclusive_links,
-                self.backref, self.multiplicity)
+        return (
+            "EXCLUSIVE: name: {} - exclusive_mask: {} - "
+            "exclusive_links: {} - backref: {} - multiplicity: {}".format(
+                self.name,
+                self.exclusive_mask,
+                self.exclusive_links,
+                self.backref,
+                self.multiplicity,
+            )
+        )
 
 
 class ExistingMasks(object):
@@ -106,9 +131,9 @@ class ExistingMasks(object):
         return self.__repr__()
 
     def __repr__(self):
-        return 'EXISTING: code: {} - existing_mask: {} - ' \
-               'existing_links: {}'.format(
-                self.code, self.existing_mask, self.existing_links)
+        return "EXISTING: code: {} - existing_mask: {} - " "existing_links: {}".format(
+            self.code, self.existing_mask, self.existing_links
+        )
 
 
 class RequiredMask(object):
@@ -121,16 +146,19 @@ class RequiredMask(object):
         return self.__repr__()
 
     def __repr__(self):
-        return 'REQUIRED: required_links: {} - group_required: {} - ' \
-               'required_mask: {}'.format(
-                self.list_required_links, self.group_required, self.required_mask)
+        return (
+            "REQUIRED: required_links: {} - group_required: {} - "
+            "required_mask: {}".format(
+                self.list_required_links, self.group_required, self.required_mask
+            )
+        )
 
 
 def create_subgroup_validators(dictionary, node_label):
     link_items = []
     leaves = []
-    for link in dictionary.schema[node_label]['links']:
-        if 'name' in link:
+    for link in dictionary.schema[node_label]["links"]:
+        if "name" in link:
             l_item = SubgroupParsingNode(None, link, 1 << len(leaves))
             leaves.append(l_item)
         else:
@@ -146,9 +174,9 @@ def build_tree_of_link_items(link_items, leaves):
     while current_pos < len(link_items):
         l_item = link_items[current_pos]
         children_required_count = 0
-        if 'subgroup' in l_item.schema:
-            for link in l_item.schema['subgroup']:
-                if 'subgroup' in link:
+        if "subgroup" in l_item.schema:
+            for link in l_item.schema["subgroup"]:
+                if "subgroup" in link:
                     new_l_item = SubgroupParsingNode(l_item, link)
                 else:
                     new_l_item = SubgroupParsingNode(l_item, link, 1 << len(leaves))
@@ -159,7 +187,11 @@ def build_tree_of_link_items(link_items, leaves):
 
                 if l_item.required and new_l_item.required:
                     children_required_count += 1
-        if l_item.all_ancestors_required and l_item.required and children_required_count == 0:
+        if (
+            l_item.all_ancestors_required
+            and l_item.required
+            and children_required_count == 0
+        ):
             final_required.append(l_item)
         current_pos += 1
 
@@ -206,7 +238,9 @@ def create_required_mask(final_required):
         res.required_mask |= item.code
         if item.name is not None:
             res.list_required_links.append(item.name)
-            base_mask |= item.code  # if the require is True from the root to the leaf, this leaf is really required
+            base_mask |= (
+                item.code
+            )  # if the require is True from the root to the leaf, this leaf is really required
         else:
             res.group_required.extend(item.required_links)
     return res, base_mask

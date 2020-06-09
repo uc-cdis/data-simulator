@@ -15,6 +15,7 @@ def init_dictionary(url):
     # the gdcdatamodel expects dictionary initiated on load, so this can't be
     # imported on module level
     from gdcdatamodel import models as md
+
     return d, md
 
 
@@ -24,33 +25,36 @@ def parse_arguments():
     subparsers = parser.add_subparsers(title="action", dest="action")
 
     simulate_data_cmd = subparsers.add_parser("simulate")
-    simulate_data_cmd.add_argument("--url", required=False, help="s3 dictionary link.", nargs='?', default=None)
     simulate_data_cmd.add_argument(
-        "--file", required=True, help="file defines the ", nargs='?'
+        "--url", required=False, help="s3 dictionary link.", nargs="?", default=None
     )
     simulate_data_cmd.add_argument(
-        "--path", required=True, help="path to save files to", nargs='?'
+        "--file", required=True, help="file defines the ", nargs="?"
     )
     simulate_data_cmd.add_argument(
-        "--program", required=False, help="program to generate data", nargs='?'
+        "--path", required=True, help="path to save files to", nargs="?"
     )
     simulate_data_cmd.add_argument(
-        "--project", required=False, help="project to generate data", nargs='?'
+        "--program", required=False, help="program to generate data", nargs="?"
+    )
+    simulate_data_cmd.add_argument(
+        "--project", required=False, help="project to generate data", nargs="?"
     )
 
     return parser.parse_args()
 
-# python new_data_sim.py simulate --url https://s3.amazonaws.com/dictionary-artifacts/ndhdictionary/3.5.4/schema.json --file generator_configuration.json --path sample_test_data --program jnkns --project jenkins
+
+# python new_data_sim.py simulate --url https://s3.amazonaws.com/dictionary-artifacts/tb-datadictionary/1.1.5/schema.json --file generator_configuration.json --path sample_test_data --program jnkns --project jenkins
 def simulate_data(url, program, project, file_path, outpath):
     try:
         d, md = init_dictionary(url)
-        with open(file_path, 'r') as config_file:
+        with open(file_path, "r") as config_file:
             numbers = json.load(config_file)
             l_graph = LinkGraph(numbers, d)
         if l_graph:
             simulate_tree(md, program, project, l_graph, outpath)
         else:
-            print('Error graph is not created')
+            print("Error graph is not created")
     except Exception as ex:
         print(ex)
         print(traceback.print_exc(file=sys.stdout))
@@ -58,9 +62,9 @@ def simulate_data(url, program, project, file_path, outpath):
 
 def main():
     args = parse_arguments()
-    if args.action == 'simulate':
+    if args.action == "simulate":
         simulate_data(args.url, args.program, args.project, args.file, args.path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
