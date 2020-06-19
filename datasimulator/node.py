@@ -89,7 +89,7 @@ class Node(object):
                 item_type=simple_schema.get("item_type"),
                 n_items=1,
                 item_predefined_values=simple_schema.get("item_enum_data", []),
-                pattern=simple_schema.get("pattern", None)
+                pattern=simple_schema.get("pattern", None),
             )
         else:
             return generate_simple_primitive_data(
@@ -215,7 +215,7 @@ class Node(object):
                     return {
                         "data_type": "array",
                         "item_type": prop_schema["items"]["type"],
-                        "pattern": prop_schema["items"]["pattern"]
+                        "pattern": prop_schema["items"]["pattern"],
                     }
 
                 if "items" in prop_schema and "enum" in prop_schema["items"]:
