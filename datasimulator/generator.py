@@ -50,9 +50,11 @@ def generate_datetime():
     )
 
 
-def generate_array_data_type(item_type, n_items=1, item_predefined_values=[]):
+def generate_array_data_type(
+    item_type, n_items=1, item_predefined_values=[], pattern=None
+):
     if item_type == "string":
-        return [generate_string_data(size=10, pattern=None) for _ in range(n_items)]
+        return [generate_string_data(size=10, pattern=pattern) for _ in range(n_items)]
     elif item_type == "integer":
         return [generate_number(is_int=True) for _ in range(n_items)]
     elif item_type in {"float", "number"}:
