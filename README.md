@@ -75,14 +75,13 @@ Optional arguments:
 * chunk_size: default is 1
 
 ## Setup
-To install data simulator for common use, run the following command.
+To install data simulator, run the following command.
 ```
-python setup.py install
+poetry install -vv
 ```
 
-##  For Development
+## Running tests locally
 ```
-pip install -r dev-requirements.txt
-python setup.py develop
-
+poetry install -vv
+poetry run pytest -vv ./tests
 ```
