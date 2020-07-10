@@ -17,4 +17,5 @@ COPY . /data-simulator
 WORKDIR /data-simulator
 
 RUN pip3 install poetry==1.0.0
-RUN python -m venv /env && . /env/bin/activate && poetry install -vv
+RUN poetry config virtualenvs.create false
+RUN poetry install -vv
