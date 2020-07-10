@@ -3,6 +3,7 @@ setup.py
 data_simulator.egg-info/PKG-INFO
 data_simulator.egg-info/SOURCES.txt
 data_simulator.egg-info/dependency_links.txt
+data_simulator.egg-info/entry_points.txt
 data_simulator.egg-info/requires.txt
 data_simulator.egg-info/top_level.txt
 datasimulator/__init__.py
@@ -10,6 +11,7 @@ datasimulator/dd_utils.py
 datasimulator/errors.py
 datasimulator/generator.py
 datasimulator/graph.py
+datasimulator/main.py
 datasimulator/node.py
 datasimulator/submit_data_utils.py
 datasimulator/utils.py

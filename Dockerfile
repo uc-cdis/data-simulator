@@ -15,4 +15,4 @@ COPY . /data-simulator
 WORKDIR /data-simulator
 
 RUN pip3 install poetry==1.0.0
-RUN python -m venv /env && . /env/bin/activate && poetry install
+RUN python -m venv /env && . /env/bin/activate && poetry install -vv
