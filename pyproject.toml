@@ -24,7 +24,7 @@ rstr = "2.2.6"
 requests = "^2.18.0"
 
 [tool.poetry.dev-dependencies]
-pytest = ">=3.6"
+pytest = ">=3.5"
 mock = "1.0.1"
 pytest-cov = "2.5.1"
 coverage = "3.7.1"
