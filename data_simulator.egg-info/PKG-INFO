@@ -94,4 +94,4 @@ Description: # Data Simulator
         poetry run pytest -vv ./tests
         ```
 Platform: UNKNOWN
-Requires-Python: >=3.6,<3.7
+Requires-Python: >=3.5,<3.7

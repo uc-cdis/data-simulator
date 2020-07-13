@@ -14,7 +14,7 @@ packages = [
 data-simulator = 'datasimulator.main:main'
 
 [tool.poetry.dependencies]
-python = "~3.6"
+python = "~3.5 || ~3.6"
 cdislogging = "~=1.0.0"
 dictionaryutils = "~3.0.2"
 gen3datamodel = "~3.0.2"
