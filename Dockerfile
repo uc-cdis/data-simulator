@@ -16,6 +16,6 @@ RUN apk update \
 COPY . /data-simulator
 WORKDIR /data-simulator
 
-RUN pip3 install poetry==1.0.0
+RUN pip3 install poetry==1.0.9
 RUN poetry config virtualenvs.create false
 RUN poetry install -vv
