@@ -75,6 +75,9 @@ Optional arguments:
 * chunk_size: default is 1
 
 ## Setup
+Poetry needs to be installed before installing data simulator.
+Please follow https://python-poetry.org/docs/#installation for installing poetry.
+
 To install data simulator, run the following command.
 ```
 poetry install -vv
