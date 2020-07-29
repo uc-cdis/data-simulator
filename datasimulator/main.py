@@ -3,8 +3,8 @@ import argparse
 
 from dictionaryutils import DataDictionary, dictionary
 
-from datasimulator.graph import Graph
-from datasimulator.submit_data_utils import submit_test_data
+from .graph import Graph
+from .submit_data_utils import submit_test_data
 
 from cdislogging import get_logger
 
@@ -16,35 +16,47 @@ def parse_arguments():
     subparsers = parser.add_subparsers(title="action", dest="action")
 
     submission_order_cmd = subparsers.add_parser("submission_order")
-    submission_order_cmd.add_argument("--url", required=True, help="s3 dictionary link.", nargs='?')
-    submission_order_cmd.add_argument("--node_name", required=False, help="node to generate the submission order for")
-    submission_order_cmd.add_argument("--path", required=True, help="path to save file to")
+    submission_order_cmd.add_argument(
+        "--url", required=True, help="s3 dictionary link.", nargs="?"
+    )
+    submission_order_cmd.add_argument(
+        "--node_name", required=False, help="node to generate the submission order for"
+    )
+    submission_order_cmd.add_argument(
+        "--path", required=True, help="path to save file to"
+    )
 
     validation_cmd = subparsers.add_parser("validate")
     validation_cmd.add_argument("--url", required=True, help="s3 dictionary link.")
 
     simulate_data_cmd = subparsers.add_parser("simulate")
-    simulate_data_cmd.add_argument("--url", required=False, help="s3 dictionary link.", nargs='?', default=None)
     simulate_data_cmd.add_argument(
-        "--path", required=True, help="path to save files to", nargs='?'
+        "--url", required=False, help="s3 dictionary link.", nargs="?", default=None
+    )
+    simulate_data_cmd.add_argument(
+        "--path", required=True, help="path to save files to", nargs="?"
     )
 
-    simulate_data_cmd.add_argument("--program", required=False, nargs='?', default='DEV')
-    simulate_data_cmd.add_argument("--project", required=False, nargs='?', default='test')
+    simulate_data_cmd.add_argument(
+        "--program", required=False, nargs="?", default="DEV"
+    )
+    simulate_data_cmd.add_argument(
+        "--project", required=False, nargs="?", default="test"
+    )
 
     simulate_data_cmd.add_argument(
         "--max_samples",
         required=False,
         help="max number of samples for each node",
         default=1,
-        nargs='?',
+        nargs="?",
     )
 
     simulate_data_cmd.add_argument(
         "--node_num_instances_file",
         required=False,
         help="max number of samples for each node stored in a file",
-        nargs='?',
+        nargs="?",
     )
 
     simulate_data_cmd.add_argument(
@@ -56,7 +68,9 @@ def parse_arguments():
     )
 
     simulate_data_cmd.add_argument(
-        "--consent_codes", help="include generation of random consent codes", action="store_true"
+        "--consent_codes",
+        help="include generation of random consent codes",
+        action="store_true",
     )
 
     simulate_data_cmd.add_argument(
@@ -79,7 +93,13 @@ def main():
 
     if args.action == "submitting_data":
         logger.info("Submitting data...")
-        submit_test_data(args.host, args.project, args.dir, args.access_token_file, int(args.chunk_size))
+        submit_test_data(
+            args.host,
+            args.project,
+            args.dir,
+            args.access_token_file,
+            int(args.chunk_size),
+        )
         logger.info("Done!")
         return
 
@@ -134,7 +154,7 @@ def main():
             submission_order = graph.generate_submission_order_path_to_node(node)
         else:
             submission_order = graph.generate_submission_order()
-        
+
         with open(os.path.join(args.path, "DataImportOrderPath.txt"), "w") as outfile:
             for node in submission_order:
                 outfile.write(node.name + "\t" + node.category + "\n")

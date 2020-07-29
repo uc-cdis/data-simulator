@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "data-simulator"
+version = "1.2.0"
+description = "Gen3 Data Simulator"
+authors = ["CTDS UChicago <cdis@uchicago.edu>"]
+license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/uc-cdis/data-simulator"
+packages = [
+    { include = "./datasimulator" }
+]
+
+[tool.poetry.scripts]
+data-simulator = 'datasimulator.main:main'
+
+[tool.poetry.dependencies]
+python = "~3.5 || ~3.6"
+cdislogging = "~=1.0.0"
+dictionaryutils = "~3.0.2"
+gen3datamodel = "~3.0.2"
+gen3dictionary = "~2.0.1"
+openpyxl = "2.6.4"
+rstr = "2.2.6"
+requests = "^2.18.0"
+
+[tool.poetry.dev-dependencies]
+pytest = ">=3.5"
+mock = "1.0.1"
+pytest-cov = "2.5.1"
+coverage = "3.7.1"
+
+[build-system]
+requires = ["poetry>=1.0.9"]
+build-backend = "poetry.masonry.api"

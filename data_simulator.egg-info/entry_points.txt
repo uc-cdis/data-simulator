@@ -1,0 +1,3 @@
+[console_scripts]
+data-simulator = datasimulator.main:main
+
