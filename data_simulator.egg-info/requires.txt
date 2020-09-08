@@ -1,7 +1,0 @@
-cdislogging<1.1.0,>=1.0.0
-dictionaryutils<3.1.0,>=3.0.2
-gen3datamodel<3.1.0,>=3.0.2
-gen3dictionary<2.1.0,>=2.0.1
-openpyxl==2.6.4
-requests<3.0.0,>=2.18.0
-rstr==2.2.6
