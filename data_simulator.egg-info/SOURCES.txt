@@ -1,5 +1,4 @@
 README.md
-pyproject.toml
 setup.py
 data_simulator.egg-info/PKG-INFO
 data_simulator.egg-info/SOURCES.txt

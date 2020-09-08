@@ -1,5 +1,5 @@
 cdislogging<1.1.0,>=1.0.0
-dictionaryutils<3.1.0,>=3.0.2
+dictionaryutils<4.0.0,>=3.0.2
 gen3datamodel<3.1.0,>=3.0.2
 gen3dictionary<2.1.0,>=2.0.1
 openpyxl==2.6.4
