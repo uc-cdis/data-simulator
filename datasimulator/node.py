@@ -208,9 +208,18 @@ class Node(object):
         if prop == "md5sum":
             return {"data_type": "md5sum"}
 
-        if prop_schema.get("type"):
-            if prop_schema.get("type") == "array":
+        prop_type = prop_schema.get("type")
+        if prop_type:
 
+            # if type if a list, use the first allowed type
+            if isinstance(prop_type, list):
+                if "null" in prop_type:
+                    prop_type.remove("null")
+                if not prop_type:
+                    raise UserError("{} contains only null type".format(prop_type))
+                prop_type = prop_type[0]
+
+            if prop_type == "array":
                 if "items" in prop_schema and "pattern" in prop_schema["items"]:
                     return {
                         "data_type": "array",
@@ -236,12 +245,12 @@ class Node(object):
                         "error_type": "DictionaryError",
                     }
                 return {
-                    "data_type": prop_schema.get("type"),
+                    "data_type": prop_type,
                     "item_type": prop_schema.get("items").get("type"),
                 }
             else:
                 return {
-                    "data_type": prop_schema.get("type"),
+                    "data_type": prop_type,
                     "pattern": prop_schema.get("pattern"),
                     "max": prop_schema.get("maximum", 100),
                     "min": prop_schema.get("minimum", 0),

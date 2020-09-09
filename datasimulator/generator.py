@@ -69,13 +69,6 @@ def generate_simple_primitive_data(data_type, pattern=None, maxx=None, minx=None
     """
     Generate a single primitive data
     """
-    if isinstance(data_type, list):
-        if "null" in data_type:
-            data_type.remove("null")
-        if not data_type:
-            raise UserError("{} contains only null type".format(data_type))
-        data_type = data_type[0]
-
     if data_type == "string":
         return generate_string_data(pattern=pattern)
 
