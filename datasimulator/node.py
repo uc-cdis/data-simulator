@@ -41,8 +41,6 @@ class Node(object):
     """
 
     def __init__(self, node_name, node_schema, project, consent_codes):
-        """
-        """
         self.name = node_name
         self.project = project
         self.consent_codes = consent_codes
