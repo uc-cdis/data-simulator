@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "data-simulator"
-version = "1.2.0"
+version = "1.2.1"
 description = "Gen3 Data Simulator"
 authors = ["CTDS UChicago <cdis@uchicago.edu>"]
 license = "Apache-2.0"
@@ -14,7 +14,7 @@ packages = [
 data-simulator = 'datasimulator.main:main'
 
 [tool.poetry.dependencies]
-python = "~3.5 || ~3.6"
+python = ">=3.6,<3.8"
 cdislogging = "~=1.0.0"
 gen3datamodel = "~3.0.2"
 gen3dictionary = "~2.0.1"
