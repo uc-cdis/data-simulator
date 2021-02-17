@@ -16,6 +16,8 @@ RUN apk update \
 COPY . /data-simulator
 WORKDIR /data-simulator
 
+ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
+
 RUN pip3 install poetry
 RUN poetry config virtualenvs.create false
 RUN poetry install -vv
