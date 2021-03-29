@@ -11,6 +11,7 @@ RUN apk update \
      libffi-dev \
      openssl-dev \
      postgresql-dev \
+     git \
      && pip install --upgrade pip
 
 COPY . /data-simulator
