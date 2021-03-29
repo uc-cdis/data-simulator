@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "data-simulator"
-version = "1.3.2"
+version = "1.3.3"
 description = "Gen3 Data Simulator"
 authors = ["CTDS UChicago <cdis@uchicago.edu>"]
 license = "Apache-2.0"
@@ -22,6 +22,7 @@ openpyxl = "2.6.4"
 rstr = "2.2.6"
 requests = "^2.18.0"
 dictionaryutils = "^3.0.2"
+py2neo = {url = "https://cdistest-public-test-bucket.s3.amazonaws.com/py2neo-py2neo-2.0.8.tar.gz"}
 
 [tool.poetry.dev-dependencies]
 pytest = ">=3.5"
