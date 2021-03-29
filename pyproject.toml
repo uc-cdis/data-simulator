@@ -22,7 +22,7 @@ openpyxl = "2.6.4"
 rstr = "2.2.6"
 requests = "^2.18.0"
 dictionaryutils = "^3.0.2"
-psqlgraph = {git = "https://github.com/uc-cdis/psqlgraph.git", rev = "fix/dependency"}
+psqlgraph = {git = "https://github.com/uc-cdis/psqlgraph.git", rev = "develop"}
 
 [tool.poetry.dev-dependencies]
 pytest = ">=3.5"
