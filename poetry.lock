@@ -333,16 +333,22 @@ description = ""
 category = "main"
 optional = false
 python-versions = "*"
+develop = false
 
 [package.dependencies]
 avro = ">=1.7,<2.0"
 progressbar = "*"
 psycopg2-binary = ">=2.8,<3.0"
-py2neo = ">=2.0,<3.0"
 requests = ">=2.5,<3.0"
 six = ">=1.12.0"
 sqlalchemy = ">=1.3,<2.0"
 xlocal = ">=0.5,<1.0"
+
+[package.source]
+type = "git"
+url = "https://github.com/uc-cdis/psqlgraph.git"
+reference = "fix/dependency"
+resolved_reference = "835eb1c191e7453e0db0c6b61abe9146dcff421b"
 
 [[package]]
 name = "psycopg2-binary"
@@ -360,17 +366,6 @@ category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
-[[package]]
-name = "py2neo"
-version = "2.0.8"
-description = "Python client library and toolkit for Neo4j"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.source]
-type = "url"
-url = "https://cdistest-public-test-bucket.s3.amazonaws.com/py2neo-py2neo-2.0.8.tar.gz"
 [[package]]
 name = "pyasn1"
 version = "0.4.8"
@@ -594,7 +589,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6"
-content-hash = "eb40274f4c2443b3bec3828a652effa1f39021ba8de70764bc3e6491545fda99"
+content-hash = "b9ef675b9a4a71fdd624d8c70186f52dffe9f69c8fefcd6df32b53c20b31fc12"
 
 [metadata.files]
 atomicwrites = [
@@ -760,9 +755,7 @@ pluggy = [
 progressbar = [
     {file = "progressbar-2.5.tar.gz", hash = "sha256:5d81cb529da2e223b53962afd6c8ca0f05c6670e40309a7219eacc36af9b6c63"},
 ]
-psqlgraph = [
-    {file = "psqlgraph-3.0.0.tar.gz", hash = "sha256:a4c8aee48dcb85c9112e6866ae404839dde683bca2df4deaa854caf5d3d2aada"},
-]
+psqlgraph = []
 psycopg2-binary = [
     {file = "psycopg2-binary-2.8.6.tar.gz", hash = "sha256:11b9c0ebce097180129e422379b824ae21c8f2a6596b159c7659e2e5a00e1aa0"},
     {file = "psycopg2_binary-2.8.6-cp27-cp27m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:d14b140a4439d816e3b1229a4a525df917d6ea22a0771a2a78332273fd9528a4"},
@@ -804,7 +797,6 @@ py = [
     {file = "py-1.10.0-py2.py3-none-any.whl", hash = "sha256:3b80836aa6d1feeaa108e046da6423ab8f6ceda6468545ae8d02d9d58d18818a"},
     {file = "py-1.10.0.tar.gz", hash = "sha256:21b81bda15b66ef5e1a777a21c4dcd9c20ad3efd0b3f817e7a809035269e1bd3"},
 ]
-py2neo = []
 pyasn1 = [
     {file = "pyasn1-0.4.8-py2.4.egg", hash = "sha256:fec3e9d8e36808a28efb59b489e4528c10ad0f480e57dcc32b4de5c9d8c9fdf3"},
     {file = "pyasn1-0.4.8-py2.5.egg", hash = "sha256:0458773cfe65b153891ac249bcf1b5f8f320b7c2ce462151f8fa74de8934becf"},
