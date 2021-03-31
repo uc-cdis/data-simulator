@@ -22,7 +22,7 @@ openpyxl = "2.6.4"
 rstr = "2.2.6"
 requests = "^2.18.0"
 dictionaryutils = "^3.0.2"
-py2neo = {url = "https://cdistest-public-test-bucket.s3.amazonaws.com/py2neo-py2neo-2.0.8.tar.gz"}
+psqlgraph = "~3.0"
 
 [tool.poetry.dev-dependencies]
 pytest = ">=3.5"
