@@ -12,7 +12,9 @@ RUN apk update \
      openssl-dev \
      postgresql-dev \
      git \
+     g++ \
      && pip install --upgrade pip
+# add g++ because greenlet needs it (imported by sqlalchemy 1.4)
 
 COPY . /data-simulator
 WORKDIR /data-simulator
