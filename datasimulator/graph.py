@@ -182,7 +182,6 @@ class Graph(object):
                             if not isinstance(sub_links, list):
                                 sub_links = [sub_links]
 
-                            # just pick one of sub-group links
                             for sub_link in sub_links:
                                 if "target_type" in sub_link:
                                     self._add_required_link_to_node(
@@ -191,7 +190,6 @@ class Graph(object):
                                         sub_link.get("name"),
                                         sub_link.get("multiplicity"),
                                     )
-                                    break
 
             except TypeError as e:
                 raise DictionaryError(
