@@ -106,25 +106,3 @@ def construct_simple_property_schema(node_name, prop, prop_schema):
             ),
             "error_type": "DictionaryError",
         }
-
-
-def _simulate_data_from_simple_schema(simple_schema):
-    if simple_schema["data_type"] == "md5sum":
-        return generate_hash()
-    elif simple_schema["data_type"] == "enum":
-        return random_choice(simple_schema["values"])
-    elif simple_schema["data_type"] == "datetime":
-        return generate_datetime()
-    elif simple_schema["data_type"] == "array":
-        return generate_array_data_type(
-            item_type=simple_schema.get("item_type"),
-            n_items=1,
-            item_predefined_values=simple_schema.get("item_enum_data", []),
-        )
-    else:
-        return generate_simple_primitive_data(
-            data_type=simple_schema["data_type"],
-            pattern=simple_schema.get("pattern"),
-            maxx=simple_schema.get("max"),
-            minx=simple_schema.get("min"),
-        )

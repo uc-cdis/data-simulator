@@ -88,6 +88,7 @@ class Node(object):
                 n_items=1,
                 item_predefined_values=simple_schema.get("item_enum_data", []),
                 pattern=simple_schema.get("pattern", None),
+                format=simple_schema.get("format"),
             )
         else:
             return generate_simple_primitive_data(
@@ -95,6 +96,7 @@ class Node(object):
                 pattern=simple_schema.get("pattern"),
                 maxx=simple_schema.get("max"),
                 minx=simple_schema.get("min"),
+                format=simple_schema.get("format"),
             )
 
     @staticmethod
@@ -208,8 +210,7 @@ class Node(object):
 
         prop_type = prop_schema.get("type")
         if prop_type:
-
-            # if type if a list, use the first allowed type
+            # if type is a list, use the first allowed type
             if isinstance(prop_type, list):
                 if "null" in prop_type:
                     prop_type.remove("null")
@@ -242,17 +243,26 @@ class Node(object):
                         ),
                         "error_type": "DictionaryError",
                     }
-                return {
+
+                simple_schema = {
                     "data_type": prop_type,
                     "item_type": prop_schema.get("items").get("type"),
                 }
+                format = prop_schema.get("items").get("format")
+                if format:
+                    simple_schema["format"] = format
+                return simple_schema
             else:
-                return {
+                simple_schema = {
                     "data_type": prop_type,
                     "pattern": prop_schema.get("pattern"),
                     "max": prop_schema.get("maximum", 100),
                     "min": prop_schema.get("minimum", 0),
                 }
+                format = prop_schema.get("format")
+                if format:
+                    simple_schema["format"] = format
+                return simple_schema
 
         elif prop_schema.get("oneOf") or prop_schema.get("anyOf"):
             one_of = prop_schema.get("oneOf") or prop_schema.get("anyOf")
@@ -263,7 +273,11 @@ class Node(object):
                 data_type = one.get("type")
                 if not data_type:
                     continue
-                return {"data_type": data_type}
+                simple_schema = {"data_type": data_type}
+                format = one.get("format")
+                if format:
+                    simple_schema["format"] = format
+                return simple_schema
 
         elif prop_schema.get("enum"):
             if is_mixed_type(prop_schema.get("enum")):

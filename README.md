@@ -38,7 +38,7 @@ Required arguments:
 Optional arguments:
 * max_samples: maximum number of instances for each node. default is 1
 * required_only: only simulate required properties
-* random: randomly generate the numbers of node instances. If this argument is not used, all nodes have `max_samples` instances
+* random: randomly generate the numbers of node instances (up to `max_samples`). If this argument is not used, all nodes have `max_samples` instances
 * node_num_instances_file ./file.json: generate the numbers of node instances specified in the JSON file. The file should contain the number of instances (integer)  to generate for each node name, for example: `{"submitted_unaligned_reads": 100}`. `max_samples` instances are generated for nodes that are not specified in the file.
 * consent_codes: whether to include generation of random consent codes
 
@@ -68,7 +68,7 @@ data-simulator submitting_data --host http://devplanet.planx-pla.net --project D
 Required arguments:
 * dir: path containing data
 * host
-* project
+* project: program name and project code separated by a forward slash
 * access_token_file
 
 Optional arguments:

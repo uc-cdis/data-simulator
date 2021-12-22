@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import rstr
 import random
 
@@ -7,7 +8,10 @@ tried_words = False
 WORDS = None
 
 
-def generate_string_data(size=10, pattern=None):
+def generate_string_data(size=10, pattern=None, format=None):
+    if format:
+        return generate_string_data_with_format(format)
+
     global tried_words, WORDS
     if not tried_words:
         tried_words = True
@@ -21,6 +25,21 @@ def generate_string_data(size=10, pattern=None):
         return rstr.xeger(pattern)
     else:
         return "{}_{}".format(random.choice(WORDS), random.choice(WORDS))
+
+
+def generate_string_data_with_format(format):
+    if format == "date-time":
+        min_year = 1980
+        max_year = 2020
+        start = datetime(min_year, 1, 1, 00, 00, 00)
+        years = max_year - min_year + 1
+        end = start + timedelta(days=365 * years)
+        random_datetime = start + (end - start) * random.random()
+        return random_datetime.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+    else:
+        raise UserError(
+            f"Format '{format}' is not currently supported by data-simulator"
+        )
 
 
 def generate_number(minx=0, maxx=100, is_int=False):
@@ -51,10 +70,13 @@ def generate_datetime():
 
 
 def generate_array_data_type(
-    item_type, n_items=1, item_predefined_values=[], pattern=None
+    item_type, n_items=1, item_predefined_values=[], pattern=None, format=None
 ):
     if item_type == "string":
-        return [generate_string_data(size=10, pattern=pattern) for _ in range(n_items)]
+        return [
+            generate_string_data(size=10, pattern=pattern, format=format)
+            for _ in range(n_items)
+        ]
     elif item_type == "integer":
         return [generate_number(is_int=True) for _ in range(n_items)]
     elif item_type in {"float", "number"}:
@@ -65,12 +87,14 @@ def generate_array_data_type(
         raise UserError("{} is not supported".format(item_type))
 
 
-def generate_simple_primitive_data(data_type, pattern=None, maxx=None, minx=None):
+def generate_simple_primitive_data(
+    data_type, pattern=None, maxx=None, minx=None, format=None
+):
     """
     Generate a single primitive data
     """
     if data_type == "string":
-        return generate_string_data(pattern=pattern)
+        return generate_string_data(pattern=pattern, format=format)
 
     if data_type == "boolean":
         return generate_boolean()
