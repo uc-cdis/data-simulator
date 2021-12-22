@@ -71,25 +71,29 @@ def simulate_relations(model, dictionary, graph_node, project_name):
 
 def simulate_node_project(props, properties, data_node, project_name):
     data_node["type"] = "project"
-    for k, v in props.items():
-        prop_schema = construct_simple_property_schema("project", k, properties[k])
+    for prop in props.keys():
+        prop_schema = construct_simple_property_schema(
+            "project", prop, properties[prop]
+        )
         if prop_schema is None:
             continue
         if prop_schema["data_type"] is None:
             logger.warning(prop_schema["error_msg"])
         # Skip. Simulate link properties later
-        elif k == "name":
-            data_node[k] = project_name
-        elif k == "code":
+        elif prop == "name":
+            data_node[prop] = project_name
+        elif prop == "code":
             continue
         else:
-            data_node[k] = _simulate_data_from_simple_schema(prop_schema)
+            data_node[prop] = _simulate_data_from_simple_schema(prop_schema)
 
 
 def simulate_node_properties(props, properties, node_name, data_node):
     data_node["type"] = node_name
-    for k, v in props.items():
-        prop_schema = construct_simple_property_schema(node_name, k, properties[k])
+    for prop in props.keys():
+        prop_schema = construct_simple_property_schema(
+            node_name, prop, properties[prop]
+        )
         if prop_schema is None:
             continue
         if prop_schema["data_type"] is None:
@@ -98,7 +102,7 @@ def simulate_node_properties(props, properties, node_name, data_node):
         elif prop_schema["data_type"] == "link_type":
             continue
         else:
-            data_node[k] = _simulate_data_from_simple_schema(prop_schema)
+            data_node[prop] = _simulate_data_from_simple_schema(prop_schema)
 
 
 def simulate_nodes_properties(model, dictionary, graph_node, project_name):
@@ -110,7 +114,7 @@ def simulate_nodes_properties(model, dictionary, graph_node, project_name):
     }
     properties = dictionary.schema[graph_node.name]["properties"]
 
-    for k, v in nodes_by_node_name[graph_node.name].items():
+    for v in nodes_by_node_name[graph_node.name].values():
         if len(nodes_by_node_name[graph_node.name]) == 0:
             continue
         if graph_node.name == "project":

@@ -115,7 +115,7 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
 
                 elif response.status_code != 200:
                     logger.error(
-                        "\n\n==============================={}=================================".format(
+                        "\n\n=============================== {} =================================".format(
                             fname
                         )
                     )
