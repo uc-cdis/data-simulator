@@ -216,10 +216,12 @@ class Graph(object):
 
         while index < len(submission_order):
             cur_node = submission_order[index]
+            index += 1
+            if not cur_node:
+                continue
             for linked_node_dict in cur_node.required_links:
                 if linked_node_dict["node"] not in submission_order:
                     submission_order.append(linked_node_dict["node"])
-            index += 1
         submission_order.reverse()
 
         return submission_order
