@@ -18,7 +18,7 @@ def generate_string_data(size=10, pattern=None, format=None):
         try:
             word_file = "/usr/share/dict/words"
             WORDS = open(word_file).read().splitlines()
-        except:
+        except Exception:
             pass
     if pattern or not WORDS:
         pattern = pattern or "^[0-9a-f]{" + str(size) + "}"
