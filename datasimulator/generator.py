@@ -28,14 +28,17 @@ def generate_string_data(size=10, pattern=None, format=None):
 
 
 def generate_string_data_with_format(format):
-    if format == "date-time":
+    if format in ["date", "date-time"]:
         min_year = 1980
         max_year = 2020
         start = datetime(min_year, 1, 1, 00, 00, 00)
         years = max_year - min_year + 1
         end = start + timedelta(days=365 * years)
         random_datetime = start + (end - start) * random.random()
-        return random_datetime.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+        if format == "date":
+            return random_datetime.strftime("%Y-%m-%d")
+        else:  # date-time
+            return random_datetime.strftime("%Y-%m-%dT%H:%M:%S+00:00")
     else:
         raise UserError(
             f"Format '{format}' is not currently supported by data-simulator"
