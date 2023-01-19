@@ -1,5 +1,5 @@
 
-FROM python:3.6-alpine
+FROM python:3.8.16-alpine
 
 RUN apk update \
      && apk add --no-cache \
