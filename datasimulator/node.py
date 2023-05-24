@@ -35,6 +35,135 @@ EXCLUDED_FIELDS = [
 logger = get_logger("data-simulator simulate", log_level="info")
 
 
+def construct_simple_property_schema(node_name, prop, prop_schema):
+    """
+    Construct a simple schema for just single non-link property
+
+    Args:
+        prop(str): property name
+        prop_schema(json): property schema
+
+    Outputs:
+        dict: a simple property schema to build data generator template
+
+    """
+    if prop == "md5sum":
+        return {"data_type": "md5sum"}
+
+    prop_type = prop_schema.get("type")
+    if prop_type:
+        # if type is a list, use the first allowed type
+        if isinstance(prop_type, list):
+            if "null" in prop_type:
+                prop_type.remove("null")
+            if not prop_type:
+                raise UserError("{} contains only null type".format(prop_type))
+            prop_type = prop_type[0]
+
+        if prop_type == "array":
+            if "items" in prop_schema and "pattern" in prop_schema["items"]:
+                return {
+                    "data_type": "array",
+                    "item_type": prop_schema["items"]["type"],
+                    "pattern": prop_schema["items"]["pattern"],
+                }
+
+            if "items" in prop_schema and "enum" in prop_schema["items"]:
+                return {
+                    "data_type": "array",
+                    "item_type": "enum",
+                    "item_enum_data": prop_schema["items"]["enum"],
+                }
+
+            item_type = prop_schema.get("items", {}).get("type")
+            if not item_type:
+                oneOfSchemas = prop_schema.get("items", {}).get(
+                    "oneOf"
+                ) or prop_schema.get("items", {}).get("anyOf")
+                if oneOfSchemas:
+                    return construct_simple_property_schema(
+                        node_name, prop, {"oneOf": oneOfSchemas}
+                    )
+                else:
+                    raise DictionaryError(
+                        "Error: {} has no item datatype. Detail {}".format(
+                            prop, prop_schema
+                        )
+                    )
+
+            simple_schema = {
+                "data_type": prop_type,
+                "item_type": prop_schema.get("items").get("type"),
+            }
+            format = prop_schema.get("items").get("format")
+            if format:
+                simple_schema["format"] = format
+            return simple_schema
+        else:
+            simple_schema = {
+                "data_type": prop_type,
+                "pattern": prop_schema.get("pattern"),
+                "max": prop_schema.get("maximum", 100),
+                "min": prop_schema.get("minimum", 0),
+            }
+            format = prop_schema.get("format")
+            if format:
+                simple_schema["format"] = format
+            return simple_schema
+
+    elif prop_schema.get("oneOf") or prop_schema.get("anyOf"):
+        one_of = prop_schema.get("oneOf") or prop_schema.get("anyOf")
+        one = random.choice(one_of)
+        if Node._is_link_property(one):
+            return {"data_type": "link_type"}
+        return construct_simple_property_schema(node_name, prop, one)
+
+    elif prop_schema.get("enum"):
+        if is_mixed_type(prop_schema.get("enum")):
+            raise DictionaryError(
+                "Error: {} has mixed datatype. Detail {}".format(
+                    prop, prop_schema["enum"]
+                )
+            )
+        else:
+            return {"data_type": "enum", "values": prop_schema.get("enum")}
+
+    elif Node._is_datetime_property(prop_schema):
+        return {"data_type": "datetime"}
+
+    else:
+        raise DictionaryError(
+            "Node {}. Can not get data type of {}. Detail {}".format(
+                node_name, prop, prop_schema
+            )
+        )
+
+
+def _simulate_data_from_simple_schema(simple_schema):
+    if simple_schema["data_type"] == "md5sum":
+        return generate_hash()
+    elif simple_schema["data_type"] == "enum":
+        return random_choice(simple_schema["values"])
+    elif simple_schema["data_type"] == "datetime":
+        return generate_datetime()
+    elif simple_schema["data_type"] == "array":
+        return generate_array_data_type(
+            item_type=simple_schema.get("item_type"),
+            n_items=1,
+            item_predefined_values=simple_schema.get("item_enum_data", []),
+            pattern=simple_schema.get("pattern", None),
+            format=simple_schema.get("format"),
+        )
+    else:
+        return generate_simple_primitive_data(
+            data_type=simple_schema["data_type"],
+            pattern=simple_schema.get("pattern"),
+            maxx=simple_schema.get("max"),
+            minx=simple_schema.get("min"),
+            format=simple_schema.get("format"),
+        )
+
+
 class Node(object):
     """
     Class representation for node
@@ -73,31 +202,6 @@ class Node(object):
         if str(prop_schema).find("date and time of day") > 0:
             return True
         return False
-
-    @staticmethod
-    def _simulate_data_from_simple_schema(simple_schema):
-        if simple_schema["data_type"] == "md5sum":
-            return generate_hash()
-        elif simple_schema["data_type"] == "enum":
-            return random_choice(simple_schema["values"])
-        elif simple_schema["data_type"] == "datetime":
-            return generate_datetime()
-        elif simple_schema["data_type"] == "array":
-            return generate_array_data_type(
-                item_type=simple_schema.get("item_type"),
-                n_items=1,
-                item_predefined_values=simple_schema.get("item_enum_data", []),
-                pattern=simple_schema.get("pattern", None),
-                format=simple_schema.get("format"),
-            )
-        else:
-            return generate_simple_primitive_data(
-                data_type=simple_schema["data_type"],
-                pattern=simple_schema.get("pattern"),
-                maxx=simple_schema.get("max"),
-                minx=simple_schema.get("min"),
-                format=simple_schema.get("format"),
-            )
 
     @staticmethod
     def _simulate_consent_code():
@@ -187,114 +291,11 @@ class Node(object):
             ):
                 continue
 
-            template[prop] = self.construct_simple_property_schema(
-                prop=prop, prop_schema=prop_schema
+            template[prop] = construct_simple_property_schema(
+                self.name, prop=prop, prop_schema=prop_schema
             )
 
         return template
-
-    def construct_simple_property_schema(self, prop, prop_schema):
-        """
-        Construct a simple schema for just single non-link property
-
-        Args:
-            prop(str): property name
-            prop_schema(json): property schema
-
-        Outputs:
-            dict: a simple property schema to build data generator template
-
-        """
-        if prop == "md5sum":
-            return {"data_type": "md5sum"}
-
-        prop_type = prop_schema.get("type")
-        if prop_type:
-            # if type is a list, use the first allowed type
-            if isinstance(prop_type, list):
-                if "null" in prop_type:
-                    prop_type.remove("null")
-                if not prop_type:
-                    raise UserError("{} contains only null type".format(prop_type))
-                prop_type = prop_type[0]
-
-            if prop_type == "array":
-                if "items" in prop_schema and "pattern" in prop_schema["items"]:
-                    return {
-                        "data_type": "array",
-                        "item_type": prop_schema["items"]["type"],
-                        "pattern": prop_schema["items"]["pattern"],
-                    }
-
-                if "items" in prop_schema and "enum" in prop_schema["items"]:
-                    return {
-                        "data_type": "array",
-                        "item_type": "enum",
-                        "item_enum_data": prop_schema["items"]["enum"],
-                    }
-
-                item_type = prop_schema.get("items", {}).get("type")
-                if not item_type:
-                    oneOfSchemas = prop_schema.get("items", {}).get(
-                        "oneOf"
-                    ) or prop_schema.get("items", {}).get("anyOf")
-                    if oneOfSchemas:
-                        return self.construct_simple_property_schema(
-                            prop, {"oneOf": oneOfSchemas}
-                        )
-                    else:
-                        raise DictionaryError(
-                            "Error: {} has no item datatype. Detail {}".format(
-                                prop, prop_schema
-                            )
-                        )
-
-                simple_schema = {
-                    "data_type": prop_type,
-                    "item_type": prop_schema.get("items").get("type"),
-                }
-                format = prop_schema.get("items").get("format")
-                if format:
-                    simple_schema["format"] = format
-                return simple_schema
-            else:
-                simple_schema = {
-                    "data_type": prop_type,
-                    "pattern": prop_schema.get("pattern"),
-                    "max": prop_schema.get("maximum", 100),
-                    "min": prop_schema.get("minimum", 0),
-                }
-                format = prop_schema.get("format")
-                if format:
-                    simple_schema["format"] = format
-                return simple_schema
-
-        elif prop_schema.get("oneOf") or prop_schema.get("anyOf"):
-            one_of = prop_schema.get("oneOf") or prop_schema.get("anyOf")
-            one = random.choice(one_of)
-            if Node._is_link_property(one):
-                return {"data_type": "link_type"}
-            return self.construct_simple_property_schema(prop, one)
-
-        elif prop_schema.get("enum"):
-            if is_mixed_type(prop_schema.get("enum")):
-                raise DictionaryError(
-                    "Error: {} has mixed datatype. Detail {}".format(
-                        prop, prop_schema["enum"]
-                    )
-                )
-            else:
-                return {"data_type": "enum", "values": prop_schema.get("enum")}
-
-        elif Node._is_datetime_property(prop_schema):
-            return {"data_type": "datetime"}
-
-        else:
-            raise DictionaryError(
-                "Node {}. Can not get data type of {}. Detail {}".format(
-                    self.name, prop, prop_schema
-                )
-            )
 
     def simulate_data(self, n_samples=1, random=False, required_only=True):
         """
@@ -343,9 +344,7 @@ class Node(object):
                         Node._simulate_consent_code() if self.consent_codes else []
                     )
                 else:
-                    example[prop] = Node._simulate_data_from_simple_schema(
-                        simple_schema
-                    )
+                    example[prop] = _simulate_data_from_simple_schema(simple_schema)
 
             if self.name != "project":
                 example["submitter_id"] = self._simulate_submitter_id()

@@ -120,6 +120,9 @@ def generate_simple_primitive_data(
     if data_type == "float" or data_type == "number":
         return generate_number(maxx=maxx, minx=minx)
 
+    if data_type == "null":
+        return None
+
     raise UserError("Data type '{}' is not supported".format(data_type))
 
 
