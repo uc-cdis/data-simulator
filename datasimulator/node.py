@@ -3,7 +3,7 @@ import random
 
 from cdislogging import get_logger
 
-from .errors import UserError
+from .errors import UserError, DictionaryError
 from .generator import (
     generate_hash,
     generate_datetime,
@@ -233,16 +233,21 @@ class Node(object):
                         "item_enum_data": prop_schema["items"]["enum"],
                     }
 
-                if prop_schema.get("items") is None or (
-                    prop_schema.get("items").get("type") is None
-                ):
-                    return {
-                        "data_type": "array",
-                        "error_msg": "Error: {} has no item datatype. Detail {}".format(
-                            prop, prop_schema
-                        ),
-                        "error_type": "DictionaryError",
-                    }
+                item_type = prop_schema.get("items", {}).get("type")
+                if not item_type:
+                    oneOfSchemas = prop_schema.get("items", {}).get(
+                        "oneOf"
+                    ) or prop_schema.get("items", {}).get("anyOf")
+                    if oneOfSchemas:
+                        return self.construct_simple_property_schema(
+                            prop, {"oneOf": oneOfSchemas}
+                        )
+                    else:
+                        raise DictionaryError(
+                            "Error: {} has no item datatype. Detail {}".format(
+                                prop, prop_schema
+                            )
+                        )
 
                 simple_schema = {
                     "data_type": prop_type,
@@ -266,28 +271,18 @@ class Node(object):
 
         elif prop_schema.get("oneOf") or prop_schema.get("anyOf"):
             one_of = prop_schema.get("oneOf") or prop_schema.get("anyOf")
-            for one in one_of:
-                if Node._is_link_property(one):
-                    return {"data_type": "link_type"}
-
-                data_type = one.get("type")
-                if not data_type:
-                    continue
-                simple_schema = {"data_type": data_type}
-                format = one.get("format")
-                if format:
-                    simple_schema["format"] = format
-                return simple_schema
+            one = random.choice(one_of)
+            if Node._is_link_property(one):
+                return {"data_type": "link_type"}
+            return self.construct_simple_property_schema(prop, one)
 
         elif prop_schema.get("enum"):
             if is_mixed_type(prop_schema.get("enum")):
-                return {
-                    "data_type": None,
-                    "error_msg": "Error: {} has mixed datatype. Detail {}".format(
+                raise DictionaryError(
+                    "Error: {} has mixed datatype. Detail {}".format(
                         prop, prop_schema["enum"]
-                    ),
-                    "error_type": "DictionaryError",
-                }
+                    )
+                )
             else:
                 return {"data_type": "enum", "values": prop_schema.get("enum")}
 
@@ -295,13 +290,11 @@ class Node(object):
             return {"data_type": "datetime"}
 
         else:
-            return {
-                "data_type": None,
-                "error_msg": "Node {}. Can not get data type of {}. Detail {}".format(
+            raise DictionaryError(
+                "Node {}. Can not get data type of {}. Detail {}".format(
                     self.name, prop, prop_schema
-                ),
-                "error_type": "DictionaryError",
-            }
+                )
+            )
 
     def simulate_data(self, n_samples=1, random=False, required_only=True):
         """
