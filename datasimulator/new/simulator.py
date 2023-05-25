@@ -1,11 +1,11 @@
 import json
-
 from os.path import join
+
 from datasimulator.new.subgroup_parser import create_subgroup_validators
 from datasimulator.generator import generate_string_data
 from datasimulator.new.links_simulator import generate_links
 from datasimulator.dd_utils import get_properties
-from datasimulator.new.node_simulator import (
+from datasimulator.node import (
     construct_simple_property_schema,
     _simulate_data_from_simple_schema,
 )

@@ -87,7 +87,7 @@ def generate_array_data_type(
     elif item_type == "enum":
         return [random.choice(item_predefined_values)]
     else:
-        raise UserError("{} is not supported".format(item_type))
+        raise UserError("Array item type '{}' is not supported".format(item_type))
 
 
 def generate_simple_primitive_data(
@@ -120,7 +120,10 @@ def generate_simple_primitive_data(
     if data_type == "float" or data_type == "number":
         return generate_number(maxx=maxx, minx=minx)
 
-    raise UserError("{} is not supported".format(data_type))
+    if data_type == "null":
+        return None
+
+    raise UserError("Data type '{}' is not supported".format(data_type))
 
 
 def generate_consent_code(size=5):
