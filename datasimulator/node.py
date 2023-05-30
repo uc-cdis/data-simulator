@@ -163,7 +163,7 @@ def _simulate_data_from_simple_schema(simple_schema):
     elif simple_schema["data_type"] == "array":
         return generate_array_data_type(
             item_type=simple_schema.get("item_type"),
-            n_items=1,
+            n_items=random.randint(1, 3),
             item_predefined_values=simple_schema.get("item_enum_data", []),
             pattern=simple_schema.get("pattern", None),
             format=simple_schema.get("format"),
