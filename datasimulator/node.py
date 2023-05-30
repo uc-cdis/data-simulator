@@ -126,8 +126,14 @@ def construct_simple_property_schema(node_name, prop, prop_schema):
             return simple_schema
 
     elif prop_schema.get("oneOf") or prop_schema.get("anyOf"):
+        # pick one allowed type at random
         one_of = prop_schema.get("oneOf") or prop_schema.get("anyOf")
+        if len(one_of) > 1:
+            # avoid picking type=null to avoid this sheepdog bug: PXP-10952
+            # TODO remove this in a while when everyone uses the fixed sheepdog...
+            one_of = [e for e in one_of if e.get("type") != "null"]
         one = random.choice(one_of)
+
         if Node._is_link_property(one):
             return {"data_type": "link_type"}
         return construct_simple_property_schema(node_name, prop, one)
