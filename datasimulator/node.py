@@ -130,7 +130,7 @@ def construct_simple_property_schema(node_name, prop, prop_schema):
         one_of = prop_schema.get("oneOf") or prop_schema.get("anyOf")
         if len(one_of) > 1:
             # avoid picking type=null to avoid this sheepdog bug: PXP-10952
-            # TODO remove this in a while when everyone uses the fixed sheepdog...
+            # TODO remove this in a while when everyone uses the fixed sheepdog 2023.07
             one_of = [e for e in one_of if e.get("type") != "null"]
         one = random.choice(one_of)
 
