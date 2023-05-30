@@ -81,9 +81,23 @@ def construct_simple_property_schema(node_name, prop, prop_schema):
                     "oneOf"
                 ) or prop_schema.get("items", {}).get("anyOf")
                 if oneOfSchemas:
-                    return construct_simple_property_schema(
+                    sub_schema = construct_simple_property_schema(
                         node_name, prop, {"oneOf": oneOfSchemas}
                     )
+                    if sub_schema.get("data_type") == "enum" and sub_schema.get(
+                        "values"
+                    ):
+                        return {
+                            "data_type": "array",
+                            "item_type": "enum",
+                            "item_enum_data": sub_schema["values"],
+                        }
+                    else:
+                        raise DictionaryError(
+                            "Error: Data simulator does not know yet how to handle schema '{}' for prop '{}'. Debug: sub_schema={}".format(
+                                prop_schema, prop, sub_schema
+                            )
+                        )
                 else:
                     raise DictionaryError(
                         "Error: {} has no item datatype. Detail {}".format(
