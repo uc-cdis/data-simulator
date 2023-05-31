@@ -81,9 +81,23 @@ def construct_simple_property_schema(node_name, prop, prop_schema):
                     "oneOf"
                 ) or prop_schema.get("items", {}).get("anyOf")
                 if oneOfSchemas:
-                    return construct_simple_property_schema(
+                    sub_schema = construct_simple_property_schema(
                         node_name, prop, {"oneOf": oneOfSchemas}
                     )
+                    if sub_schema.get("data_type") == "enum" and sub_schema.get(
+                        "values"
+                    ):
+                        return {
+                            "data_type": "array",
+                            "item_type": "enum",
+                            "item_enum_data": sub_schema["values"],
+                        }
+                    else:
+                        raise DictionaryError(
+                            "Error: Data simulator does not know yet how to handle schema '{}' for prop '{}'. Debug: sub_schema={}".format(
+                                prop_schema, prop, sub_schema
+                            )
+                        )
                 else:
                     raise DictionaryError(
                         "Error: {} has no item datatype. Detail {}".format(
@@ -112,8 +126,14 @@ def construct_simple_property_schema(node_name, prop, prop_schema):
             return simple_schema
 
     elif prop_schema.get("oneOf") or prop_schema.get("anyOf"):
+        # pick one allowed type at random
         one_of = prop_schema.get("oneOf") or prop_schema.get("anyOf")
+        if len(one_of) > 1:
+            # avoid picking type=null to avoid this sheepdog bug: PXP-10952
+            # TODO remove this in a while when everyone uses the fixed sheepdog 2023.07
+            one_of = [e for e in one_of if e.get("type") != "null"]
         one = random.choice(one_of)
+
         if Node._is_link_property(one):
             return {"data_type": "link_type"}
         return construct_simple_property_schema(node_name, prop, one)
@@ -149,7 +169,7 @@ def _simulate_data_from_simple_schema(simple_schema):
     elif simple_schema["data_type"] == "array":
         return generate_array_data_type(
             item_type=simple_schema.get("item_type"),
-            n_items=1,
+            n_items=random.randint(1, 3),
             item_predefined_values=simple_schema.get("item_enum_data", []),
             pattern=simple_schema.get("pattern", None),
             format=simple_schema.get("format"),

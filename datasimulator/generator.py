@@ -85,7 +85,9 @@ def generate_array_data_type(
     elif item_type in {"float", "number"}:
         return [generate_number() for _ in range(n_items)]
     elif item_type == "enum":
-        return [random.choice(item_predefined_values)]
+        return random.sample(
+            item_predefined_values, min(n_items, len(item_predefined_values))
+        )
     else:
         raise UserError("Array item type '{}' is not supported".format(item_type))
 
