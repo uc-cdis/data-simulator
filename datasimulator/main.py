@@ -151,7 +151,14 @@ def main():
         logger.info("Generating data submission order...")
         if args.node_name:
             node = graph.get_node_with_name(args.node_name)
-            submission_order = graph.generate_submission_order_path_to_node(node)
+            cmc_node = graph.get_node_with_name("core_metadata_collection")
+            if not node:
+                raise Exception(
+                    f"Argument 'node_name' is '{args.node_name}' but this node does not exist"
+                )
+            submission_order = graph.generate_submission_order_path_to_node(
+                node, cmc_node
+            )
         else:
             submission_order = graph.generate_submission_order()
 
