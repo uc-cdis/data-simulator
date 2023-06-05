@@ -200,7 +200,7 @@ class Graph(object):
                     )
                 )
 
-    def generate_submission_order_path_to_node(self, node):
+    def generate_submission_order_path_to_node(self, node, cmc_node=None):
         """
         Generate submission order so that the current node can be submitted
 
@@ -212,6 +212,8 @@ class Graph(object):
 
         """
         submission_order = [node]
+        if cmc_node:
+            submission_order.append(cmc_node)
         index = 0
 
         while index < len(submission_order):
