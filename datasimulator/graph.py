@@ -177,8 +177,9 @@ class Graph(object):
                                 link.get("multiplicity"),
                             )
 
-                        if "sub_group" in link or "subgroup" in link:
-                            sub_links = link.get("sub_group") or link.get("subgroup")
+                        sub_links = link.get("sub_group") or link.get("subgroup")
+                        if sub_links:
+                            is_exclusive = link.get("exclusive", False)
                             if not isinstance(sub_links, list):
                                 sub_links = [sub_links]
 
@@ -190,6 +191,8 @@ class Graph(object):
                                         sub_link.get("name"),
                                         sub_link.get("multiplicity"),
                                     )
+                                if is_exclusive:
+                                    break
 
             except TypeError as e:
                 raise DictionaryError(
