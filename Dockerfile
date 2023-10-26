@@ -1,26 +1,16 @@
+FROM quay.io/cdis/python:python3.9-buster-2.0.0
 
-FROM python:3.6-alpine
-
-RUN apk update \
-     && apk add --no-cache \
+RUN apt-get update \
+     && apt-get install -y --no-install-recommends\
      ca-certificates \
      gcc \
-     bash \
-     curl \
+     curl bash git vim \
      musl-dev \
-     libffi-dev \
-     openssl-dev \
-     postgresql-dev \
-     git \
-     g++ \
-     && pip install --upgrade pip
-# add g++ because greenlet needs it (imported by sqlalchemy 1.4)
+     libffi-dev
 
 COPY . /data-simulator
 WORKDIR /data-simulator
 
-ENV CRYPTOGRAPHY_DONT_BUILD_RUST=1
-
-RUN pip3 install poetry
+RUN pip install --upgrade pip && pip3 install poetry
 RUN poetry config virtualenvs.create false
 RUN poetry install -vv
