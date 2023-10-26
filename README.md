@@ -1,5 +1,5 @@
 # Data Simulator
-Used to generate datasets based on dictionary
+Used to generate graph data based on a Gen3 data dictionary.
 
 
 # Motivation
