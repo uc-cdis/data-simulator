@@ -1,6 +1,6 @@
 #!groovy
 
-@Library('cdis-jenkins-lib@fix-sim-py3.9') _
+@Library('cdis-jenkins-lib@master') _
 
 testPipeline {
 }
