@@ -223,8 +223,11 @@ class Graph(object):
             if not cur_node:
                 continue
             for linked_node_dict in cur_node.required_links:
-                if linked_node_dict["node"] not in submission_order:
-                    submission_order.append(linked_node_dict["node"])
+                if linked_node_dict["node"] in submission_order:
+                    # reorder to place the node at the beginning. eg. if this node is parent to 2 other
+                    # nodes, we need it to be submitted before the 2 others, and not in-between.
+                    submission_order.remove(linked_node_dict["node"])
+                submission_order.append(linked_node_dict["node"])
         submission_order.reverse()
 
         return submission_order

@@ -65,7 +65,7 @@ properties:
 
   format:
     description: >
-      The file format, physical medium, or dimensions of the resource. Examples of dimensions include size and duration. Recommended best practice is to use a controlled vocabulary such as the list of Internet Media Types [MIME] (http://www.iana.org/assignments/media-types/). 
+      The file format, physical medium, or dimensions of the resource. Examples of dimensions include size and duration. Recommended best practice is to use a controlled vocabulary such as the list of Internet Media Types [MIME] (http://www.iana.org/assignments/media-types/).
     type: string
 
   language:
@@ -110,4 +110,3 @@ properties:
 
   projects:
     $ref: "_definitions.yaml#/to_one"
-

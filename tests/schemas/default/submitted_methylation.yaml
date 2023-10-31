@@ -3,7 +3,7 @@ $schema: "http://json-schema.org/draft-04/schema#"
 id: "submitted_methylation"
 title: Submitted Methylation
 type: object
-namespace: https://www.bloodpac.org/ 
+namespace: https://www.bloodpac.org/
 category: data_file
 program: '*'
 project: '*'
@@ -61,7 +61,7 @@ properties:
       $ref: "_terms.yaml#/data_format"
     enum:
       - IDAT
-  assay_method: 
+  assay_method:
     enum:
       - Methylation Array
   assay_instrument:
