@@ -217,17 +217,25 @@ class Graph(object):
             submission_order.append(cmc_node)
         index = 0
 
+        project_node = None
         while index < len(submission_order):
             cur_node = submission_order[index]
             index += 1
             if not cur_node:
                 continue
             for linked_node_dict in cur_node.required_links:
+                if linked_node_dict["node"].name == "project":
+                    project_node = linked_node_dict["node"]
+                    continue
                 if linked_node_dict["node"] in submission_order:
                     # reorder to place the node at the beginning. eg. if this node is parent to 2 other
                     # nodes, we need it to be submitted before the 2 others, and not in-between.
                     submission_order.remove(linked_node_dict["node"])
                 submission_order.append(linked_node_dict["node"])
+
+        if project_node:  # project should always be submitted first
+            submission_order.append(project_node)
+
         submission_order.reverse()
 
         return submission_order

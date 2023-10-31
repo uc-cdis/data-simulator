@@ -39,11 +39,11 @@ def test_generate_submission_order_path_to_node_multiple_children():
     ]
 
     # before the fix, "study" was not submitted before "case":
-    # ['case', 'biospecimen', 'project', 'sample', 'study', 'aliquot', 'analyte']
+    # ['project', 'case', 'biospecimen', 'sample', 'study', 'aliquot', 'analyte']
     assert submission_order == [
+        "project",
         "study",
         "case",
-        "project",
         "biospecimen",
         "sample",
         "aliquot",
