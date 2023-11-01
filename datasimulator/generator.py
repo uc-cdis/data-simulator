@@ -2,7 +2,12 @@ from datetime import datetime, timedelta
 import rstr
 import random
 
+from cdislogging import get_logger
+
 from .errors import UserError
+
+
+logger = get_logger("data-simulator generator", log_level="info")
 
 tried_words = False
 WORDS = None
@@ -18,8 +23,11 @@ def generate_string_data(size=10, pattern=None, format=None):
         try:
             word_file = "/usr/share/dict/words"
             WORDS = open(word_file).read().splitlines()
-        except Exception:
-            pass
+            logger.info("Using '/usr/share/dict/words' for string generation.")
+        except Exception as e:
+            logger.info(
+                f"Unable to use '/usr/share/dict/words' for string generation. Generating random strings instead. Details: {e}"
+            )
     if pattern or not WORDS:
         pattern = pattern or "^[0-9a-f]{" + str(size) + "}"
         return rstr.xeger(pattern)

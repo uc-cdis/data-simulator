@@ -1,15 +1,13 @@
 $schema: "http://json-schema.org/draft-04/schema#"
 
-id: "case"
-title: Case
+id: "acknowledgement"
+title: Acknowledgement
 type: object
 namespace: http://gdc.nci.nih.gov
 category: administrative
 program: '*'
 project: '*'
-description: >
-  The collection of all data related to a specific subject in the
-  context of a specific experiment. 
+description: "Acknowledgement of an individual involved in a project."
 additionalProperties: false
 submittable: true
 validators: null
@@ -17,30 +15,29 @@ validators: null
 systemProperties:
   - id
   - project_id
+  - state
   - created_datetime
   - updated_datetime
-  - state
 
 links:
-  - name: experiments 
-    backref: cases
-    label: member_of
-    target_type: experiment
-    multiplicity: many_to_one
+  - name: projects
+    backref: acknowledgements
+    label: contribute_to
+    target_type: project
+    multiplicity: many_to_many
     required: true
 
 required:
   - submitter_id
-  - experiments 
+  - projects
 
 uniqueKeys:
-  - [id]
-  - [project_id, submitter_id]
+  - [ id ]
+  - [ project_id, submitter_id ]
 
-# Case properties
 properties:
   type:
-    type: string
+    enum: [ "acknowledgement" ]
   id:
     $ref: "_definitions.yaml#/UUID"
     systemAlias: node_id
@@ -50,16 +47,13 @@ properties:
     type:
       - string
       - "null"
-  primary_site:
-    description: "Primary site for the case."
+  acknowledgee:
+    description: "The indvidiual or group being acknowledged by the project."
     type: string
-  disease_type:
-    description: "Name of the disease for the case."
-    type: string
-  experiments: 
-    $ref: "_definitions.yaml#/to_one"
+  projects:
+    $ref: "_definitions.yaml#/to_many"
   project_id:
-    $ref: "_definitions.yaml#/project_id"
+    type: string
   created_datetime:
     $ref: "_definitions.yaml#/datetime"
   updated_datetime:

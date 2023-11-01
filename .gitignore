@@ -3,3 +3,5 @@ main_test.py
 sample_test_data/
 # Distribution / packaging
 *.egg-info/
+
+tests/TestData

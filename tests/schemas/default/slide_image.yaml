@@ -73,7 +73,7 @@ properties:
   data_format:
     term:
       $ref: "_terms.yaml#/data_format"
-    type: string 
+    type: string
   experimental_strategy:
     description: "Classification of the slide type with respect to its experimental use."
     enum:

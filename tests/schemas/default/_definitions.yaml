@@ -58,7 +58,7 @@ file_name:
 
 file_size:
     type: integer
-    term: 
+    term:
         $ref: "_terms.yaml#/file_size"
 
 file_format:
@@ -105,7 +105,7 @@ data_file_error_type:
 
 state:
     term:
-        $ref: "_terms.yaml#/state" 
+        $ref: "_terms.yaml#/state"
     default: validated
     downloadable:
         - uploaded
@@ -136,7 +136,7 @@ state:
 
 file_state:
     term:
-        $ref: "_terms.yaml#/file_state" 
+        $ref: "_terms.yaml#/file_state"
     default: registered
     enum:
         - registered
@@ -177,7 +177,7 @@ data_file_properties:
   file_size:
     $ref: "#/file_size"
   md5sum:
-    $ref: "#/md5sum" 
+    $ref: "#/md5sum"
   file_state:
     $ref: "#/file_state"
   object_id:
@@ -188,7 +188,7 @@ data_file_properties:
     $ref: "#/data_file_error_type"
   state_comment:
     type: string
-    description: > 
+    description: >
       Optional comment about why the file is in the
       current state, mainly for invalid state.
   project_id:

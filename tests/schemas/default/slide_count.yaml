@@ -70,7 +70,7 @@ properties:
       - Cytoplasmic
       - Both
       - None
-      - Not Determined 
+      - Not Determined
   frame_identifier:
     description: "Name, number, or other identifier given to the frame of the slide from which this image was taken."
     type: string
