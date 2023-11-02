@@ -30,42 +30,90 @@ def test_generate_submission_order():
     graph.generate_nodes_from_dictionary()
     graph.construct_graph_edges()
 
-    submission_order = [node.name for node in graph.generate_submission_order()]
-    assert len(submission_order) == len(
-        set(submission_order)
-    ), "There should be not duplicates"
-    assert submission_order == [
+    submission_order = graph.generate_submission_order()
+    names = [node.name for node in submission_order]
+    assert len(names) == len(
+        set(names)
+    ), "There should be not duplicates in the submission order"
+
+    for node in submission_order:
+        node_i = submission_order.index(node)
+        for child_node in node.child_nodes:
+            child_i = submission_order.index(child_node)
+            assert (
+                node_i < child_i
+            ), f"Node '{node.name}' should be submitted before its child '{child_node.name}'"
+
+    assert names == [
         "project",
-        "core_metadata_collection",
-        "read_group",
-        "submitted_aligned_reads",
-        "submitted_unaligned_reads",
-        "alignment_workflow",
-        "alignment_cocleaning_workflow",
-        "aligned_reads",
-        "aligned_reads_index",
         "publication",
         "study",
+        "core_metadata_collection",
+        "acknowledgement",
+        "reference_file",
+        "reference_file_index",
         "subject",
         "demographic",
         "exposure",
-        "sample",
-        "aliquot",
-        "germline_mutation_calling_workflow",
-        "simple_germline_variation",
-        "imaging_file",
-        "imaging_file_reference",
         "electrocardiogram_test",
-        "acknowledgement",
-        "reference_file",
+        "sample",
         "blood_pressure_test",
         "sleep_test_file",
-        "reference_file_index",
         "medical_history",
         "cardiac_mri",
-        "germline_variation_index",
+        "imaging_file",
         "lab_result",
         "medication",
+        "imaging_file_reference",
+        "aliquot",
+        "read_group",
+        "submitted_aligned_reads",
+        "submitted_unaligned_reads",
+        "germline_mutation_calling_workflow",
+        "alignment_cocleaning_workflow",
+        "alignment_workflow",
+        "aligned_reads",
+        "aligned_reads_index",
+        "simple_germline_variation",
+        "germline_variation_index",
+    ]
+
+
+def test_generate_submission_order_path_to_node():
+    datadictionary = DataDictionary(
+        local_file=os.path.join(MOD_DIR, "schemas/gtex.json")
+    )
+    dictionary.init(datadictionary)
+
+    graph = Graph(dictionary, "DEV", "test")
+    graph.generate_nodes_from_dictionary()
+    graph.construct_graph_edges()
+
+    submission_order = graph.generate_submission_order_path_to_node(
+        graph.get_node_with_name("submitted_aligned_reads")
+    )
+    names = [node.name for node in submission_order]
+    assert len(names) == len(
+        set(names)
+    ), "There should be not duplicates in the submission order"
+
+    for node in submission_order:
+        node_i = submission_order.index(node)
+        for child_node in node.child_nodes:
+            child_i = submission_order.index(child_node)
+            assert (
+                node_i < child_i
+            ), f"Node '{node.name}' should be submitted before its child '{child_node.name}'"
+
+    assert names == [
+        "project",
+        "study",
+        "subject",
+        "sample",
+        "aliquot",
+        "read_group",
+        "core_metadata_collection",
+        "submitted_aligned_reads",
     ]
 
 
@@ -82,9 +130,11 @@ def test_generate_submission_order_path_to_node_multiple_children():
     graph.generate_nodes_from_dictionary()
     graph.construct_graph_edges()
 
-    node = [n for n in graph.nodes if n.name == "analyte"][0]
     submission_order = [
-        node.name for node in graph.generate_submission_order_path_to_node(node)
+        node.name
+        for node in graph.generate_submission_order_path_to_node(
+            graph.get_node_with_name("analyte")
+        )
     ]
 
     # before the fix, "study" was not submitted before "case":
