@@ -20,6 +20,55 @@ def test_get_schema(default_dictionary):
     # TODO: delete generated files at the end of tests
 
 
+def test_generate_submission_order():
+    datadictionary = DataDictionary(
+        local_file=os.path.join(MOD_DIR, "schemas/gtex.json")
+    )
+    dictionary.init(datadictionary)
+
+    graph = Graph(dictionary, "DEV", "test")
+    graph.generate_nodes_from_dictionary()
+    graph.construct_graph_edges()
+
+    submission_order = [node.name for node in graph.generate_submission_order()]
+    assert len(submission_order) == len(
+        set(submission_order)
+    ), "There should be not duplicates"
+    assert submission_order == [
+        "project",
+        "core_metadata_collection",
+        "read_group",
+        "submitted_aligned_reads",
+        "submitted_unaligned_reads",
+        "alignment_workflow",
+        "alignment_cocleaning_workflow",
+        "aligned_reads",
+        "aligned_reads_index",
+        "publication",
+        "study",
+        "subject",
+        "demographic",
+        "exposure",
+        "sample",
+        "aliquot",
+        "germline_mutation_calling_workflow",
+        "simple_germline_variation",
+        "imaging_file",
+        "imaging_file_reference",
+        "electrocardiogram_test",
+        "acknowledgement",
+        "reference_file",
+        "blood_pressure_test",
+        "sleep_test_file",
+        "reference_file_index",
+        "medical_history",
+        "cardiac_mri",
+        "germline_variation_index",
+        "lab_result",
+        "medication",
+    ]
+
+
 def test_generate_submission_order_path_to_node_multiple_children():
     # this is a simplified version of the bpadictionary, where "aliquot" is child of both "sample" and "study",
     # and "case" is child of "study". So "study" should be submitted before both "aliquot" and "case", and not

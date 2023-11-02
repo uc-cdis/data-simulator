@@ -246,10 +246,9 @@ class Graph(object):
         """
         submission_order = []
         for node in self.nodes:
-            if node not in submission_order:
-                for item in self.generate_submission_order_path_to_node(node):
-                    if item not in submission_order:
-                        submission_order.append(item)
+            for item in self.generate_submission_order_path_to_node(node):
+                if item not in submission_order:
+                    submission_order.append(item)
 
         return submission_order
 
