@@ -4,7 +4,7 @@ from os.path import join
 from .node import Node, logger
 from .errors import UserError, DictionaryError
 from .generator import generate_list_numbers
-from .utils import generate_list_numbers_from_file
+from .utils import generate_list_numbers_from_file, get_graph_traversal_path
 
 EXCLUDED_NODE = ["program", "root", "data_release"]
 
@@ -201,23 +201,14 @@ class Graph(object):
                     )
                 )
 
-    def generate_submission_order_path_to_node(self, end_node, cmc_node=None):
+    def generate_submission_order_path_to_node(self, node, cmc_node=None):
         """
         From the specified `end_node`, step through the graph from bottom to top to generate the minimal
         submission order to that node.
         """
-        to_visit = [end_node]
-        submission_order = [end_node]
-        while to_visit:
-            node = to_visit.pop()
-            for parent_node_dict in node.required_links:
-                parent_node = parent_node_dict["node"]
-                if parent_node in submission_order:
-                    submission_order.remove(parent_node)
-                submission_order.append(parent_node)
-                if parent_node not in to_visit:
-                    to_visit.append(parent_node)
-
+        # get the bottom-to-top path from the node, and then reverse since the actual submission order
+        # must be top-to-bottom (parent nodes first)
+        submission_order = get_graph_traversal_path(direction="up", start_node=node)
         submission_order.reverse()
 
         # if specified, make sure that `core_metadata_collection` is in the submission order
@@ -235,20 +226,13 @@ class Graph(object):
         # populate the nodes' `child_nodes` lists
         for node in self.nodes:
             if node.name == "project":
-                proj_node = node
+                project_node = node
             for link in node.required_links:
                 link["node"].child_nodes.append(node)
 
-        to_visit = [proj_node]
-        submission_order = [proj_node]
-        while to_visit:
-            node = to_visit.pop()
-            for child_node in node.child_nodes:
-                if child_node in submission_order:
-                    submission_order.remove(child_node)
-                submission_order.append(child_node)
-                if child_node not in to_visit:
-                    to_visit.append(child_node)
+        submission_order = get_graph_traversal_path(
+            direction="down", start_node=project_node
+        )
 
         return submission_order
 

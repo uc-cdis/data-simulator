@@ -21,6 +21,10 @@ def test_get_schema(default_dictionary):
 
 
 def test_generate_submission_order():
+    """
+    Generate the submission order from the project node to all leaf nodes.
+    Check that parent nodes are always submitted before their linked child nodes.
+    """
     datadictionary = DataDictionary(
         local_file=os.path.join(MOD_DIR, "schemas/gtex.json")
     )
@@ -80,6 +84,10 @@ def test_generate_submission_order():
 
 
 def test_generate_submission_order_path_to_node():
+    """
+    Generate the submission order from the project node to a specific leaf node.
+    Check that parent nodes are always submitted before their linked child nodes.
+    """
     datadictionary = DataDictionary(
         local_file=os.path.join(MOD_DIR, "schemas/gtex.json")
     )
