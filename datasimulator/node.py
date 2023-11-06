@@ -205,6 +205,8 @@ class Node(object):
                 "Error: NODE {} does not have key `{}`".format(node_name, e.message)
             )
         self.required_links = []
+        # useful property for traversing the graph from top to bottom:
+        self.child_nodes = []
         self.simulated_dataset = []
 
     def __str__(self):

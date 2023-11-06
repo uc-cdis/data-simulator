@@ -4,7 +4,7 @@ from os.path import join
 from .node import Node, logger
 from .errors import UserError, DictionaryError
 from .generator import generate_list_numbers
-from .utils import generate_list_numbers_from_file
+from .utils import generate_list_numbers_from_file, get_graph_traversal_path
 
 EXCLUDED_NODE = ["program", "root", "data_release"]
 
@@ -102,7 +102,7 @@ class Graph(object):
         node_parent = self.get_node_with_name(link_node_name)
 
         if not node_parent:
-            msg = "Node {} have a link to node {} which does not exist".format(
+            msg = "Node '{}' has a link to node '{}' which does not exist".format(
                 node.name, link_node_name
             )
             if skip:
@@ -203,53 +203,36 @@ class Graph(object):
 
     def generate_submission_order_path_to_node(self, node, cmc_node=None):
         """
-        Generate submission order so that the current node can be submitted
-
-        Args:
-            node(Node): current node object
-
-        Outputs:
-            list: list of submission order
-
+        From the specified `end_node`, step through the graph from bottom to top to generate the minimal
+        submission order to that node.
         """
-        submission_order = [node]
-        if cmc_node:
-            submission_order.append(cmc_node)
-        index = 0
-
-        project_node = None
-        while index < len(submission_order):
-            cur_node = submission_order[index]
-            index += 1
-            if not cur_node:
-                continue
-            for linked_node_dict in cur_node.required_links:
-                if linked_node_dict["node"].name == "project":
-                    project_node = linked_node_dict["node"]
-                    continue
-                if linked_node_dict["node"] in submission_order:
-                    # reorder to place the node at the beginning. eg. if this node is parent to 2 other
-                    # nodes, we need it to be submitted before the 2 others, and not in-between.
-                    submission_order.remove(linked_node_dict["node"])
-                submission_order.append(linked_node_dict["node"])
-
-        if project_node:  # project should always be submitted first
-            submission_order.append(project_node)
-
+        # get the bottom-to-top path from the node, and then reverse since the actual submission order
+        # must be top-to-bottom (parent nodes first)
+        submission_order = get_graph_traversal_path(direction="up", start_node=node)
         submission_order.reverse()
+
+        # if specified, make sure that `core_metadata_collection` is in the submission order
+        if cmc_node and cmc_node not in submission_order:
+            # insert cmc node right after "project"
+            submission_order.insert(1, cmc_node)
 
         return submission_order
 
     def generate_submission_order(self):
         """
-        Generate submission order for the graph
+        Step through the graph from top to bottom to generate the submission order from the `project` node
+        to all leaf nodes.
         """
-        submission_order = []
+        # populate the nodes' `child_nodes` lists
         for node in self.nodes:
-            if node not in submission_order:
-                for item in self.generate_submission_order_path_to_node(node):
-                    if item not in submission_order:
-                        submission_order.append(item)
+            if node.name == "project":
+                project_node = node
+            for link in node.required_links:
+                link["node"].child_nodes.append(node)
+
+        submission_order = get_graph_traversal_path(
+            direction="down", start_node=project_node
+        )
 
         return submission_order
 

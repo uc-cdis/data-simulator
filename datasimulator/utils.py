@@ -62,3 +62,39 @@ def generate_list_numbers_from_file(data_file, submission_order, n_samples):
         )
 
     return result
+
+
+def get_graph_traversal_path(direction, start_node):
+    """
+    Starting from the specified node, step through the graph either from top to bottom (direction=down) or
+    from bottom to top (direction=up) through node links, and return the resulting path. Ensure "parent"
+    nodes are always before their direct and indirect "child" nodes in the path.
+
+    Args:
+        direction(str): "down" for top-to-bottom or "up" for bottom-to-top
+        start_node(Node): Node at which to start the path
+
+    Outputs:
+        list[Node]: path
+    """
+    if direction not in ["down", "up"]:
+        raise Exception(
+            f"Graph traversal is either top-to-bottom (direction=down) or bottom-to-top (direction=up). Provided value direction={direction} unknown."
+        )
+
+    to_visit = [start_node]
+    path = [start_node]
+    while to_visit:
+        node = to_visit.pop()
+        if direction == "down":
+            links = node.child_nodes
+        elif direction == "up":
+            links = [link["node"] for link in node.required_links]
+        for linked_node in links:
+            if linked_node in path:
+                path.remove(linked_node)
+            path.append(linked_node)
+            if linked_node not in to_visit:
+                to_visit.append(linked_node)
+
+    return path
