@@ -113,7 +113,7 @@ def run_simulation(
     # simulate data whether the graph passes validation or not
     logger.info("Generating data...")
     graph.simulate_graph_data(
-        path=path,
+        path=data_path,
         n_samples=max_samples,
         node_num_instances_file=node_num_instances_file,
         random=random,
@@ -135,7 +135,7 @@ def run_submission_order_generation(graph, data_path, node_name=None):
     else:
         submission_order = graph.generate_submission_order()
 
-    with open(os.path.join(path, "DataImportOrderPath.txt"), "w") as outfile:
+    with open(os.path.join(data_path, "DataImportOrderPath.txt"), "w") as outfile:
         for node in submission_order:
             outfile.write(node.name + "\t" + node.category + "\n")
 
