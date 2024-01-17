@@ -189,7 +189,7 @@ def main():
         graph.graph_validation()
 
     elif args.action == "submission_order":
-        run_submission_order_generation(graph, args.node_name, args.path)
+        run_submission_order_generation(graph, args.path, args.node_name)
 
     logger.info("Done!")
 
