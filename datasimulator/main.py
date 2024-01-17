@@ -95,8 +95,17 @@ def initialize_graph(dictionary_url, program, project, consent_codes):
         logger.info("Loading dictionary from installed dictionary")
 
     logger.info("Initializing graph...")
-    graph = Graph(dictionary, program=program, project=project)
-    graph.generate_nodes_from_dictionary(consent_codes)
+    if program and project:
+        graph = Graph(dictionary, program=program, project=project)
+    else:
+        logger.info("Using default program name and project code")
+        graph = Graph(dictionary)
+
+    if consent_codes:
+        graph.generate_nodes_from_dictionary(consent_codes)
+    else:
+        graph.generate_nodes_from_dictionary()
+
     graph.construct_graph_edges()
 
     return graph
@@ -157,7 +166,12 @@ def main():
         return
 
     logger.info("Data simulator initialization...")
-    graph = initialize_graph(args.url, args.program, args.project, args.consent_codes)
+    graph = initialize_graph(
+        dictionary_url=args.url if hasattr(args, "url") else None,
+        program=args.program if hasattr(args, "program") else None,
+        project=args.project if hasattr(args, "project") else None,
+        consent_codes=args.consent_codes if hasattr(args, "consent_codes") else None,
+    )
 
     if args.action == "simulate":
         run_simulation(
