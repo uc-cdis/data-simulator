@@ -121,7 +121,7 @@ def main():
         # just print error messages
         graph.graph_validation(required_only=args.required_only)
 
-        # simulate data no matter what the graph passes validation or not
+        # simulate data whether the graph passes validation or not
         logger.info("Generating data...")
         graph.simulate_graph_data(
             path=args.path,

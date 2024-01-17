@@ -18,12 +18,11 @@ python = ">=3.9,<4"
 cdislogging = "*"
 gen3datamodel = "*"
 gen3dictionary = "*"
+pyyaml = "<7"
 rstr = ">=3,<4"
 requests = "*"
 dictionaryutils = "*"
 psqlgraph = "*"
-
-pyyaml = "<=5.1" # force version that doesn't cause "not supporting PEP 517 builds" error
 
 [tool.poetry.dev-dependencies]
 pytest = ">=7,<8"
