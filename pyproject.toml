@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "data-simulator"
-version = "1.6.0"
+version = "1.6.1"
 description = "Gen3 Data Simulator"
 authors = ["CTDS UChicago <cdis@uchicago.edu>"]
 license = "Apache-2.0"
