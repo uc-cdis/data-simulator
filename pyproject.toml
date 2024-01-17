@@ -16,7 +16,7 @@ data-simulator = 'datasimulator.main:main'
 [tool.poetry.dependencies]
 python = ">=3.9,<4"
 cdislogging = "*"
-gen3datamodel = "*"
+gen3datamodel = {git = "https://github.com/uc-cdis/gdcdatamodel", rev = "3.1.3"}
 gen3dictionary = "*"
 pyyaml = "<7"
 rstr = ">=3,<4"
