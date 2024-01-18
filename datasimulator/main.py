@@ -87,6 +87,68 @@ def parse_arguments():
     return parser.parse_args()
 
 
+def initialize_graph(dictionary_url, program, project, consent_codes):
+    if dictionary_url:
+        logger.info("Loading dictionary from url {}".format(dictionary_url))
+        dictionary.init(DataDictionary(url=dictionary_url))
+    else:
+        logger.info("Loading dictionary from installed dictionary")
+
+    logger.info("Initializing graph...")
+    if program and project:
+        graph = Graph(dictionary, program=program, project=project)
+    else:
+        logger.info("Using default program name and project code")
+        graph = Graph(dictionary)
+
+    if consent_codes:
+        graph.generate_nodes_from_dictionary(consent_codes)
+    else:
+        graph.generate_nodes_from_dictionary()
+
+    graph.construct_graph_edges()
+
+    return graph
+
+
+def run_simulation(
+    graph, data_path, max_samples, node_num_instances_file, random, required_only, skip
+):
+    max_samples = int(max_samples)
+
+    # just print error messages
+    graph.graph_validation(required_only=required_only)
+
+    # simulate data whether the graph passes validation or not
+    logger.info("Generating data...")
+    graph.simulate_graph_data(
+        path=data_path,
+        n_samples=max_samples,
+        node_num_instances_file=node_num_instances_file,
+        random=random,
+        required_only=required_only,
+        skip=skip,
+    )
+
+
+def run_submission_order_generation(graph, data_path, node_name=None):
+    logger.info("Generating data submission order...")
+    if node_name:
+        node = graph.get_node_with_name(node_name)
+        cmc_node = graph.get_node_with_name("core_metadata_collection")
+        if not node:
+            raise Exception(
+                f"Argument 'node_name' is '{node_name}' but this node does not exist"
+            )
+        submission_order = graph.generate_submission_order_path_to_node(node, cmc_node)
+    else:
+        submission_order = graph.generate_submission_order()
+
+    with open(os.path.join(data_path, "DataImportOrderPath.txt"), "w") as outfile:
+        for node in submission_order:
+            outfile.write(node.name + "\t" + node.category + "\n")
+
+
 # python main.py simulate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.3/schema.json --path ./data-simulator/sample_test_data --program DEV --project test
 def main():
     args = parse_arguments()
@@ -104,67 +166,30 @@ def main():
         return
 
     logger.info("Data simulator initialization...")
-    if args.url:
-        logger.info("Loading dictionary from url {}".format(args.url))
-        dictionary.init(DataDictionary(url=args.url))
-    else:
-        logger.info("Loading dictionary from installed dictionary")
+    graph = initialize_graph(
+        dictionary_url=args.url if hasattr(args, "url") else None,
+        program=args.program if hasattr(args, "program") else None,
+        project=args.project if hasattr(args, "project") else None,
+        consent_codes=args.consent_codes if hasattr(args, "consent_codes") else None,
+    )
 
     if args.action == "simulate":
-        # Initialize graph
-        logger.info("Initializing graph...")
-        graph = Graph(dictionary, program=args.program, project=args.project)
-        graph.generate_nodes_from_dictionary(args.consent_codes)
-        graph.construct_graph_edges()
-        max_samples = int(args.max_samples)
-
-        # just print error messages
-        graph.graph_validation(required_only=args.required_only)
-
-        # simulate data no matter what the graph passes validation or not
-        logger.info("Generating data...")
-        graph.simulate_graph_data(
-            path=args.path,
-            n_samples=max_samples,
-            node_num_instances_file=args.node_num_instances_file,
-            random=args.random,
-            required_only=args.required_only,
-            skip=args.skip,
+        run_simulation(
+            graph,
+            args.path,
+            args.max_samples,
+            args.node_num_instances_file,
+            args.random,
+            args.required_only,
+            args.skip,
         )
 
     elif args.action == "validate":
-        # Initialize graph
-        logger.info("Initializing graph...")
-        graph = Graph(dictionary)
-        graph.generate_nodes_from_dictionary()
-        graph.construct_graph_edges()
         logger.info("Validating...")
         graph.graph_validation()
 
     elif args.action == "submission_order":
-        # Initialize graph
-        logger.info("Initializing graph...")
-        graph = Graph(dictionary)
-        graph.generate_nodes_from_dictionary()
-        graph.construct_graph_edges()
-
-        logger.info("Generating data submission order...")
-        if args.node_name:
-            node = graph.get_node_with_name(args.node_name)
-            cmc_node = graph.get_node_with_name("core_metadata_collection")
-            if not node:
-                raise Exception(
-                    f"Argument 'node_name' is '{args.node_name}' but this node does not exist"
-                )
-            submission_order = graph.generate_submission_order_path_to_node(
-                node, cmc_node
-            )
-        else:
-            submission_order = graph.generate_submission_order()
-
-        with open(os.path.join(args.path, "DataImportOrderPath.txt"), "w") as outfile:
-            for node in submission_order:
-                outfile.write(node.name + "\t" + node.category + "\n")
+        run_submission_order_generation(graph, args.path, args.node_name)
 
     logger.info("Done!")
 
