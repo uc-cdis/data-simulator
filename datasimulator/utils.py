@@ -6,6 +6,13 @@ from functools import reduce
 from .errors import UserError
 
 
+def attempt(action):
+    try:
+        return {"success": True, "result": action()}
+    except Exception as e:
+        return {"success": False, "error": e}
+
+
 def is_mixed_type(arr):
     # An enum is said "mixed type" if the enum items don't all have the same type. The only
     # exception to this is NoneType, which is allowed in enums regardless of the type of other
