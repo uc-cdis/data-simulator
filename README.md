@@ -12,6 +12,8 @@ It is sometimes necessary to create simulated data when it is impractical to obt
 
 ## Basic Functionality
 
+Data simulator contains various commands to help simulate, test, and validate data dictonaries. These commands are generally accessed via `data-simulator`. However, if you are not managaging your own virtual environment externally, you may need to append `poetry run` in front of your commands, as is described in the poetry documentation [here](https://python-poetry.org/docs/basic-usage/#using-poetry-run).
+
 #### Dictionary Validation
 
 This function is very helpful for user to validate dictionary
