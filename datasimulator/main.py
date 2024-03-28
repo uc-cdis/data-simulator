@@ -5,7 +5,7 @@ from dictionaryutils import DataDictionary, dictionary
 
 from .graph import Graph
 from .submit_data_utils import submit_test_data
-from file_handling import write_to_file_or_log_error
+from .file_handling import write_to_file_or_log_error
 from cdislogging import get_logger
 logger = get_logger("data-simulator", log_level="info")
 
@@ -144,7 +144,7 @@ def run_submission_order_generation(graph, data_path, node_name=None):
         submission_order = graph.generate_submission_order()
 
     file_path = os.path.join(data_path, "DataImportOrderPath.txt")
-    path_exists = os.path.exists(file_path)
+    path_exists = os.path.exists(data_path)
     if not path_exists:
         logger.error("Cannot create file because path does not exist. Did you create a 'test-data' folder?")
     else:
