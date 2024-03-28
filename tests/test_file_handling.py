@@ -1,5 +1,5 @@
 import os
-from datasimulator.file_handling import write_to_file_or_log_error
+from datasimulator.file_handling import write_submission_order_to_file_or_log_error
 from datasimulator.node import Node
 
 
@@ -17,5 +17,5 @@ def test_write_to_file_or_log_error(tmpdir):
         False)
     submission_order = [node_a, node_b]
     test_path = tmpdir.mkdir("test-data").join("DataImportOrderPath.txt")
-    succeeded = write_to_file_or_log_error(test_path, submission_order)
+    succeeded = write_submission_order_to_file_or_log_error(test_path, submission_order)
     assert succeeded and os.path.getsize(test_path) > 0
