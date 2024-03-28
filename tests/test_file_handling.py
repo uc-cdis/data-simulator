@@ -1,7 +1,7 @@
 from datasimulator.graph import Graph
 from dictionaryutils import dictionary
 from datasimulator.file_handling import write_to_file_or_log_error
-
+from datasimulator.utils import attempt
 
 def test_write_to_file_or_log_error():
     graph = Graph(dictionary, "DEV", "test")
