@@ -7,7 +7,7 @@ def write_node_to_file(outfile, node):
     outfile.write(f"{node.name}\t{node.category}\n")
 
 
-def write_to_file_or_log_error(file_path, submission_order):
+def write_submission_order_to_file_or_log_error(file_path, submission_order):
     file_open_result = attempt(lambda: open(file_path, "w"))
     if not file_open_result["success"]:
         exception = file_open_result["error"]
