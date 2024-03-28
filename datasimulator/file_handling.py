@@ -12,5 +12,6 @@ def write_to_file_or_log_error(file_path, submission_order):
         output_file = file_open_result["result"]
         for node in submission_order:
             output_file.write(f"{node.name}\t{node.category}\n")
+        output_file.close()
         logger.info("DataImportOrderPath.txt has been successfully created.")
     return file_open_result["success"]
