@@ -146,7 +146,7 @@ def run_submission_order_generation(graph, data_path, node_name=None):
     file_path = os.path.join(data_path, "DataImportOrderPath.txt")
     path_exists = os.path.exists(data_path)
     if not path_exists:
-        logger.error(f"Cannot create file because path does not exist. Here is the path we expect: '{data_path}'")
+        raise Exception(f"Cannot create file because path does not exist. Here is the path we expect: '{data_path}'")
     else:
         write_submission_order_to_file(submission_order, file_path)
 
