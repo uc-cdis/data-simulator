@@ -1,21 +1,27 @@
 import os
+from datasimulator.utils import attempt
 from datasimulator.file_handling import write_submission_order_to_file
 from datasimulator.node import Node
 
+node_a = Node(
+    'first_node',
+    {"category": "foo", "properties": "bar", "links": "biz", "oneOf": "baz"},
+    'test_project',
+    False)
+node_b = Node(
+    'second_node',
+    {"category": "aoo", "properties": "aar", "links": "aiz", "oneOf": "aaz"},
+    'test_project',
+    False)
+example_submission_order = [node_a, node_b]
 
-def test_write_to_file_or_log_error(tmpdir):
+
+def test_write_to_file_or_log_error_succeeds(tmpdir):
     """ asking for tmpdir in the parameter provides an empty test directory for testing """
-    node_a = Node(
-        'first_node',
-        {"category": "foo", "properties": "bar", "links": "biz", "oneOf": "baz"},
-        'test_project',
-        False)
-    node_b = Node(
-        'second_node',
-        {"category": "aoo", "properties": "aar", "links": "aiz", "oneOf": "aaz"},
-        'test_project',
-        False)
-    submission_order = [node_a, node_b]
     test_path = tmpdir.mkdir("test-data").join("DataImportOrderPath.txt")
-    succeeded = write_submission_order_to_file(submission_order, test_path)
+    succeeded = write_submission_order_to_file(example_submission_order, test_path)
     assert succeeded and os.path.getsize(test_path) > 0
+
+def test_write_to_file_or_log_error_fails():
+    write_result = attempt(lambda: write_submission_order_to_file(example_submission_order, "/test-path"))
+    assert not write_result["success"]
