@@ -27,5 +27,5 @@ def test_write_to_file_or_log_error_succeeds(tmpdir):
 
 def test_write_to_file_or_log_error_fails():
     """ Tests that write_submission_order_to_file fails when the directory does not exist"""
-    with pytest.raises(Exception):
+    with pytest.raises(IOError):
         write_submission_order_to_file(example_submission_order, "/test-path")
