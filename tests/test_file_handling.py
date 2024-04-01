@@ -1,5 +1,7 @@
 import os
-from datasimulator.utils import attempt
+
+import pytest
+
 from datasimulator.file_handling import write_submission_order_to_file
 from datasimulator.node import Node
 
@@ -22,7 +24,8 @@ def test_write_to_file_or_log_error_succeeds(tmpdir):
     succeeded = write_submission_order_to_file(example_submission_order, test_path)
     assert succeeded and os.path.getsize(test_path) > 0
 
+
 def test_write_to_file_or_log_error_fails():
     """ Tests that write_submission_order_to_file fails when the directory does not exist"""
-    write_result = attempt(lambda: write_submission_order_to_file(example_submission_order, "/test-path"))
-    assert not write_result["success"]
+    with pytest.raises(Exception):
+        write_submission_order_to_file(example_submission_order, "/test-path")
