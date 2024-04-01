@@ -5,9 +5,8 @@ from dictionaryutils import DataDictionary, dictionary
 
 from .graph import Graph
 from .submit_data_utils import submit_test_data
-
+from .file_handling import write_submission_order_to_file
 from cdislogging import get_logger
-
 logger = get_logger("data-simulator", log_level="info")
 
 
@@ -144,9 +143,13 @@ def run_submission_order_generation(graph, data_path, node_name=None):
     else:
         submission_order = graph.generate_submission_order()
 
-    with open(os.path.join(data_path, "DataImportOrderPath.txt"), "w") as outfile:
-        for node in submission_order:
-            outfile.write(node.name + "\t" + node.category + "\n")
+    file_path = os.path.join(data_path, "DataImportOrderPath.txt")
+    path_exists = os.path.exists(data_path)
+    if not path_exists:
+        raise Exception(f"Cannot create file because path does not exist. Here is the path we expect: '{data_path}'")
+    else:
+        write_submission_order_to_file(submission_order, file_path)
+
 
 
 # python main.py simulate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.3/schema.json --path ./data-simulator/sample_test_data --program DEV --project test
