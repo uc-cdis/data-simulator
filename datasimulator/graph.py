@@ -120,6 +120,7 @@ class Graph(object):
         """
         self.prelimary_dictionary_check()
         required_link_pass = self.graph_required_link_validation()
+        # print(self.nodes)
         return (
             all(
                 [
@@ -138,9 +139,8 @@ class Graph(object):
         for node in self.nodes:
             # validate required links
             if not node.required_links and node.name != "project":
-                logger.error(
-                    "Node {} does not have any required link".format(node.name)
-                )
+                logger.error("Node {} does not have any required link".format(node.name))
+                print(vars(node))
                 pass_validation = False
         return pass_validation
 
