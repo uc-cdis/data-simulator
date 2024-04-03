@@ -29,7 +29,7 @@ Required arguments:
 
 Simulate the data using dictionary
 ```
-data-simulator simulate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/<release_version>/schema.json --path ./data-simulator/sample_test_data --program DEV --project test
+data-simulator simulate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/<release_version>/schema.json --path ./tests/TestData --program DEV --project test
 ```
 
 Required arguments:
