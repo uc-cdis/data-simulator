@@ -12,13 +12,14 @@ It is sometimes necessary to create simulated data when it is impractical to obt
 
 ## Basic Functionality
 
-Data simulator contains various commands to help simulate, test, and validate data dictionaries. These commands are generally accessed via `data-simulator`. However, if you are not managing your own virtual environment externally, you may need to prepend `poetry run` to your commands, as is described in the poetry documentation [here](https://python-poetry.org/docs/basic-usage/#using-poetry-run).
+Data simulator contains various commands to help simulate, test, and validate data dictionaries. These commands are generally accessed via `data-simulator`. However, if you are not managing your own virtual environment externally, you may need to prepend `poetry run` to your commands, as is described in the poetry documentation [here](https://python-poetry.org/docs/basic-usage/#using-poetry-run). 
+Additionally, make sure you use data-simulator with the most recent release of our services in order to ensure expected behavior. In the examples below, we use `bhcdictonary` which, at time of writing, is on release `3.1.1`. 
 
 #### Dictionary Validation
 
 This function is very helpful for user to validate dictionary
 ```
-data-simulator validate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.3/schema.json
+data-simulator validate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/<release_version>/schema.json
 ```
 
 Required arguments:
@@ -28,7 +29,7 @@ Required arguments:
 
 Simulate the data using dictionary
 ```
-data-simulator simulate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.3/schema.json --path ./data-simulator/sample_test_data --program DEV --project test
+data-simulator simulate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/<release_version>/schema.json --path ./tests/TestData --program DEV --project test
 ```
 
 Required arguments:
@@ -48,7 +49,7 @@ Optional arguments:
 
 Generate a submission order given a node name and a dictionary
 ```
-data-simulator submission_order --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/0.4.3/schema.json --node_name case --path ./data-simulator/sample_test_data
+data-simulator submission_order --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/<release_version>/schema.json --node_name case --path ./data-simulator/sample_test_data
 ```
 
 Required arguments:
