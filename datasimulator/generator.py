@@ -22,7 +22,8 @@ def generate_string_data(size=10, pattern=None, format=None):
         tried_words = True
         try:
             word_file = "/usr/share/dict/words"
-            WORDS = open(word_file).read().splitlines()
+            with open(word_file) as f:
+                WORDS = f.read().splitlines()
             logger.info("Using '/usr/share/dict/words' for string generation.")
         except Exception as e:
             logger.info(
