@@ -310,7 +310,7 @@ zipp = "==0.6.0"
 
 [package.source]
 type = "git"
-url = "https://github.com/uc-cdis/gen3datamodel"
+url = "https://github.com/uc-cdis/gen3datamodel.git"
 reference = "chore/upgrade-jsonschema"
 resolved_reference = "19d6a40c8ac28959831a3933858d52751ec52842"
 
@@ -762,4 +762,4 @@ testing = ["contextlib2", "pathlib2", "unittest2"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<4"
-content-hash = "ebf074cb044f4fde06ad859bdfc4d538687e0bad7829c729454c1e7c153036ae"
+content-hash = "b2c7c35ae2b2b53df6c716b47b15104051f83c06a60494bd4bd46d0b96668ba1"
