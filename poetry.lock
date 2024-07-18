@@ -250,7 +250,7 @@ requests = "*"
 type = "git"
 url = "https://github.com/uc-cdis/dictionaryutils"
 reference = "chore/update-jsonschema"
-resolved_reference = "8bb9491201938034032149de3f5fc9f7209694e0"
+resolved_reference = "24825fccf64691a3c90ae0938fdf02962fbbf98c"
 
 [[package]]
 name = "exceptiongroup"
@@ -310,7 +310,7 @@ strict-rfc3339 = "==0.7"
 type = "git"
 url = "https://github.com/uc-cdis/gdcdatamodel.git"
 reference = "chore/update-jsonschema"
-resolved_reference = "13b02d6ab64c5ae23f1c30a0d00022eae832e07c"
+resolved_reference = "85fcc42a8b4878d53baae152ce69d2df02c26814"
 
 [[package]]
 name = "gen3dictionary"
