@@ -242,7 +242,7 @@ develop = false
 
 [package.dependencies]
 cdislogging = "*"
-jsonschema = "*"
+jsonschema = "<=4.23.0"
 PyYAML = "*"
 requests = "*"
 
@@ -250,7 +250,7 @@ requests = "*"
 type = "git"
 url = "https://github.com/uc-cdis/dictionaryutils"
 reference = "chore/update-jsonschema"
-resolved_reference = "24825fccf64691a3c90ae0938fdf02962fbbf98c"
+resolved_reference = "d1eee48ed69e7ced35a86a182951a4b5f4609f7e"
 
 [[package]]
 name = "exceptiongroup"
@@ -310,7 +310,7 @@ strict-rfc3339 = "==0.7"
 type = "git"
 url = "https://github.com/uc-cdis/gdcdatamodel.git"
 reference = "chore/update-jsonschema"
-resolved_reference = "85fcc42a8b4878d53baae152ce69d2df02c26814"
+resolved_reference = "63d7a3a10d28542c08fad74f46e338f6990ecfb7"
 
 [[package]]
 name = "gen3dictionary"
