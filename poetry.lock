@@ -270,8 +270,8 @@ requests = "*"
 [package.source]
 type = "git"
 url = "https://github.com/uc-cdis/dictionaryutils"
-reference = "chore/update-jsonschema"
-resolved_reference = "6a0c1b0d73296eb0d1e00537be827aba583aaf9a"
+reference = "3.4.11"
+resolved_reference = "cbac4bf51febc64eab4875f84ca6cb15c8b4718e"
 
 [[package]]
 name = "exceptiongroup"
@@ -317,7 +317,7 @@ develop = false
 
 [package.dependencies]
 cdislogging = "*"
-dictionaryutils = {git = "https://github.com/uc-cdis/dictionaryutils", branch = "chore/update-jsonschema"}
+dictionaryutils = {git = "https://github.com/uc-cdis/dictionaryutils", rev = "3.4.11"}
 gdcdictionary = {git = "https://github.com/NCI-GDC/gdcdictionary.git", rev = "release/py3"}
 jsonschema = "*"
 psqlgraph = "~=3.0"
@@ -330,8 +330,8 @@ strict-rfc3339 = "==0.7"
 [package.source]
 type = "git"
 url = "https://github.com/uc-cdis/gen3datamodel"
-reference = "3.2.0"
-resolved_reference = "4d0a73a23a97865ae65683ad7b93414e7b377a01"
+reference = "chore/update-branches"
+resolved_reference = "b31628d2b13d0dd1a4269f8ef523726df72031c8"
 
 [[package]]
 name = "gen3dictionary"
@@ -892,4 +892,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<4"
-content-hash = "80c6e08a196d5353aa52b494687e05b84844ecdb2f32f78171612aa8ca58b45b"
+content-hash = "e1204568b9ada71058fd1e26963c087fa73aedf09407b778ffbda5f53e707e6e"
