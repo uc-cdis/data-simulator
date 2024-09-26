@@ -271,7 +271,7 @@ requests = "*"
 type = "git"
 url = "https://github.com/uc-cdis/dictionaryutils"
 reference = "chore/update-jsonschema"
-resolved_reference = "d1eee48ed69e7ced35a86a182951a4b5f4609f7e"
+resolved_reference = "6a0c1b0d73296eb0d1e00537be827aba583aaf9a"
 
 [[package]]
 name = "exceptiongroup"
