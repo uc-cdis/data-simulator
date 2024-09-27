@@ -12,9 +12,9 @@ from datasimulator.new.simulator import simulate_tree
 def init_dictionary(url):
     d = DataDictionary(url=url)
     dictionary.init(d)
-    # the gdcdatamodel expects dictionary initiated on load, so this can't be
+    # the gen3datamodel expects dictionary initiated on load, so this can't be
     # imported on module level
-    from gdcdatamodel import models as md
+    from gen3datamodel import models as md
 
     return d, md
 
@@ -29,7 +29,10 @@ def parse_arguments():
         "--url", required=False, help="s3 dictionary link.", nargs="?", default=None
     )
     simulate_data_cmd.add_argument(
-        "--file", required=True, help="file defines the ", nargs="?"
+        "--file",
+        required=True,
+        help="file defines the generator configuration",
+        nargs="?",
     )
     simulate_data_cmd.add_argument(
         "--path", required=True, help="path to save files to", nargs="?"
