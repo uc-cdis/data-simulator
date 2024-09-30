@@ -21,7 +21,7 @@ gen3dictionary = "*"
 pyyaml = "<7"
 rstr = ">=3,<4"
 requests = "*"
-dictionaryutils = {git = "https://github.com/uc-cdis/dictionaryutils", rev = "3.4.11"}
+dictionaryutils = ">=3.4.11"
 psqlgraph = "*"
 
 [tool.poetry.dev-dependencies]
