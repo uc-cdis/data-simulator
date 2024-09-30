@@ -257,21 +257,16 @@ name = "dictionaryutils"
 version = "3.4.11"
 description = "Python wrapper and metaschema for datadictionary."
 optional = false
-python-versions = ">=3.9, <4"
-files = []
-develop = false
+python-versions = "<4,>=3.9"
+files = [
+    {file = "dictionaryutils-3.4.11.tar.gz", hash = "sha256:a63ae34b4c0130cd94e4ca685cbb18155c225f9bface32ed1d503393d0dd39cf"},
+]
 
 [package.dependencies]
 cdislogging = "*"
 jsonschema = "<=4.23.0"
 PyYAML = "*"
 requests = "*"
-
-[package.source]
-type = "git"
-url = "https://github.com/uc-cdis/dictionaryutils"
-reference = "3.4.11"
-resolved_reference = "cbac4bf51febc64eab4875f84ca6cb15c8b4718e"
 
 [[package]]
 name = "exceptiongroup"
@@ -303,12 +298,12 @@ PyYAML = "*"
 [package.source]
 type = "git"
 url = "https://github.com/NCI-GDC/gdcdictionary.git"
-reference = "release/py3"
-resolved_reference = "b5db4e815794c0544bbc9f4b6a16fc5b0475363b"
+reference = "2.0.0"
+resolved_reference = "0427dc737a7cc165868f3d065529d20a68a20ac1"
 
 [[package]]
 name = "gen3datamodel"
-version = "3.2.0"
+version = "3.2.2"
 description = ""
 optional = false
 python-versions = "^3.9"
@@ -317,8 +312,8 @@ develop = false
 
 [package.dependencies]
 cdislogging = "*"
-dictionaryutils = {git = "https://github.com/uc-cdis/dictionaryutils", rev = "3.4.11"}
-gdcdictionary = {git = "https://github.com/NCI-GDC/gdcdictionary.git", rev = "release/py3"}
+dictionaryutils = ">=3.4.11"
+gdcdictionary = {git = "https://github.com/NCI-GDC/gdcdictionary.git", rev = "2.0.0"}
 jsonschema = "*"
 psqlgraph = "~=3.0"
 psycopg2-binary = "~=2.8.2"
@@ -330,8 +325,8 @@ strict-rfc3339 = "==0.7"
 [package.source]
 type = "git"
 url = "https://github.com/uc-cdis/gen3datamodel"
-reference = "3.2.1"
-resolved_reference = "97d67c7bd2539f9d90ea0ccb899185ebe2ecc24c"
+reference = "chore/update-branches"
+resolved_reference = "02f70838c66389cfdfd49c662cf1dc561c9c0e7d"
 
 [[package]]
 name = "gen3dictionary"
@@ -892,4 +887,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<4"
-content-hash = "bfe0a0f52eb8043c34502463f1df7d4b360fb3d88b345c39e08db5d95f0f960b"
+content-hash = "12600bd8e2754864d03cf92ca9e27b45ff3d5b61b7498c1006e87a51fd3e01cc"
