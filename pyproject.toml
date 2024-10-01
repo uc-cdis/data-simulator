@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "data-simulator"
-version = "1.6.4"
+version = "1.6.5"
 description = "Gen3 Data Simulator"
 authors = ["CTDS UChicago <cdis@uchicago.edu>"]
 license = "Apache-2.0"
@@ -16,8 +16,7 @@ data-simulator = 'datasimulator.main:main'
 [tool.poetry.dependencies]
 python = ">=3.9,<4"
 cdislogging = "*"
-# gen3datamodel = {git = "https://github.com/uc-cdis/gen3datamodel", rev = "3.2.1"}
-gen3datamodel = {git = "https://github.com/uc-cdis/gen3datamodel", branch = "chore/update-branches"}
+gen3datamodel = ">=3.2.1"
 gen3dictionary = "*"
 pyyaml = "<7"
 rstr = ">=3,<4"
