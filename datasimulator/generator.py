@@ -4,7 +4,7 @@ import random
 
 from cdislogging import get_logger
 
-from .errors import UserError
+from datasimulator.errors import UserError
 
 
 logger = get_logger("data-simulator generator", log_level="info")
