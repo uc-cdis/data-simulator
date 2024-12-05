@@ -1,10 +1,13 @@
 import json
 from os.path import join
 
-from .node import Node, logger
-from .errors import UserError, DictionaryError
-from .generator import generate_list_numbers
-from .utils import generate_list_numbers_from_file, get_graph_traversal_path
+from datasimulator.node import Node, logger
+from datasimulator.errors import UserError, DictionaryError
+from datasimulator.generator import generate_list_numbers
+from datasimulator.utils import (
+    generate_list_numbers_from_file,
+    get_graph_traversal_path,
+)
 
 EXCLUDED_NODE = ["program", "root", "data_release"]
 

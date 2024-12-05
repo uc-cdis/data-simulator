@@ -2,7 +2,7 @@ import random
 import json
 from functools import reduce
 
-from .errors import UserError
+from datasimulator.errors import UserError
 
 
 def is_mixed_type(arr):

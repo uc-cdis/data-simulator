@@ -3,8 +3,8 @@ import random
 
 from cdislogging import get_logger
 
-from .errors import UserError, DictionaryError
-from .generator import (
+from datasimulator.errors import UserError, DictionaryError
+from datasimulator.generator import (
     generate_hash,
     generate_datetime,
     generate_string_data,
@@ -12,7 +12,7 @@ from .generator import (
     generate_consent_code,
     generate_simple_primitive_data,
 )
-from .utils import is_mixed_type, random_choice, get_keys_list
+from datasimulator.utils import is_mixed_type, random_choice, get_keys_list
 
 
 # Ingnore system properties
