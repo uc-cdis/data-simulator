@@ -229,7 +229,7 @@ class Graph(object):
                 project_node = node
             for link in node.required_links:
                 link["node"].child_nodes.append(node)
-
+        logger.info(f"Got project_node {project_node}")
         submission_order = get_graph_traversal_path(
             direction="down", start_node=project_node
         )
@@ -256,7 +256,9 @@ class Graph(object):
         Outputs:
             None
         """
+        logger.info("Generating submission order")
         submission_order = self.generate_submission_order()
+        logger.info("Got submission order")
 
         with open(join(path, "DataImportOrder.txt"), "w") as outfile:
             for node in submission_order:

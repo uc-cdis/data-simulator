@@ -3,6 +3,9 @@ import json
 from functools import reduce
 
 from .errors import UserError
+from cdislogging import get_logger
+
+logger = get_logger("data-simulator simulate", log_level="info")
 
 
 def is_mixed_type(arr):
@@ -85,6 +88,7 @@ def get_graph_traversal_path(direction, start_node):
     path = [start_node]
     while to_visit:
         node = to_visit.pop()
+        logger.info(f"Visiting {node}")
         if direction == "down":
             links = node.child_nodes
         elif direction == "up":
