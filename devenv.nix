@@ -2,7 +2,7 @@
 
 {
   # https://devenv.sh/basics/
-  env.GREET = "devenv";
+  env.GREET = "data-simulator";
 
   # https://devenv.sh/packages/
   packages = [
@@ -11,8 +11,9 @@
 
   # https://devenv.sh/languages/
   languages.python.enable = true;
+  languages.python.poetry.enable = true;
+  languages.python.poetry.activate.enable = true;
   languages.python.uv.enable = true;
-  languages.python.venv.enable = true;
   languages.python.version = "3.9";
 
   # https://devenv.sh/processes/
@@ -39,6 +40,7 @@
   # https://devenv.sh/tests/
   enterTest = ''
     echo "Running tests"
+    poetry run pytest -vv ./tests
   '';
 
   # https://devenv.sh/git-hooks/
