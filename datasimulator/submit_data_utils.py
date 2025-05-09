@@ -15,7 +15,7 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
     program_name = project.split("/")[0]
     api_root_endpoint = host + "/api/v0/submission"
     api_program_endpoint = "{}/{}".format(api_root_endpoint, program_name)
-    api_endpoint = "{}/{}".format(api_root_endpoint, project)
+    api_project_endpoint = "{}/{}".format(api_program_endpoint, project)
 
     token = ""
     if os.path.isfile(access_token_file):
@@ -36,9 +36,9 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
         logger.error("Can not create program. Detail {}".format((e)))
         return
 
-    response = requests.put(
+    response = requests.post(
         api_root_endpoint,
-        data=json.dumps(data),
+        json=data,
         headers={
             "content-type": "application/json",
             "Authorization": "bearer " + token,
@@ -46,7 +46,11 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
     )
 
     if response.status_code not in [200, 201]:
-        logger.error("Can not create the program. Response {}".format(response.json()))
+        logger.error(
+            "Can not create the program. Response status: %s, body: %s",
+            response.status_code,
+            response.text,
+        )
         return
 
     submission_order = ""
@@ -75,9 +79,9 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
         with open(complete_fname, "r") as rfile:
             data = json.loads(rfile.read())
             if fname == "project":
-                response = requests.put(
+                response = requests.post(
                     api_program_endpoint,
-                    data=json.dumps(data),
+                    json=data,
                     headers={
                         "content-type": "application/json",
                         "Authorization": "bearer " + token,
@@ -85,9 +89,9 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
                 )
                 if response.status_code not in [200, 201]:
                     logger.error(
-                        "Can not create the project. Response {}".format(
-                            response.json()
-                        )
+                        "Can not create the project. Response status: %s, body: %s",
+                        response.status_code,
+                        response.text,
                     )
                     return
                 continue
@@ -96,11 +100,9 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
                 data = [data]
             index = 0
             while index < len(data):
-                response = requests.put(
-                    api_endpoint,
-                    data=json.dumps(
-                        list(data[index : min(index + chunk_size, len(data))])
-                    ),
+                response = requests.post(
+                    api_project_endpoint,
+                    json=list(data[index : min(index + chunk_size, len(data))]),
                     headers={
                         "content-type": "application/json",
                         "Authorization": "bearer " + token,
