@@ -5,7 +5,7 @@ on: pull_request
 jobs:
   integration_tests:
     name: Integration tests
-    uses: uc-cdis/.github/.github/workflows/integration_tests.yaml@chore/handle_data_simulator_prs
+    uses: uc-cdis/.github/.github/workflows/integration_tests.yaml@master
     with:
       SERVICE_TO_TEST: "graph_submission"
       TEST_REPO_BRANCH: "chore/handle_data_simulator_ci"
