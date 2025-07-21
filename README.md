@@ -12,8 +12,8 @@ It is sometimes necessary to create simulated data when it is impractical to obt
 
 ## Basic Functionality
 
-Data simulator contains various commands to help simulate, test, and validate data dictionaries. These commands are generally accessed via `data-simulator`. However, if you are not managing your own virtual environment externally, you may need to prepend `poetry run` to your commands, as is described in the poetry documentation [here](https://python-poetry.org/docs/basic-usage/#using-poetry-run). 
-Additionally, make sure you use data-simulator with the most recent release of our services in order to ensure expected behavior. In the examples below, we use `bhcdictonary` which, at time of writing, is on release `3.1.1`. 
+Data simulator contains various commands to help simulate, test, and validate data dictionaries. These commands are generally accessed via `data-simulator`. However, if you are not managing your own virtual environment externally, you may need to prepend `poetry run` to your commands, as is described in the poetry documentation [here](https://python-poetry.org/docs/basic-usage/#using-poetry-run).
+Additionally, make sure you use data-simulator with the most recent release of our services in order to ensure expected behavior. In the examples below, we use `bhcdictonary` which, at time of writing, is on release `3.1.1`.
 
 #### Dictionary Validation
 
@@ -25,11 +25,26 @@ data-simulator validate --url https://s3.amazonaws.com/dictionary-artifacts/bhcd
 Required arguments:
 * url: s3 dictionary link
 
+#### Submission Order
+
+Generate a submission order given a node name and a dictionary
+```
+data-simulator submission_order --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/<release_version>/schema.json --node_name case --path ./TestData
+```
+
+Required arguments:
+* url: s3 dictionary link
+* path: path to save file to
+
+Optional arguments:
+* node_name: node to generate the submission order for. by default, the command selects a random data file node
+* skip: skip raising an exception if gets an error
+
 #### Simulating data
 
-Simulate the data using dictionary
+Simulate the data using dictionary. Note that the submission order has to be generated first.
 ```
-data-simulator simulate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/<release_version>/schema.json --path ./tests/TestData --program DEV --project test
+data-simulator simulate --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/<release_version>/schema.json --path ./TestData --program DEV --project test
 ```
 
 Required arguments:
@@ -44,21 +59,6 @@ Optional arguments:
 * random: randomly generate the numbers of node instances (up to `max_samples`). If this argument is not used, all nodes have `max_samples` instances
 * node_num_instances_file ./file.json: generate the numbers of node instances specified in the JSON file. The file should contain the number of instances (integer)  to generate for each node name, for example: `{"submitted_unaligned_reads": 100}`. `max_samples` instances are generated for nodes that are not specified in the file.
 * consent_codes: whether to include generation of random consent codes
-
-#### Submission Order
-
-Generate a submission order given a node name and a dictionary
-```
-data-simulator submission_order --url https://s3.amazonaws.com/dictionary-artifacts/bhcdictionary/<release_version>/schema.json --node_name case --path ./data-simulator/sample_test_data
-```
-
-Required arguments:
-* url: s3 dictionary link
-* path: path to save file to
-
-Optional arguments:
-* node_name: node to generate the submission order for. by default, the command selects a random data file node
-* skip: skip raising an exception if gets an error
 
 #### Submitting Data
 

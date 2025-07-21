@@ -158,6 +158,9 @@ def run_submission_order_generation(graph, data_path, node_name=None):
 def main():
     args = parse_arguments()
 
+    if hasattr(args, "path") and args.path:
+        os.makedirs(args.path, exist_ok=True)
+
     if args.action == "submitting_data":
         logger.info("Submitting data...")
         submit_test_data(
