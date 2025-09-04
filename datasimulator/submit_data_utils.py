@@ -8,7 +8,7 @@ from cdislogging import get_logger
 logger = get_logger("data-simulator submitting_data", log_level="info")
 
 
-def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
+def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1, insecure=False):
     """
     Submit the test data. `project` is in the format of `program/project`
     """
@@ -43,6 +43,7 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
             "content-type": "application/json",
             "Authorization": "bearer " + token,
         },
+        verify=not insecure,
     )
 
     if response.status_code not in [200, 201]:
@@ -82,6 +83,7 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
                         "content-type": "application/json",
                         "Authorization": "bearer " + token,
                     },
+                    verify=not insecure,
                 )
                 if response.status_code not in [200, 201]:
                     logger.error(
@@ -105,6 +107,7 @@ def submit_test_data(host, project, dir, access_token_file, max_chunk_size=1):
                         "content-type": "application/json",
                         "Authorization": "bearer " + token,
                     },
+                    verify=not insecure,
                 )
                 if response.status_code == 504:
                     chunk_size = chunk_size / 2
