@@ -83,6 +83,7 @@ def parse_arguments():
     submit_data_cmd.add_argument("--project", required=True)
     submit_data_cmd.add_argument("--chunk_size", default=1)
     submit_data_cmd.add_argument("--access_token_file", required=True)
+    submit_data_cmd.add_argument("--insecure", help="skip TLS certificate validation", action="store_true")
 
     return parser.parse_args()
 
@@ -169,6 +170,7 @@ def main():
             args.dir,
             args.access_token_file,
             int(args.chunk_size),
+            args.insecure,
         )
         logger.info("Done!")
         return
