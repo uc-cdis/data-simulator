@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "data-simulator"
-version = "1.6.5"
+version = "1.6.6"
 description = "Gen3 Data Simulator"
 authors = ["CTDS UChicago <cdis@uchicago.edu>"]
 license = "Apache-2.0"
@@ -24,7 +24,7 @@ requests = "*"
 dictionaryutils = ">=3.4.11"
 psqlgraph = "*"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = ">=7,<8"
 mock = "*"
 pytest-cov = "*"
