@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 import rstr
 import random
-
+import uuid
 from cdislogging import get_logger
 
 from datasimulator.errors import UserError
@@ -48,6 +48,8 @@ def generate_string_data_with_format(format):
             return random_datetime.strftime("%Y-%m-%d")
         else:  # date-time
             return random_datetime.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+    if format in ["uri"]:
+        return f"urn:uuid:{uuid.uuid4()}"
     else:
         raise UserError(
             f"Format '{format}' is not currently supported by data-simulator"
