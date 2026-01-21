@@ -76,6 +76,7 @@ Required arguments:
 
 Optional arguments:
 * chunk_size: default is 1
+* insecure: skip TLS certificate validation. default is `False`
 
 ## Setup
 Poetry needs to be installed before installing data simulator.
