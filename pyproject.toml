@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "data-simulator"
+name = "gen3-data-simulator"
 version = "1.6.6"
 description = "Gen3 Data Simulator"
 authors = ["CTDS UChicago <cdis@uchicago.edu>"]
