@@ -15,3 +15,4 @@ jobs:
     uses: uc-cdis/.github/.github/workflows/python_unit_test.yaml@master
     with:
       python-version: '3.9'
+      poetry-version: '2.2.0'
