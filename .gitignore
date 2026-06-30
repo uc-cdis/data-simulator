@@ -5,4 +5,5 @@ sample_test_data/
 *.egg-info/
 
 tests/TestData
+tests/TestDataTemp
 /.idea/
