@@ -199,6 +199,9 @@ def test_local_simulation():
     """Work in progress.
     Tests n_samples iteration. Otherwise largely the same as test_local_get_schema."""
 
+    # Define max n_samples
+    n_samples = 200
+
     # Set up test (delete any existing files in test data folder before test starts)
     local_test_path = "tests/TestDataTemp"
     test_generated_files = os.listdir(local_test_path)
@@ -213,7 +216,7 @@ def test_local_simulation():
     # Check if graph passess validaiton
     assert graph.graph_validation()
     # Simulate data whether the graph passes validation or not
-    graph.simulate_graph_data(path=local_test_path, n_samples=50)
+    graph.simulate_graph_data(path=local_test_path, n_samples=n_samples)
 
 
 import urllib.request
@@ -228,9 +231,10 @@ def test_read_dictionary():
     # Get public schema info
     # Examine did, urls, file_name, hashes['md5'] per entry
     # base_url = <base_url_here>
-    test_limit = 2
+    test_limit = 3
+
     with urllib.request.urlopen(
-        base_url + "&page=1&limit=" + str(test_limit)
+        base_url + "&page=1" + "&limit=" + str(test_limit)
     ) as response:
         response_body = response.read()
         schema_response = json.loads(response_body)
@@ -263,5 +267,58 @@ def test_read_dictionary():
     with open("tests/TestDataTemp/test_submitted_aligned_reads.json", "w") as file:
         json.dump(new_json_content, file)
 
-    # Temp Work in progress - force failure
-    # assert 'a' == 'b'
+
+def test_read_dictionary_two():
+    """
+    Work in progress.
+    Test with public schema
+    - Must update & uncomment base url which references the public schema
+    - Run test_local_simulation before running this pytest"""
+
+    # Get local tests reference info
+    local_file_name = "tests/TestDataTemp/submitted_aligned_reads.json"
+    with open(local_file_name, "r") as local_json:
+        local_records = json.load(local_json)
+
+    # Init variables
+    n_original_records = len(local_records)
+    limit = 100
+    page = 1
+    updated_records = []
+    n_updated_records = 0
+    # base_url =
+
+    while n_updated_records < n_original_records:
+        print(f"beginning loop... page: {page}")
+        url = base_url + "&page=" + str(page) + "&limit=" + str(limit)
+        with urllib.request.urlopen(url) as response:
+            response_body = response.read()
+            url_schema = json.loads(response_body)
+        schema_records = url_schema["records"]
+        # Exit if schema records are empty
+        if schema_records == []:
+            print(f"breaking out of loop... page: {page}")
+            break
+
+        # Extract updated records
+        for schema in schema_records:
+            # Extract local_record & update some info to match that of a schema
+            local_entry = local_records[n_updated_records]
+            local_entry["md5sum"] = "test_" + schema["hashes"]["md5"]
+            local_entry["bucket_path"] = schema["urls_metadata"]
+            schema_file_name = schema["file_name"]
+            if schema_file_name != "":
+                local_entry["file_name"] = "test_" + str(schema_file_name)
+            # Append new to new content list and update count
+            updated_records.append(local_entry)
+            n_updated_records += 1
+            # Exit if updated records if we've updated all available local test records
+            if n_updated_records == n_original_records:
+                break
+
+        # Update url page number
+        page += 1
+
+    # Save new json with updated records after exiting while loop
+    with open("tests/TestDataTemp/test_submitted_aligned_reads.json", "w") as file:
+        json.dump(updated_records, file)
