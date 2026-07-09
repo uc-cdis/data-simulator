@@ -23,6 +23,7 @@ rstr = ">=3,<4"
 requests = "*"
 dictionaryutils = ">=3.4.11"
 psqlgraph = "*"
+pypfb = ">=0.6.2"
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7,<8"

@@ -7,3 +7,4 @@ sample_test_data/
 tests/TestData
 tests/TestDataTemp
 /.idea/
+*.avro
