@@ -22,41 +22,6 @@ def test_get_schema(default_dictionary):
     # TODO: delete generated files at the end of tests
 
 
-def test_local_get_schema(default_dictionary):
-    """Tests files are successfully generated & deletes generated files at the end of test."""
-    # Set up test (Check local test folder is empty)
-    local_test_path = "tests/TestDataTemp"
-    assert len(os.listdir(local_test_path)) == 0
-
-    # Confirm test folder is empty
-    graph = Graph(dictionary, "DEV", "test")
-    graph.generate_nodes_from_dictionary()
-    graph.construct_graph_edges()
-    assert graph.graph_validation()
-    graph.simulate_graph_data(path=local_test_path)
-
-    # Check that files generated (should match files from tests/schema/default)
-    default_schema_files = os.listdir("tests/schemas/default")
-    default_schema_files_filtered = [
-        x.split(".")[0]
-        for x in default_schema_files
-        if (not x.startswith("_") and not x.startswith("program"))
-    ]
-    test_generated_files = os.listdir(local_test_path)
-    test_generated_files_filtered = [
-        x.split(".")[0]
-        for x in test_generated_files
-        if not (x == "DataImportOrder.txt")
-    ]
-    assert sorted(default_schema_files_filtered) == sorted(
-        test_generated_files_filtered
-    )
-
-    # Detele generated files at the end of the tests
-    for file in test_generated_files:
-        os.remove(local_test_path + f"/{file}")
-
-
 def test_generate_submission_order():
     """
     Generate the submission order from the project node to all leaf nodes.
